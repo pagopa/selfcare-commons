@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
@@ -36,16 +34,16 @@ public class RestExceptionsHandler {
     @ExceptionHandler({Exception.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
-    private ErrorResource handleThrowable(Throwable e, HttpServletRequest request, HttpServletResponse response) {
+    ErrorResource handleThrowable(Throwable e) {
         log.error(UNHANDLED_EXCEPTION, e);
         return new ErrorResource(e.getMessage());
     }
 
+
     @ExceptionHandler({ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    private ErrorResource handleConstraintViolationException(ConstraintViolationException e, HttpServletRequest request,
-                                                             HttpServletResponse response) {
+    ErrorResource handleConstraintViolationException(ConstraintViolationException e) {
         log.warn(UNHANDLED_EXCEPTION, e);
         return new ErrorResource(e.getMessage());
     }
@@ -54,17 +52,16 @@ public class RestExceptionsHandler {
     @ExceptionHandler({BindException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    private ErrorResource handleMethodArgumentNotValidException(MethodArgumentNotValidException e,
-                                                                HttpServletRequest request, HttpServletResponse response) {
+    ErrorResource handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.warn(UNHANDLED_EXCEPTION, e);
         return new ErrorResource(e.getMessage());
     }
 
+
     @ExceptionHandler({ServletException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    private ErrorResource handleMissingServletRequestParameterException(MissingServletRequestParameterException e,
-                                                                        HttpServletRequest request, HttpServletResponse response) {
+    ErrorResource handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
         log.warn(UNHANDLED_EXCEPTION, e);
         return new ErrorResource(e.getMessage());
     }
@@ -73,26 +70,25 @@ public class RestExceptionsHandler {
     @ExceptionHandler({HttpMediaTypeNotAcceptableException.class})
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ResponseBody
-    private ErrorResource handleHttpMediaTypeNotAcceptableException(HttpMediaTypeNotAcceptableException e,
-                                                                    HttpServletRequest request, HttpServletResponse response) {
+    ErrorResource handleHttpMediaTypeNotAcceptableException(HttpMediaTypeNotAcceptableException e) {
         log.warn(UNHANDLED_EXCEPTION, e);
         return new ErrorResource(e.getMessage());
     }
+
 
     @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ResponseBody
-    private ErrorResource handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e,
-                                                                       HttpServletRequest request, HttpServletResponse response) {
+    ErrorResource handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         log.warn(UNHANDLED_EXCEPTION, e);
         return new ErrorResource(e.getMessage());
     }
 
+
     @ExceptionHandler({MethodArgumentTypeMismatchException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    private ErrorResource handleInvalidParam(MethodArgumentTypeMismatchException e, HttpServletRequest request,
-                                             HttpServletResponse response) {
+    ErrorResource handleInvalidParam(MethodArgumentTypeMismatchException e) {
         log.warn(UNHANDLED_EXCEPTION, e);
         return new ErrorResource(e.getMessage());
     }
