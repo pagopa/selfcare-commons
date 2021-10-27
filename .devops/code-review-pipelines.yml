@@ -3,9 +3,8 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/java
 
 trigger:
-  include:
-    - master
-    - release-*
+  - master
+  - release-*
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -23,7 +22,6 @@ steps:
   #        maven
   #      path: $(MAVEN_CACHE_FOLDER)
   #    displayName: Cache Maven local repo
-  -
   - task: SonarCloudPrepare@1
     displayName: 'Prepare SonarCloud analysis configuration'
     inputs:
