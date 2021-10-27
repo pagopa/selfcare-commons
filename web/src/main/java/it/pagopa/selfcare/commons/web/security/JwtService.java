@@ -3,9 +3,15 @@ package it.pagopa.selfcare.commons.web.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Optional;
 
 /**
@@ -15,53 +21,36 @@ import java.util.Optional;
 @Component
 public class JwtService {
 
-    private final String jwtSecret;
-    private final int jwtExpirationMs;
+    private final PublicKey jwtSigningKey;
 
-    public JwtService(@Value("${jwt.secret}") String jwtSecret,
-                      @Value("${jwt.expirationMs}") int jwtExpirationMs) {
-        this.jwtSecret = jwtSecret;
-        this.jwtExpirationMs = jwtExpirationMs;
-    }
 
-    //    public String generateJwtToken(Authentication authentication) {
-//
-//        UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-//
-//        return Jwts.builder()
-//                .setSubject((userPrincipal.getUsername()))
-//                .setIssuedAt(new Date())
-//                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-//                .signWith(SignatureAlgorithm.HS512, jwtSecret)
-//                .compact();
-//    }
-
-    public String getSubjectFromJwtToken(String token) {
-        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+    public JwtService(@Value("${jwt.signingKey}") String jwtSigningKey) throws Exception {
+        this.jwtSigningKey = getPublicKey(jwtSigningKey);
     }
 
 
     public Optional<Claims> getClaims(String token) {
         Optional<Claims> claims = Optional.empty();
         try {
-            claims = Optional.of(Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody());
+            claims = Optional.of(Jwts.parser().setSigningKey(jwtSigningKey).parseClaimsJws(token).getBody());
         } catch (Exception e) {
             log.error(e.getMessage());
         }
         return claims;
     }
 
-    public boolean validateJwtToken(String authToken) {
-        boolean valid = false;
-        if (authToken != null) {
-            try {
-                Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
-                valid = true;
-            } catch (Exception e) {
-                log.error(e.getMessage());
-            }
-        }
 
-        return valid;
+    private PublicKey getPublicKey(String signingKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        String publicKeyPEM = signingKey
+                .replace("-----BEGIN PUBLIC KEY-----", "")
+                .replaceAll(System.lineSeparator(), "")
+                .replace("-----END PUBLIC KEY-----", "");
+
+        byte[] encoded = Base64.decodeBase64(publicKeyPEM);
+
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
+        return keyFactory.generatePublic(keySpec);
     }
+
 }

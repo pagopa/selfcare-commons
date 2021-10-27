@@ -5,67 +5,68 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.DefaultClaims;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.security.*;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Optional;
 
 class JwtServiceTest {
 
     @Test
-    void getClaims() throws Exception {
+    void getClaims_signatureOK() throws Exception {
         // given
         DefaultClaims claims = new DefaultClaims();
         claims.setId("id");
-        claims.setAudience("audience");
         String jwt = generateToken(loadPrivateKey(), claims);
-        System.out.println("jwt = " + jwt);
-        JwtService jwtService = new JwtService(jwt, 1000);
+        File file = ResourceUtils.getFile("classpath:certs/pubkey.pem");
+        String jwtSigningKey = Files.readString(file.toPath(), Charset.defaultCharset());
+        JwtService jwtService = new JwtService(jwtSigningKey);
         // when
-//        jwtService.getClaims(jwt);
+        Optional<Claims> body = jwtService.getClaims(jwt);
         // then
-
-        Claims body = Jwts.parser().setSigningKey(loadPublicKey()).parseClaimsJws(jwt).getBody();
-        System.out.println("body = " + body);
+        Assertions.assertTrue(body.isPresent());
+        Assertions.assertEquals("id", body.get().getId());
     }
 
 
-    public PublicKey loadPublicKey() throws Exception {
-        CertificateFactory cf = CertificateFactory.getInstance("X.509");
-        FileInputStream inStream = new FileInputStream(ResourceUtils.getFile("classpath:certs/certificate.pem"));
-        Certificate cert = cf.generateCertificate(inStream);
-        return cert.getPublicKey();
-
-//        File file = ResourceUtils.getFile("classpath:certs/certificate.pem");
-//        String key = new String(Files.readAllBytes(file.toPath()), Charset.defaultCharset());
-//
-////        String publicKeyPEM = key
-////                .replace("-----BEGIN PUBLIC KEY-----", "")
-////                .replaceAll(System.lineSeparator(), "")
-////                .replace("-----END PUBLIC KEY-----", "");
-//        String publicKeyPEM = key
-//                .replace("-----BEGIN CERTIFICATE-----", "")
-//                .replaceAll(System.lineSeparator(), "")
-//                .replace("-----END CERTIFICATE-----", "");
-//
-//        byte[] encoded = Base64.decodeBase64(publicKeyPEM);
-//
-//        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-//        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
-//        return keyFactory.generatePublic(keySpec);
+    @Test
+    void getClaims_signatureNotValid() throws Exception {
+        // given
+        DefaultClaims claims = new DefaultClaims();
+        claims.setId("id");
+        String jwt = generateToken(loadPrivateKey(), claims);
+        File file = ResourceUtils.getFile("classpath:certs/different_pubkey.pem");
+        String jwtSigningKey = Files.readString(file.toPath(), Charset.defaultCharset());
+        JwtService jwtService = new JwtService(jwtSigningKey);
+        // when
+        Optional<Claims> body = jwtService.getClaims(jwt);
+        // then
+        Assertions.assertFalse(body.isPresent());
     }
 
 
-    public PrivateKey loadPrivateKey() throws Exception {
+    @Test
+    void getClaims_cannotParseSignature() throws Exception {
+        // given
+        DefaultClaims claims = new DefaultClaims();
+        claims.setId("id");
+        String jwt = generateToken(loadPrivateKey(), claims);
+        // when - then
+        Assertions.assertThrows(InvalidKeySpecException.class, () -> new JwtService("invalid signature"));
+    }
+
+
+    private PrivateKey loadPrivateKey() throws Exception {
         File file = ResourceUtils.getFile("classpath:certs/key.pem");
-        String key = new String(Files.readAllBytes(file.toPath()), Charset.defaultCharset());
+        String key = Files.readString(file.toPath(), Charset.defaultCharset());
 
         String privateKeyPEM = key
                 .replace("-----BEGIN PRIVATE KEY-----", "")
@@ -93,38 +94,4 @@ class JwtServiceTest {
         return token;
     }
 
-
-    /**
-     * Verify and get claims using public key
-     *
-     * @param token     the JWT
-     * @param publicKey the public key
-     * @return the claims extracted from the JWT
-     */
-    private Claims verifyToken(String token, PublicKey publicKey) {
-        Claims claims;
-
-        try {
-            claims = Jwts.parser().setSigningKey(publicKey).parseClaimsJws(token).getBody();
-
-        } catch (Exception e) {
-            claims = null;
-        }
-
-        return claims;
-    }
-
-
-    /**
-     * Generate RSA keys. Uses key size of 2048.
-     *
-     * @return RSA key pair
-     * @throws Exception
-     */
-    private KeyPair generateRSAKeys() throws Exception {
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-        keyPairGenerator.initialize(2048);
-        KeyPair keyPair = keyPairGenerator.generateKeyPair();
-        return keyPair;
-    }
 }
