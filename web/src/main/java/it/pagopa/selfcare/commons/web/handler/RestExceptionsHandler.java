@@ -6,8 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.servlet.ServletException;
-import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
 /**
@@ -43,7 +40,7 @@ public class RestExceptionsHandler {
     @ExceptionHandler({ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    ErrorResource handleConstraintViolationException(ConstraintViolationException e) {
+    ErrorResource handleValidationException(ValidationException e) {
         log.warn(UNHANDLED_EXCEPTION, e);
         return new ErrorResource(e.getMessage());
     }
@@ -52,7 +49,7 @@ public class RestExceptionsHandler {
     @ExceptionHandler({BindException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    ErrorResource handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    ErrorResource handleBindException(BindException e) {
         log.warn(UNHANDLED_EXCEPTION, e);
         return new ErrorResource(e.getMessage());
     }
@@ -61,7 +58,7 @@ public class RestExceptionsHandler {
     @ExceptionHandler({ServletException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    ErrorResource handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+    ErrorResource handleServletException(ServletException e) {
         log.warn(UNHANDLED_EXCEPTION, e);
         return new ErrorResource(e.getMessage());
     }
@@ -88,7 +85,7 @@ public class RestExceptionsHandler {
     @ExceptionHandler({MethodArgumentTypeMismatchException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    ErrorResource handleInvalidParam(MethodArgumentTypeMismatchException e) {
+    ErrorResource handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         log.warn(UNHANDLED_EXCEPTION, e);
         return new ErrorResource(e.getMessage());
     }

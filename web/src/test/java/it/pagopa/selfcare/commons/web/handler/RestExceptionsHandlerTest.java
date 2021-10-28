@@ -3,13 +3,13 @@ package it.pagopa.selfcare.commons.web.handler;
 import it.pagopa.selfcare.commons.web.model.ErrorResource;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.validation.BindException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import javax.validation.ConstraintViolationException;
+import javax.servlet.ServletException;
+import javax.validation.ValidationException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -41,13 +41,13 @@ class RestExceptionsHandlerTest {
 
 
     @Test
-    void handleConstraintViolationException() {
+    void handleValidationException() {
         // given
-        Throwable exceptionMock = Mockito.mock(ConstraintViolationException.class);
+        ValidationException exceptionMock = Mockito.mock(ValidationException.class);
         Mockito.when(exceptionMock.getMessage())
                 .thenReturn(DETAIL_MESSAGE);
         // when
-        ErrorResource resource = handler.handleThrowable(exceptionMock);
+        ErrorResource resource = handler.handleValidationException(exceptionMock);
         // then
         assertNotNull(resource);
         assertEquals(DETAIL_MESSAGE, resource.getMessage());
@@ -55,13 +55,13 @@ class RestExceptionsHandlerTest {
 
 
     @Test
-    void handleMethodArgumentNotValidException() {
+    void handleBindException() {
         // given
-        Throwable exceptionMock = Mockito.mock(MethodArgumentNotValidException.class);
+        BindException exceptionMock = Mockito.mock(BindException.class);
         Mockito.when(exceptionMock.getMessage())
                 .thenReturn(DETAIL_MESSAGE);
         // when
-        ErrorResource resource = handler.handleThrowable(exceptionMock);
+        ErrorResource resource = handler.handleBindException(exceptionMock);
         // then
         assertNotNull(resource);
         assertEquals(DETAIL_MESSAGE, resource.getMessage());
@@ -69,13 +69,13 @@ class RestExceptionsHandlerTest {
 
 
     @Test
-    void handleMissingServletRequestParameterException() {
+    void handleServletException() {
         // given
-        Throwable exceptionMock = Mockito.mock(MissingServletRequestParameterException.class);
+        ServletException exceptionMock = Mockito.mock(ServletException.class);
         Mockito.when(exceptionMock.getMessage())
                 .thenReturn(DETAIL_MESSAGE);
         // when
-        ErrorResource resource = handler.handleThrowable(exceptionMock);
+        ErrorResource resource = handler.handleServletException(exceptionMock);
         // then
         assertNotNull(resource);
         assertEquals(DETAIL_MESSAGE, resource.getMessage());
@@ -85,11 +85,11 @@ class RestExceptionsHandlerTest {
     @Test
     void handleHttpMediaTypeNotAcceptableException() {
         // given
-        Throwable exceptionMock = Mockito.mock(HttpMediaTypeNotAcceptableException.class);
+        HttpMediaTypeNotAcceptableException exceptionMock = Mockito.mock(HttpMediaTypeNotAcceptableException.class);
         Mockito.when(exceptionMock.getMessage())
                 .thenReturn(DETAIL_MESSAGE);
         // when
-        ErrorResource resource = handler.handleThrowable(exceptionMock);
+        ErrorResource resource = handler.handleHttpMediaTypeNotAcceptableException(exceptionMock);
         // then
         assertNotNull(resource);
         assertEquals(DETAIL_MESSAGE, resource.getMessage());
@@ -99,11 +99,11 @@ class RestExceptionsHandlerTest {
     @Test
     void handleHttpRequestMethodNotSupportedException() {
         // given
-        Throwable exceptionMock = Mockito.mock(HttpRequestMethodNotSupportedException.class);
+        HttpRequestMethodNotSupportedException exceptionMock = Mockito.mock(HttpRequestMethodNotSupportedException.class);
         Mockito.when(exceptionMock.getMessage())
                 .thenReturn(DETAIL_MESSAGE);
         // when
-        ErrorResource resource = handler.handleThrowable(exceptionMock);
+        ErrorResource resource = handler.handleHttpRequestMethodNotSupportedException(exceptionMock);
         // then
         assertNotNull(resource);
         assertEquals(DETAIL_MESSAGE, resource.getMessage());
@@ -111,13 +111,13 @@ class RestExceptionsHandlerTest {
 
 
     @Test
-    void handleInvalidParam() {
+    void handleMethodArgumentTypeMismatchException() {
         // given
-        Throwable exceptionMock = Mockito.mock(MethodArgumentTypeMismatchException.class);
+        MethodArgumentTypeMismatchException exceptionMock = Mockito.mock(MethodArgumentTypeMismatchException.class);
         Mockito.when(exceptionMock.getMessage())
                 .thenReturn(DETAIL_MESSAGE);
         // when
-        ErrorResource resource = handler.handleThrowable(exceptionMock);
+        ErrorResource resource = handler.handleMethodArgumentTypeMismatchException(exceptionMock);
         // then
         assertNotNull(resource);
         assertEquals(DETAIL_MESSAGE, resource.getMessage());
