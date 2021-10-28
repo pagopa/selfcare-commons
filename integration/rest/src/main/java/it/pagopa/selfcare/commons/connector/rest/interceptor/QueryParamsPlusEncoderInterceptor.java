@@ -17,11 +17,6 @@ public class QueryParamsPlusEncoderInterceptor implements RequestInterceptor {
 
     @Override
     public void apply(RequestTemplate template) {
-        if (log.isDebugEnabled()) {
-            log.trace("QueryParamsPlusEncoderInterceptor.apply");
-            log.debug("template = " + template);
-        }
-
         final Map<String, Collection<String>> queriesPlusEncoded = new HashMap<>();
         template.queries().forEach((key, value) -> queriesPlusEncoded.put(key, value.stream()
                 .map(paramValue -> paramValue.replace(PLUS_RAW, PLUS_ENCODED))
