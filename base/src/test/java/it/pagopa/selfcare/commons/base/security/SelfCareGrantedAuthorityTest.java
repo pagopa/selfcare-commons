@@ -1,4 +1,4 @@
-package it.pagopa.selfcare.commons.web.security;
+package it.pagopa.selfcare.commons.base.security;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
