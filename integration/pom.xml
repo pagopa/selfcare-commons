@@ -15,5 +15,11 @@
         <module>rest</module>
     </modules>
 
+    <dependencies>
+        <dependency>
+            <groupId>it.pagopa.selfcare</groupId>
+            <artifactId>selc-commons-base</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>
