@@ -20,6 +20,16 @@
     <name>selc-commons</name>
     <description>Self Care Commons</description>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>it.pagopa.selfcare</groupId>
+                <artifactId>selc-commons-base</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
         <plugins>
             <plugin>
