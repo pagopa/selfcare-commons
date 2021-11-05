@@ -16,7 +16,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.OffsetDateTime;
 import java.util.Optional;
 
 @Slf4j
@@ -41,10 +40,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Optional<Claims> claims = jwtService.getClaims(jwt);
 
                 if (claims.isPresent()) {
-                    if (claims.get().getExpiration() != null
-                            && claims.get().getExpiration().toInstant().isBefore(OffsetDateTime.now().toInstant())) {
-                        throw new IllegalArgumentException("JWT expired");
-                    }
                     UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(claims.get().getSubject(), jwt);
                     authRequest.setDetails(new SelfCareAuthenticationDetails(request.getHeader("x-selc-institutionId")));
                     Authentication authentication = authenticationManager.authenticate(authRequest);
