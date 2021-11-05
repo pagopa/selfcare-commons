@@ -69,28 +69,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.exceptionHandling()
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
                     log.error("Unauthorized error: {}: {}", accessDeniedException.getMessage(), request.getRequestURI());
-                    response.sendError(HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN.getReasonPhrase());
+                    response.setStatus(HttpStatus.FORBIDDEN.value());
                 })
                 .authenticationEntryPoint((request, response, authException) -> {
                     log.error("Unauthorized error: {}: {}", authException.getMessage(), request.getRequestURI());
                     response.addHeader(HttpHeaders.WWW_AUTHENTICATE, "Bearer realm=\"selfcare\"");
-                    response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 })
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-//                .authorizeRequests()
-//                .antMatchers(HttpMethod.GET, "/products/**").hasAnyRole("USER", "ADMIN")
-//                .antMatchers("/products/**").hasRole("ADMIN")
-//                .anyRequest().authenticated()
-//                .and()
                 .cors().and()
                 .csrf().disable()
                 .formLogin().disable()
                 .logout().disable()
                 .httpBasic().disable()
-//                .addFilterBefore(new JwtAuthenticationFilter(authenticationManagerBean(), jwtService), UsernamePasswordAuthenticationFilter.class);
                 .addFilterBefore(new JwtAuthenticationFilter(getApplicationContext().getBean(AuthenticationManager.class), jwtService), UsernamePasswordAuthenticationFilter.class);
-//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
 
