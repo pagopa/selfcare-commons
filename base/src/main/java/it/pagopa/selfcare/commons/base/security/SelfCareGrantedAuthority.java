@@ -1,4 +1,4 @@
-package it.pagopa.selfcare.commons.web.security;
+package it.pagopa.selfcare.commons.base.security;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
