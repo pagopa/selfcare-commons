@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -18,12 +19,15 @@ public class AuthorizationHeaderInterceptor implements RequestInterceptor {
         if (authentication != null) {
             template.header(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", authentication.getCredentials()));
 
-        } else if (RequestContextHolder.getRequestAttributes() != null
-                && ServletRequestAttributes.class.isAssignableFrom(RequestContextHolder.getRequestAttributes().getClass())) {
-            template.header(HttpHeaders.AUTHORIZATION,
-                    ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-                            .getRequest()
-                            .getHeader(HttpHeaders.AUTHORIZATION));
+        } else {
+            RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+            if (requestAttributes != null
+                    && ServletRequestAttributes.class.isAssignableFrom(requestAttributes.getClass())) {
+                template.header(HttpHeaders.AUTHORIZATION,
+                        ((ServletRequestAttributes) requestAttributes)
+                                .getRequest()
+                                .getHeader(HttpHeaders.AUTHORIZATION));
+            }
         }
     }
 
