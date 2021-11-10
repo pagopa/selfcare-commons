@@ -7,6 +7,7 @@ import org.springframework.validation.BindException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import javax.servlet.ServletException;
 import javax.validation.ValidationException;
@@ -118,6 +119,20 @@ class RestExceptionsHandlerTest {
                 .thenReturn(DETAIL_MESSAGE);
         // when
         ErrorResource resource = handler.handleMethodArgumentTypeMismatchException(exceptionMock);
+        // then
+        assertNotNull(resource);
+        assertEquals(DETAIL_MESSAGE, resource.getMessage());
+    }
+
+
+    @Test
+    void handleMaxUploadSizeExceededException() {
+        // given
+        MaxUploadSizeExceededException exceptionMock = Mockito.mock(MaxUploadSizeExceededException.class);
+        Mockito.when(exceptionMock.getMessage())
+                .thenReturn(DETAIL_MESSAGE);
+        // when
+        ErrorResource resource = handler.handleMaxUploadSizeExceededException(exceptionMock);
         // then
         assertNotNull(resource);
         assertEquals(DETAIL_MESSAGE, resource.getMessage());
