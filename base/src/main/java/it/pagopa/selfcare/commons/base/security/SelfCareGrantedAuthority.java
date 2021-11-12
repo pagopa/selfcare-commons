@@ -7,9 +7,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
+import static it.pagopa.selfcare.commons.base.security.Authority.ADMIN_REF;
+import static it.pagopa.selfcare.commons.base.security.Authority.TECH_REF;
+
 public class SelfCareGrantedAuthority implements GrantedAuthority {
 
-    public static final Set<String> PRODUCTS_BASED_AUTHORITIES = Set.of("TECH_REF", "ADMIN_REF");
+    public static final Set<String> PRODUCTS_BASED_AUTHORITIES = Set.of(TECH_REF.name(), ADMIN_REF.name());
 
     private final String role;
     private final Set<String> products;
