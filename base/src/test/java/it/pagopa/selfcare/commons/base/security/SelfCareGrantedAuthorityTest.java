@@ -6,6 +6,7 @@ import org.junit.jupiter.api.function.Executable;
 import java.util.Collection;
 import java.util.Collections;
 
+import static it.pagopa.selfcare.commons.base.security.Authority.TECH_REF;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SelfCareGrantedAuthorityTest {
@@ -58,7 +59,7 @@ class SelfCareGrantedAuthorityTest {
     @Test
     void getProducts_productBasedAuthorityWithNullProducts() {
         // given
-        String role = "TECH_REF";
+        String role = TECH_REF.name();
         // when
         SelfCareGrantedAuthority grantedAuthority = new SelfCareGrantedAuthority(role, null);
         // then
@@ -70,7 +71,7 @@ class SelfCareGrantedAuthorityTest {
     @Test
     void getProducts_productBasedAuthorityWithNotNullProducts() {
         // given
-        String role = "TECH_REF";
+        String role = TECH_REF.name();
         Collection<String> products = Collections.singletonList("product");
         // when
         SelfCareGrantedAuthority grantedAuthority = new SelfCareGrantedAuthority(role, products);
