@@ -6,6 +6,7 @@ import org.junit.jupiter.api.function.Executable;
 import java.util.Collection;
 import java.util.Collections;
 
+import static it.pagopa.selfcare.commons.base.security.Authority.TECH_REF;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SelfCareGrantedAuthorityTest {
@@ -44,36 +45,39 @@ class SelfCareGrantedAuthorityTest {
 
 
     @Test
-    void getProducts_null() {
-        // given
-        String role = "role";
-        // when
-        SelfCareGrantedAuthority grantedAuthority = new SelfCareGrantedAuthority(role);
-        // then
-        assertNull(grantedAuthority.getProducts());
-    }
-
-
-    @Test
-    void getProducts_empty() {
-        // given
-        String role = "role";
-        Collection<String> products = Collections.emptyList();
-        // when
-        SelfCareGrantedAuthority grantedAuthority = new SelfCareGrantedAuthority(role, products);
-        // then
-        assertTrue(grantedAuthority.getProducts().isEmpty());
-    }
-
-
-    @Test
-    void getProducts_notEmpty() {
+    void getProducts_notProductBasedAuthority() {
         // given
         String role = "role";
         Collection<String> products = Collections.singletonList("product");
         // when
         SelfCareGrantedAuthority grantedAuthority = new SelfCareGrantedAuthority(role, products);
         // then
+        assertNull(grantedAuthority.getProducts());
+    }
+
+
+    @Test
+    void getProducts_productBasedAuthorityWithNullProducts() {
+        // given
+        String role = TECH_REF.name();
+        // when
+        SelfCareGrantedAuthority grantedAuthority = new SelfCareGrantedAuthority(role, null);
+        // then
+        assertNotNull(grantedAuthority.getProducts());
+        assertTrue(grantedAuthority.getProducts().isEmpty());
+    }
+
+
+    @Test
+    void getProducts_productBasedAuthorityWithNotNullProducts() {
+        // given
+        String role = TECH_REF.name();
+        Collection<String> products = Collections.singletonList("product");
+        // when
+        SelfCareGrantedAuthority grantedAuthority = new SelfCareGrantedAuthority(role, products);
+        // then
+        assertNotNull(grantedAuthority.getProducts());
+        assertFalse(grantedAuthority.getProducts().isEmpty());
         assertIterableEquals(products, grantedAuthority.getProducts());
     }
 
