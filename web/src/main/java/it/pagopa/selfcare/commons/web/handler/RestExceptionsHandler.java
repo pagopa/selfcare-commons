@@ -4,8 +4,10 @@ import it.pagopa.selfcare.commons.web.model.ErrorResource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -14,6 +16,10 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import javax.servlet.ServletException;
 import javax.validation.ValidationException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The Class RestExceptionsHandler.
@@ -89,6 +95,19 @@ public class RestExceptionsHandler {
     ErrorResource handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
         log.warn(e.getMessage());
         return new ErrorResource(e.getMessage());
+    }
+
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ErrorResource handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        Map<String, List<String>> errorMessage = new HashMap<>();
+        e.getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            errorMessage.computeIfAbsent(fieldName, s -> new ArrayList<>())
+                    .add(error.getCode() + " constraint violation");
+        });
+        log.warn(errorMessage.toString());
+        return new ErrorResource(errorMessage.toString());
     }
 
 }
