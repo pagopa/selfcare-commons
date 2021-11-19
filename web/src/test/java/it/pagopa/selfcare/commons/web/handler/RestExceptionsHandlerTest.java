@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
@@ -136,6 +137,18 @@ class RestExceptionsHandlerTest {
         // then
         assertNotNull(resource);
         assertEquals(DETAIL_MESSAGE, resource.getMessage());
+    }
+
+    @Test
+    void handleMethodArgumentNotValidException() {
+        // given
+        MethodArgumentNotValidException exceptionMock = Mockito.mock(MethodArgumentNotValidException.class);
+        Mockito.when(exceptionMock.getMessage()).thenReturn("{}");
+        // when
+        ErrorResource resource = handler.handleMethodArgumentNotValidException(exceptionMock);
+        // then
+        assertNotNull(resource);
+        assertEquals("{}", resource.getMessage());
     }
 
 }
