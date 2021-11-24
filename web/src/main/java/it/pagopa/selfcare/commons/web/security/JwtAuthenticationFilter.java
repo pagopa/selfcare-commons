@@ -3,6 +3,7 @@ package it.pagopa.selfcare.commons.web.security;
 import io.jsonwebtoken.Claims;
 import it.pagopa.selfcare.commons.base.security.SelfCareAuthenticationDetails;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +21,8 @@ import java.util.Optional;
 
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private static final String MDC_UID = "uid";
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
@@ -40,7 +43,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Optional<Claims> claims = jwtService.getClaims(jwt);
 
                 if (claims.isPresent()) {
-                    UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(claims.get().getSubject(), jwt);
+                    String uid = claims.get().getSubject();
+                    if (uid != null) {
+                        MDC.put(MDC_UID, uid);
+                    }
+                    UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(uid, jwt);
                     authRequest.setDetails(new SelfCareAuthenticationDetails(request.getHeader("x-selc-institutionId")));
                     Authentication authentication = authenticationManager.authenticate(authRequest);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -52,6 +59,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+
+        MDC.remove(MDC_UID);
     }
 
 

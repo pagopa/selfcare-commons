@@ -5,24 +5,19 @@ import it.pagopa.selfcare.commons.web.security.JwtService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Slf4j
-@Configuration
-@EnableWebSecurity
 @PropertySource("classpath:config/jwt.properties")
-@ComponentScan(basePackageClasses = JwtAuthenticationFilter.class)
+@ComponentScan(basePackages = "it.pagopa.selfcare.commons.web.security")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] AUTH_WHITELIST = {
@@ -44,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     @Override
-    @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
+    @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
@@ -68,11 +63,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //        http.cors().configurationSource(request -> corsConfiguration)
         http.exceptionHandling()
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    log.error("Unauthorized error: {}: {}", accessDeniedException.getMessage(), request.getRequestURI());
+                    log.error("{} to resource {}", accessDeniedException.getMessage(), request.getRequestURI());
                     response.setStatus(HttpStatus.FORBIDDEN.value());
                 })
                 .authenticationEntryPoint((request, response, authException) -> {
-                    log.error("Unauthorized error: {}: {}", authException.getMessage(), request.getRequestURI());
+                    log.error("{} {}", authException.getMessage(), request.getRequestURI());
                     response.addHeader(HttpHeaders.WWW_AUTHENTICATE, "Bearer realm=\"selfcare\"");
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 })
