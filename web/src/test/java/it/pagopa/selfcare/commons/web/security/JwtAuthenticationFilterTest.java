@@ -1,15 +1,17 @@
 package it.pagopa.selfcare.commons.web.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.impl.DefaultClaims;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.MDC;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.servlet.FilterChain;
@@ -26,6 +28,7 @@ class JwtAuthenticationFilterTest {
 
     private static final HttpServletResponse RESPONSE_MOCK = mock(HttpServletResponse.class);
     private static final FilterChain FILTER_CHAIN_MOCK = mock(FilterChain.class);
+    private static final String MDC_UID = "uid";
 
     @InjectMocks
     private JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -42,6 +45,7 @@ class JwtAuthenticationFilterTest {
         // when
         jwtAuthenticationFilter.doFilterInternal(requestMock, RESPONSE_MOCK, FILTER_CHAIN_MOCK);
         // then
+        Assertions.assertNull(MDC.get(MDC_UID));
         verifyNoInteractions(jwtServiceMock, authenticationManagerMock);
     }
 
@@ -55,6 +59,7 @@ class JwtAuthenticationFilterTest {
         // when
         jwtAuthenticationFilter.doFilterInternal(requestMock, RESPONSE_MOCK, FILTER_CHAIN_MOCK);
         // then
+        Assertions.assertNull(MDC.get(MDC_UID));
         verifyNoInteractions(jwtServiceMock, authenticationManagerMock);
     }
 
@@ -71,6 +76,7 @@ class JwtAuthenticationFilterTest {
         // when
         jwtAuthenticationFilter.doFilterInternal(requestMock, RESPONSE_MOCK, FILTER_CHAIN_MOCK);
         // then
+        Assertions.assertNull(MDC.get(MDC_UID));
         verify(jwtServiceMock, times(1)).getClaims(any());
         verifyNoMoreInteractions(jwtServiceMock);
         verifyNoInteractions(authenticationManagerMock);
@@ -89,6 +95,7 @@ class JwtAuthenticationFilterTest {
         // when
         jwtAuthenticationFilter.doFilterInternal(requestMock, RESPONSE_MOCK, FILTER_CHAIN_MOCK);
         // then
+        Assertions.assertNull(MDC.get(MDC_UID));
         verify(jwtServiceMock, times(1)).getClaims(any());
         verify(authenticationManagerMock, times(1)).authenticate(any());
         verifyNoMoreInteractions(jwtServiceMock, authenticationManagerMock);
@@ -100,16 +107,23 @@ class JwtAuthenticationFilterTest {
     void doFilterInternal_validJwtAndAuthOk() throws ServletException, IOException {
         // given
         String token = "token";
+        String subject = "subject";
         HttpServletRequest requestMock = mock(HttpServletRequest.class);
         when(requestMock.getHeader(eq(HttpHeaders.AUTHORIZATION)))
                 .thenReturn("Bearer " + token);
+        Claims claims = new DefaultClaims();
+        claims.setSubject(subject);
         when(jwtServiceMock.getClaims(any()))
-                .thenReturn(Optional.of(mock(Claims.class)));
+                .thenReturn(Optional.of(claims));
         when(authenticationManagerMock.authenticate(any()))
-                .thenReturn(mock(Authentication.class));
+                .thenAnswer(invocationOnMock -> {
+                    Assertions.assertEquals(subject, MDC.get(MDC_UID));
+                    return new TestingAuthenticationToken("username", "password");
+                });
         // when
         jwtAuthenticationFilter.doFilterInternal(requestMock, RESPONSE_MOCK, FILTER_CHAIN_MOCK);
         // then
+        Assertions.assertNull(MDC.get(MDC_UID));
         verify(jwtServiceMock, times(1)).getClaims(any());
         verify(authenticationManagerMock, times(1)).authenticate(any());
         verifyNoMoreInteractions(jwtServiceMock, authenticationManagerMock);
