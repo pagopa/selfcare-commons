@@ -47,7 +47,7 @@ class ProductGrantedAuthorityTest {
 
 
     @Test
-    void getters() {
+    void ProductGrantedAuthority() {
         // given
         Authority selcRole = Authority.ADMIN;
         String productRole = "";
@@ -59,6 +59,12 @@ class ProductGrantedAuthorityTest {
         Assertions.assertEquals(selcRole, authority.getSelcRole());
         Assertions.assertEquals(productRole, authority.getProductRole());
         Assertions.assertEquals(productCode, authority.getProductCode());
+        ProductGrantedAuthority authority2 = new ProductGrantedAuthority(Authority.LIMITED, "role2", productCode);
+        Assertions.assertEquals(authority2, authority);
+        Assertions.assertEquals(authority2.hashCode(), authority.hashCode());
+        ProductGrantedAuthority authority3 = new ProductGrantedAuthority(Authority.ADMIN, productRole, "productCode2");
+        Assertions.assertNotEquals(authority3, authority);
+        Assertions.assertNotEquals(authority3.hashCode(), authority.hashCode());
     }
 
 }
