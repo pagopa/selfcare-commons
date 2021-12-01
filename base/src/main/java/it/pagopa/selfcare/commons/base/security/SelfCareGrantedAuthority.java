@@ -1,8 +1,5 @@
 package it.pagopa.selfcare.commons.base.security;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
 
@@ -15,13 +12,13 @@ import static it.pagopa.selfcare.commons.base.security.Authority.LIMITED;
 public class SelfCareGrantedAuthority implements GrantedAuthority {
 
     private final Authority roleOnInstitution;
-    private final Set<ProductRole> roleOnProducts;
+    private final Set<ProductGrantedAuthority> roleOnProducts;
 
 
-    public SelfCareGrantedAuthority(Collection<ProductRole> roleOnProducts) {
-        Assert.notEmpty(roleOnProducts, "At least one role on product is required");
+    public SelfCareGrantedAuthority(Collection<ProductGrantedAuthority> roleOnProducts) {
+        Assert.notEmpty(roleOnProducts, "At least one Product Granted Authority is required");
         boolean isAdminForInstitution = roleOnProducts.stream()
-                .anyMatch(productRole -> ADMIN.equals(productRole.getSelcRole()));
+                .anyMatch(productRole -> ADMIN.name().equals(productRole.getAuthority()));
         this.roleOnInstitution = isAdminForInstitution ? ADMIN : LIMITED;
         this.roleOnProducts = Set.copyOf(roleOnProducts);
     }
@@ -33,18 +30,9 @@ public class SelfCareGrantedAuthority implements GrantedAuthority {
     }
 
 
-    public Collection<ProductRole> getRoleOnProducts() {
+    public Collection<ProductGrantedAuthority> getRoleOnProducts() {
         return roleOnProducts;
     }
 
-
-    @Setter
-    @Getter
-    @EqualsAndHashCode(of = "productCode")
-    public static class ProductRole {
-        private Authority selcRole;
-        private String productRole;
-        private String productCode;
-    }
 
 }

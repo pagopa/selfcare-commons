@@ -18,7 +18,7 @@ class SelfCareGrantedAuthorityTest {
     @Test
     void SelfCareGrantedAuthority_KoNullRole() {
         // given
-        Collection<SelfCareGrantedAuthority.ProductRole> roleOnProducts = null;
+        Collection<ProductGrantedAuthority> roleOnProducts = null;
         // when
         Executable executable = () -> new SelfCareGrantedAuthority(roleOnProducts);
         // then
@@ -29,7 +29,7 @@ class SelfCareGrantedAuthorityTest {
     @Test
     void SelfCareGrantedAuthority_KoEmptyRole() {
         // given
-        Collection<SelfCareGrantedAuthority.ProductRole> roleOnProducts = Collections.emptyList();
+        Collection<ProductGrantedAuthority> roleOnProducts = Collections.emptyList();
         // when
         Executable executable = () -> new SelfCareGrantedAuthority(roleOnProducts);
         // then
@@ -40,11 +40,11 @@ class SelfCareGrantedAuthorityTest {
     @Test
     void getAuthority() {
         // given
-        SelfCareGrantedAuthority.ProductRole productRole1 = TestUtils.mockInstance(new SelfCareGrantedAuthority.ProductRole(), 1);
-        productRole1.setSelcRole(ADMIN);
-        SelfCareGrantedAuthority.ProductRole productRole2 = TestUtils.mockInstance(new SelfCareGrantedAuthority.ProductRole(), 2);
-        productRole2.setSelcRole(LIMITED);
-        Collection<SelfCareGrantedAuthority.ProductRole> roleOnProducts =
+        ProductGrantedAuthority productRole1 =
+                TestUtils.mockInstance(new ProductGrantedAuthority(ADMIN, "", ""), 1);
+        ProductGrantedAuthority productRole2 =
+                TestUtils.mockInstance(new ProductGrantedAuthority(LIMITED, "", ""), 2);
+        Collection<ProductGrantedAuthority> roleOnProducts =
                 List.of(productRole1, productRole2);
         // when
         SelfCareGrantedAuthority grantedAuthority = new SelfCareGrantedAuthority(roleOnProducts);
