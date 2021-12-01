@@ -38,7 +38,7 @@ class SelfCareGrantedAuthorityTest {
 
 
     @Test
-    void getAuthority() {
+    void getAuthority_ADMIN() {
         // given
         ProductGrantedAuthority productRole1 =
                 TestUtils.mockInstance(new ProductGrantedAuthority(ADMIN, "", ""), 1);
@@ -50,6 +50,23 @@ class SelfCareGrantedAuthorityTest {
         SelfCareGrantedAuthority grantedAuthority = new SelfCareGrantedAuthority(roleOnProducts);
         // then
         assertEquals(ADMIN.name(), grantedAuthority.getAuthority());
+        assertIterableEquals(new HashSet<>(roleOnProducts), new HashSet<>(grantedAuthority.getRoleOnProducts()));
+    }
+
+
+    @Test
+    void getAuthority_LIMITED() {
+        // given
+        ProductGrantedAuthority productRole1 =
+                TestUtils.mockInstance(new ProductGrantedAuthority(LIMITED, "", ""), 1);
+        ProductGrantedAuthority productRole2 =
+                TestUtils.mockInstance(new ProductGrantedAuthority(LIMITED, "", ""), 2);
+        Collection<ProductGrantedAuthority> roleOnProducts =
+                List.of(productRole1, productRole2);
+        // when
+        SelfCareGrantedAuthority grantedAuthority = new SelfCareGrantedAuthority(roleOnProducts);
+        // then
+        assertEquals(LIMITED.name(), grantedAuthority.getAuthority());
         assertIterableEquals(new HashSet<>(roleOnProducts), new HashSet<>(grantedAuthority.getRoleOnProducts()));
     }
 
