@@ -4,48 +4,35 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 
-import static it.pagopa.selfcare.commons.base.security.Authority.ADMIN_REF;
-import static it.pagopa.selfcare.commons.base.security.Authority.TECH_REF;
+import static it.pagopa.selfcare.commons.base.security.Authority.ADMIN;
+import static it.pagopa.selfcare.commons.base.security.Authority.LIMITED;
 
 public class SelfCareGrantedAuthority implements GrantedAuthority {
 
-    public static final Set<String> PRODUCTS_BASED_AUTHORITIES = Set.of(TECH_REF.name(), ADMIN_REF.name());
-
-    private final String role;
-    private final Set<String> products;
+    private final Authority roleOnInstitution;
+    private final Set<ProductGrantedAuthority> roleOnProducts;
 
 
-    public SelfCareGrantedAuthority(String role) {
-        this(role, null);
-    }
-
-
-    public SelfCareGrantedAuthority(String role, Collection<String> products) {
-        Assert.hasText(role, "A granted authority textual representation is required");
-        this.role = role;
-        if (PRODUCTS_BASED_AUTHORITIES.contains(role)) {
-            if (products == null) {
-                this.products = Collections.emptySet();
-            } else {
-                this.products = Set.copyOf(products);
-            }
-        } else {
-            this.products = null;
-        }
+    public SelfCareGrantedAuthority(Collection<ProductGrantedAuthority> roleOnProducts) {
+        Assert.notEmpty(roleOnProducts, "At least one Product Granted Authority is required");
+        boolean isAdminForInstitution = roleOnProducts.stream()
+                .anyMatch(productRole -> ADMIN.name().equals(productRole.getAuthority()));
+        this.roleOnInstitution = isAdminForInstitution ? ADMIN : LIMITED;
+        this.roleOnProducts = Set.copyOf(roleOnProducts);
     }
 
 
     @Override
     public String getAuthority() {
-        return this.role;
+        return this.roleOnInstitution.name();
     }
 
 
-    public Collection<String> getProducts() {
-        return products;
+    public Collection<ProductGrantedAuthority> getRoleOnProducts() {
+        return roleOnProducts;
     }
+
 
 }
