@@ -1,8 +1,5 @@
 package it.pagopa.selfcare.commons.base.security;
 
-import lombok.Getter;
-
-@Getter
 public enum Authority {
     ADMIN("Amministratore"),
     LIMITED("Operatore"),
