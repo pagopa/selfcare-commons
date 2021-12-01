@@ -1,51 +1,50 @@
 package it.pagopa.selfcare.commons.base.security;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 
-import static it.pagopa.selfcare.commons.base.security.Authority.ADMIN_REF;
-import static it.pagopa.selfcare.commons.base.security.Authority.TECH_REF;
+import static it.pagopa.selfcare.commons.base.security.Authority.ADMIN;
+import static it.pagopa.selfcare.commons.base.security.Authority.LIMITED;
 
 public class SelfCareGrantedAuthority implements GrantedAuthority {
 
-    public static final Set<String> PRODUCTS_BASED_AUTHORITIES = Set.of(TECH_REF.name(), ADMIN_REF.name());
-
-    private final String role;
-    private final Set<String> products;
+    private final Authority roleOnInstitution;
+    private final Set<ProductRole> roleOnProducts;
 
 
-    public SelfCareGrantedAuthority(String role) {
-        this(role, null);
-    }
-
-
-    public SelfCareGrantedAuthority(String role, Collection<String> products) {
-        Assert.hasText(role, "A granted authority textual representation is required");
-        this.role = role;
-        if (PRODUCTS_BASED_AUTHORITIES.contains(role)) {
-            if (products == null) {
-                this.products = Collections.emptySet();
-            } else {
-                this.products = Set.copyOf(products);
-            }
-        } else {
-            this.products = null;
-        }
+    public SelfCareGrantedAuthority(Collection<ProductRole> roleOnProducts) {
+        Assert.notEmpty(roleOnProducts, "At least one role on product is required");
+        boolean isAdminForInstitution = roleOnProducts.stream()
+                .anyMatch(productRole -> ADMIN.equals(productRole.getSelcRole()));
+        this.roleOnInstitution = isAdminForInstitution ? ADMIN : LIMITED;
+        this.roleOnProducts = Set.copyOf(roleOnProducts);
     }
 
 
     @Override
     public String getAuthority() {
-        return this.role;
+        return this.roleOnInstitution.name();
     }
 
 
-    public Collection<String> getProducts() {
-        return products;
+    public Collection<ProductRole> getRoleOnProducts() {
+        return roleOnProducts;
+    }
+
+
+    @Setter
+    @Getter
+    @EqualsAndHashCode(of = "productCode")
+    public static class ProductRole {
+        private Authority selcRole;
+        private String productRole;
+        private String productCode;
     }
 
 }
