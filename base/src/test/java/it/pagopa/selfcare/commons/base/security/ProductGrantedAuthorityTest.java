@@ -10,8 +10,8 @@ class ProductGrantedAuthorityTest {
     void ProductGrantedAuthority_nullSelcRole() {
         // given
         Authority selcRole = null;
-        String productRole = "";
-        String productCode = "";
+        String productRole = "productRole";
+        String productCode = "productCode";
         // when
         Executable executable = () -> new ProductGrantedAuthority(selcRole, productRole, productCode);
         // then
@@ -24,7 +24,7 @@ class ProductGrantedAuthorityTest {
         // given
         Authority selcRole = Authority.ADMIN;
         String productRole = null;
-        String productCode = "";
+        String productCode = "productCode";
         // when
         Executable executable = () -> new ProductGrantedAuthority(selcRole, productRole, productCode);
         // then
@@ -36,8 +36,8 @@ class ProductGrantedAuthorityTest {
     void ProductGrantedAuthority_nullProductCode() {
         // given
         Authority selcRole = Authority.ADMIN;
-        String productRole = "";
-        String productCode = null;
+        String productRole = "productRole";
+        String productCode = "";
         // when
         Executable executable = () -> new ProductGrantedAuthority(selcRole, productRole, productCode);
         // then
@@ -50,8 +50,8 @@ class ProductGrantedAuthorityTest {
     void ProductGrantedAuthority() {
         // given
         Authority selcRole = Authority.ADMIN;
-        String productRole = "";
-        String productCode = "";
+        String productRole = "productRole";
+        String productCode = "productCode";
         // when
         ProductGrantedAuthority authority = new ProductGrantedAuthority(selcRole, productRole, productCode);
         // then

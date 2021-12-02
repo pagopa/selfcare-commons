@@ -15,8 +15,8 @@ public class ProductGrantedAuthority implements GrantedAuthority {
 
     public ProductGrantedAuthority(Authority selcRole, String productRole, String productCode) {
         Assert.notNull(selcRole, "A Self Care granted authority is required");
-        Assert.notNull(productRole, "A Product granted authority textual representation is required");
-        Assert.notNull(productCode, "A product code is required");
+        Assert.hasText(productRole, "A Product granted authority textual representation is required");
+        Assert.hasText(productCode, "A product code is required");
         this.selcRole = selcRole;
         this.productRole = productRole;
         this.productCode = productCode;
