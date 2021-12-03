@@ -1,30 +1,43 @@
 package it.pagopa.selfcare.commons.base.security;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
 
+import java.util.Objects;
+
 @Getter
-@EqualsAndHashCode(of = "productCode")
 public class ProductGrantedAuthority implements GrantedAuthority {
 
-    private final Authority selcRole;
+    private final SelfCareAuthority selfCareAuthority;
     private final String productRole;
-    private final String productCode;
+    private final String productId;
 
-    public ProductGrantedAuthority(Authority selcRole, String productRole, String productCode) {
-        Assert.notNull(selcRole, "A Self Care granted authority is required");
+    public ProductGrantedAuthority(SelfCareAuthority selfCareAuthority, String productRole, String productId) {
+        Assert.notNull(selfCareAuthority, "A Self Care granted authority is required");
         Assert.hasText(productRole, "A Product granted authority textual representation is required");
-        Assert.hasText(productCode, "A product code is required");
-        this.selcRole = selcRole;
+        Assert.hasText(productId, "A Product id is required");
+        this.selfCareAuthority = selfCareAuthority;
         this.productRole = productRole;
-        this.productCode = productCode;
+        this.productId = productId;
     }
 
     @Override
     public String getAuthority() {
-        return selcRole.name();
+        return selfCareAuthority.name();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProductGrantedAuthority that = (ProductGrantedAuthority) o;
+        return productId.equals(that.productId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(productId);
     }
 
 }

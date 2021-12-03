@@ -5,6 +5,7 @@ import io.jsonwebtoken.impl.DefaultClaims;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -95,6 +96,33 @@ class JwtAuthenticationFilterTest {
         // when
         jwtAuthenticationFilter.doFilterInternal(requestMock, RESPONSE_MOCK, FILTER_CHAIN_MOCK);
         // then
+        Assertions.assertNull(MDC.get(MDC_UID));
+        verify(jwtServiceMock, times(1)).getClaims(any());
+        verify(authenticationManagerMock, times(1)).authenticate(any());
+        verifyNoMoreInteractions(jwtServiceMock, authenticationManagerMock);
+        Assertions.assertNull(SecurityContextHolder.getContext().getAuthentication());
+    }
+
+
+    @Test
+    void doFilterInternal_validJwtAndAuthKo() throws ServletException, IOException {
+        // given
+        String token = "token";
+        String subject = "subject";
+        HttpServletRequest requestMock = mock(HttpServletRequest.class);
+        when(requestMock.getHeader(eq(HttpHeaders.AUTHORIZATION)))
+                .thenReturn("Bearer " + token);
+        Claims claims = new DefaultClaims();
+        claims.setSubject(subject);
+        when(jwtServiceMock.getClaims(any()))
+                .thenReturn(Optional.of(claims));
+        doThrow(RuntimeException.class)
+                .when(authenticationManagerMock)
+                .authenticate(any());
+        // when
+        Executable executable = () -> jwtAuthenticationFilter.doFilterInternal(requestMock, RESPONSE_MOCK, FILTER_CHAIN_MOCK);
+        // then
+        Assertions.assertThrows(Exception.class, executable);
         Assertions.assertNull(MDC.get(MDC_UID));
         verify(jwtServiceMock, times(1)).getClaims(any());
         verify(authenticationManagerMock, times(1)).authenticate(any());

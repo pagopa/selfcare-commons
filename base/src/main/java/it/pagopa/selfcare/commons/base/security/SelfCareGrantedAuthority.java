@@ -4,23 +4,26 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import static it.pagopa.selfcare.commons.base.security.Authority.ADMIN;
-import static it.pagopa.selfcare.commons.base.security.Authority.LIMITED;
+import static it.pagopa.selfcare.commons.base.security.SelfCareAuthority.ADMIN;
+import static it.pagopa.selfcare.commons.base.security.SelfCareAuthority.LIMITED;
 
 public class SelfCareGrantedAuthority implements GrantedAuthority {
 
-    private final Authority roleOnInstitution;
-    private final Set<ProductGrantedAuthority> roleOnProducts;
+    private final SelfCareAuthority roleOnInstitution;
+    private final Map<String, ProductGrantedAuthority> roleOnProducts;
 
 
     public SelfCareGrantedAuthority(Collection<ProductGrantedAuthority> roleOnProducts) {
-        Assert.notEmpty(roleOnProducts, "At least one Product Granted Authority is required");
+        Assert.notEmpty(roleOnProducts, "At least one Product Granted SelfCareAuthority is required");
         boolean isAdminForInstitution = roleOnProducts.stream()
                 .anyMatch(productRole -> ADMIN.name().equals(productRole.getAuthority()));
         this.roleOnInstitution = isAdminForInstitution ? ADMIN : LIMITED;
-        this.roleOnProducts = Set.copyOf(roleOnProducts);
+        this.roleOnProducts = roleOnProducts.stream()
+                .collect(Collectors.toMap(ProductGrantedAuthority::getProductId, Function.identity()));
     }
 
 
@@ -30,7 +33,7 @@ public class SelfCareGrantedAuthority implements GrantedAuthority {
     }
 
 
-    public Collection<ProductGrantedAuthority> getRoleOnProducts() {
+    public Map<String, ProductGrantedAuthority> getRoleOnProducts() {
         return roleOnProducts;
     }
 

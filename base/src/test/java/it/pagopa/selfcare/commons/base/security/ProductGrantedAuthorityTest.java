@@ -9,11 +9,11 @@ class ProductGrantedAuthorityTest {
     @Test
     void ProductGrantedAuthority_nullSelcRole() {
         // given
-        Authority selcRole = null;
+        SelfCareAuthority selcRole = null;
         String productRole = "productRole";
-        String productCode = "productCode";
+        String productId = "productId";
         // when
-        Executable executable = () -> new ProductGrantedAuthority(selcRole, productRole, productCode);
+        Executable executable = () -> new ProductGrantedAuthority(selcRole, productRole, productId);
         // then
         IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, executable);
         Assertions.assertEquals("A Self Care granted authority is required", e.getMessage());
@@ -22,11 +22,11 @@ class ProductGrantedAuthorityTest {
     @Test
     void ProductGrantedAuthority_nullProductRole() {
         // given
-        Authority selcRole = Authority.ADMIN;
+        SelfCareAuthority selcRole = SelfCareAuthority.ADMIN;
         String productRole = null;
-        String productCode = "productCode";
+        String productId = "productId";
         // when
-        Executable executable = () -> new ProductGrantedAuthority(selcRole, productRole, productCode);
+        Executable executable = () -> new ProductGrantedAuthority(selcRole, productRole, productId);
         // then
         IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, executable);
         Assertions.assertEquals("A Product granted authority textual representation is required", e.getMessage());
@@ -35,34 +35,34 @@ class ProductGrantedAuthorityTest {
     @Test
     void ProductGrantedAuthority_nullProductCode() {
         // given
-        Authority selcRole = Authority.ADMIN;
+        SelfCareAuthority selcRole = SelfCareAuthority.ADMIN;
         String productRole = "productRole";
-        String productCode = "";
+        String productId = "";
         // when
-        Executable executable = () -> new ProductGrantedAuthority(selcRole, productRole, productCode);
+        Executable executable = () -> new ProductGrantedAuthority(selcRole, productRole, productId);
         // then
         IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, executable);
-        Assertions.assertEquals("A product code is required", e.getMessage());
+        Assertions.assertEquals("A Product id is required", e.getMessage());
     }
 
 
     @Test
     void ProductGrantedAuthority() {
         // given
-        Authority selcRole = Authority.ADMIN;
+        SelfCareAuthority selcRole = SelfCareAuthority.ADMIN;
         String productRole = "productRole";
-        String productCode = "productCode";
+        String productId = "productId";
         // when
-        ProductGrantedAuthority authority = new ProductGrantedAuthority(selcRole, productRole, productCode);
+        ProductGrantedAuthority authority = new ProductGrantedAuthority(selcRole, productRole, productId);
         // then
         Assertions.assertEquals(selcRole.name(), authority.getAuthority());
-        Assertions.assertEquals(selcRole, authority.getSelcRole());
+        Assertions.assertEquals(selcRole, authority.getSelfCareAuthority());
         Assertions.assertEquals(productRole, authority.getProductRole());
-        Assertions.assertEquals(productCode, authority.getProductCode());
-        ProductGrantedAuthority authority2 = new ProductGrantedAuthority(Authority.LIMITED, "role2", productCode);
+        Assertions.assertEquals(productId, authority.getProductId());
+        ProductGrantedAuthority authority2 = new ProductGrantedAuthority(SelfCareAuthority.LIMITED, "role2", productId);
         Assertions.assertEquals(authority2, authority);
         Assertions.assertEquals(authority2.hashCode(), authority.hashCode());
-        ProductGrantedAuthority authority3 = new ProductGrantedAuthority(Authority.ADMIN, productRole, "productCode2");
+        ProductGrantedAuthority authority3 = new ProductGrantedAuthority(SelfCareAuthority.ADMIN, productRole, "productId2");
         Assertions.assertNotEquals(authority3, authority);
         Assertions.assertNotEquals(authority3.hashCode(), authority.hashCode());
     }
