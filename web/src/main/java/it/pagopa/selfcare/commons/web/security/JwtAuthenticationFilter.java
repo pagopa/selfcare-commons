@@ -44,6 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 if (claims.isPresent()) {
                     String uid = claims.get().getSubject();
+
                     if (uid != null) {
                         MDC.put(MDC_UID, uid);
                     }
@@ -53,14 +54,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
+            filterChain.doFilter(request, response);
 
-        } catch (Exception e) {
-            log.error("Cannot set user authentication: {}", e.getMessage());
+        } finally {
+            MDC.remove(MDC_UID);
         }
-
-        filterChain.doFilter(request, response);
-
-        MDC.remove(MDC_UID);
     }
 
 

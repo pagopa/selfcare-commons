@@ -3,6 +3,7 @@ package it.pagopa.selfcare.commons.web.handler;
 import it.pagopa.selfcare.commons.web.model.ErrorResource;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -143,12 +144,26 @@ class RestExceptionsHandlerTest {
     void handleMethodArgumentNotValidException() {
         // given
         MethodArgumentNotValidException exceptionMock = Mockito.mock(MethodArgumentNotValidException.class);
-        Mockito.when(exceptionMock.getMessage()).thenReturn("{}");
+        Mockito.when(exceptionMock.getMessage())
+                .thenReturn("{}");
         // when
         ErrorResource resource = handler.handleMethodArgumentNotValidException(exceptionMock);
         // then
         assertNotNull(resource);
         assertEquals("{}", resource.getMessage());
+    }
+
+    @Test
+    void handleAccessDeniedException() {
+        // given
+        AccessDeniedException exceptionMock = Mockito.mock(AccessDeniedException.class);
+        Mockito.when(exceptionMock.getMessage())
+                .thenReturn(DETAIL_MESSAGE);
+        // when
+        ErrorResource resource = handler.handleAccessDeniedException(exceptionMock);
+        // then
+        assertNotNull(resource);
+        assertEquals(DETAIL_MESSAGE, resource.getMessage());
     }
 
 }
