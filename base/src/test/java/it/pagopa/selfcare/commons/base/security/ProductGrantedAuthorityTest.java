@@ -67,4 +67,16 @@ class ProductGrantedAuthorityTest {
         Assertions.assertNotEquals(authority3.hashCode(), authority.hashCode());
     }
 
+
+    @Test
+    void canEqual() {
+        // given
+        ProductGrantedAuthority authority1 = new ProductGrantedAuthority(SelfCareAuthority.LIMITED, "role1", "productId1");
+        ProductGrantedAuthority authority2 = new ProductGrantedAuthority(SelfCareAuthority.LIMITED, "role2", "productId2");
+        // when
+        boolean condition = authority1.canEqual(authority2);
+        // then
+        Assertions.assertTrue(condition);
+    }
+
 }
