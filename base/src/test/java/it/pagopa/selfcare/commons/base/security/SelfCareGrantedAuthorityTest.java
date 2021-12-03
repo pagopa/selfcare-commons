@@ -9,8 +9,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import static it.pagopa.selfcare.commons.base.security.Authority.ADMIN;
-import static it.pagopa.selfcare.commons.base.security.Authority.LIMITED;
+import static it.pagopa.selfcare.commons.base.security.SelfCareAuthority.ADMIN;
+import static it.pagopa.selfcare.commons.base.security.SelfCareAuthority.LIMITED;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SelfCareGrantedAuthorityTest {
@@ -41,16 +41,16 @@ class SelfCareGrantedAuthorityTest {
     void getAuthority_ADMIN() {
         // given
         ProductGrantedAuthority productRole1 =
-                TestUtils.mockInstance(new ProductGrantedAuthority(ADMIN, "productRole1", "productCode1"), 1);
+                TestUtils.mockInstance(new ProductGrantedAuthority(ADMIN, "productRole1", "productId1"), 1);
         ProductGrantedAuthority productRole2 =
-                TestUtils.mockInstance(new ProductGrantedAuthority(LIMITED, "productRole2", "productCode2"), 2);
+                TestUtils.mockInstance(new ProductGrantedAuthority(LIMITED, "productRole2", "productId2"), 2);
         Collection<ProductGrantedAuthority> roleOnProducts =
                 List.of(productRole1, productRole2);
         // when
         SelfCareGrantedAuthority grantedAuthority = new SelfCareGrantedAuthority(roleOnProducts);
         // then
         assertEquals(ADMIN.name(), grantedAuthority.getAuthority());
-        assertIterableEquals(new HashSet<>(roleOnProducts), new HashSet<>(grantedAuthority.getRoleOnProducts()));
+        assertIterableEquals(new HashSet<>(roleOnProducts), new HashSet<>(grantedAuthority.getRoleOnProducts().values()));
     }
 
 
@@ -58,16 +58,16 @@ class SelfCareGrantedAuthorityTest {
     void getAuthority_LIMITED() {
         // given
         ProductGrantedAuthority productRole1 =
-                TestUtils.mockInstance(new ProductGrantedAuthority(LIMITED, "productRole1", "productCode1"), 1);
+                TestUtils.mockInstance(new ProductGrantedAuthority(LIMITED, "productRole1", "productId1"), 1);
         ProductGrantedAuthority productRole2 =
-                TestUtils.mockInstance(new ProductGrantedAuthority(LIMITED, "productRole2", "productCode2"), 2);
+                TestUtils.mockInstance(new ProductGrantedAuthority(LIMITED, "productRole2", "productId2"), 2);
         Collection<ProductGrantedAuthority> roleOnProducts =
                 List.of(productRole1, productRole2);
         // when
         SelfCareGrantedAuthority grantedAuthority = new SelfCareGrantedAuthority(roleOnProducts);
         // then
         assertEquals(LIMITED.name(), grantedAuthority.getAuthority());
-        assertIterableEquals(new HashSet<>(roleOnProducts), new HashSet<>(grantedAuthority.getRoleOnProducts()));
+        assertIterableEquals(new HashSet<>(roleOnProducts), new HashSet<>(grantedAuthority.getRoleOnProducts().values()));
     }
 
 }

@@ -3,6 +3,7 @@ package it.pagopa.selfcare.commons.web.handler;
 import it.pagopa.selfcare.commons.web.model.ErrorResource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -97,6 +98,7 @@ public class RestExceptionsHandler {
         return new ErrorResource(e.getMessage());
     }
 
+
     @ExceptionHandler({MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ErrorResource handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
@@ -108,6 +110,14 @@ public class RestExceptionsHandler {
         });
         log.warn(errorMessage.toString());
         return new ErrorResource(errorMessage.toString());
+    }
+
+
+    @ExceptionHandler({AccessDeniedException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    ErrorResource handleAccessDeniedException(AccessDeniedException e) {
+        log.warn(e.getMessage());
+        return new ErrorResource(e.getMessage());
     }
 
 }
