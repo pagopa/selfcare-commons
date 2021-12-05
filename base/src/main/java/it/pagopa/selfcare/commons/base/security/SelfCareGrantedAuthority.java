@@ -13,17 +13,20 @@ import static it.pagopa.selfcare.commons.base.security.SelfCareAuthority.LIMITED
 
 public class SelfCareGrantedAuthority implements GrantedAuthority {
 
+    private final String institutionId;
     private final SelfCareAuthority roleOnInstitution;
     private final Map<String, ProductGrantedAuthority> roleOnProducts;
 
 
-    public SelfCareGrantedAuthority(Collection<ProductGrantedAuthority> roleOnProducts) {
+    public SelfCareGrantedAuthority(String institutionId, Collection<ProductGrantedAuthority> roleOnProducts) {
+        Assert.hasText(institutionId, "An Institution id is required");
         Assert.notEmpty(roleOnProducts, "At least one Product Granted SelfCareAuthority is required");
+        this.institutionId = institutionId;
         boolean isAdminForInstitution = roleOnProducts.stream()
                 .anyMatch(productRole -> ADMIN.name().equals(productRole.getAuthority()));
         this.roleOnInstitution = isAdminForInstitution ? ADMIN : LIMITED;
         this.roleOnProducts = roleOnProducts.stream()
-                .collect(Collectors.toMap(ProductGrantedAuthority::getProductId, Function.identity()));
+                .collect(Collectors.toUnmodifiableMap(ProductGrantedAuthority::getProductId, Function.identity()));
     }
 
 
@@ -33,9 +36,13 @@ public class SelfCareGrantedAuthority implements GrantedAuthority {
     }
 
 
+    public String getInstitutionId() {
+        return institutionId;
+    }
+
+
     public Map<String, ProductGrantedAuthority> getRoleOnProducts() {
         return roleOnProducts;
     }
-
 
 }
