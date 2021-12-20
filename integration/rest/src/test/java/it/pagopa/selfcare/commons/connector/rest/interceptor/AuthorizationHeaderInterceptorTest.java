@@ -1,7 +1,6 @@
 package it.pagopa.selfcare.commons.connector.rest.interceptor;
 
 import feign.RequestTemplate;
-import it.pagopa.selfcare.commons.base.security.SelfCareAuthenticationDetails;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -52,9 +51,7 @@ class AuthorizationHeaderInterceptorTest {
     void apply_notNullAuthentication() {
         // given
         String credentials = "credentials";
-        String institutionId = "institutionId";
         TestingAuthenticationToken auth = new TestingAuthenticationToken("principal", credentials);
-        auth.setDetails(new SelfCareAuthenticationDetails(institutionId));
         SecurityContextHolder.getContext().setAuthentication(auth);
         RequestTemplate requestTemplate = new RequestTemplate();
 
