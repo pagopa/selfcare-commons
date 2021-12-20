@@ -135,17 +135,17 @@ class JwtAuthenticationFilterTest {
     void doFilterInternal_validJwtAndAuthOk() throws ServletException, IOException {
         // given
         String token = "token";
-        String subject = "subject";
+        String uid = "uid";
         HttpServletRequest requestMock = mock(HttpServletRequest.class);
         when(requestMock.getHeader(eq(HttpHeaders.AUTHORIZATION)))
                 .thenReturn("Bearer " + token);
         Claims claims = new DefaultClaims();
-        claims.setSubject(subject);
+        claims.put("uid", uid);
         when(jwtServiceMock.getClaims(any()))
                 .thenReturn(Optional.of(claims));
         when(authenticationManagerMock.authenticate(any()))
                 .thenAnswer(invocationOnMock -> {
-                    Assertions.assertEquals(subject, MDC.get(MDC_UID));
+                    Assertions.assertEquals(uid, MDC.get(MDC_UID));
                     return new TestingAuthenticationToken("username", "password");
                 });
         // when
