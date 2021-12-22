@@ -12,7 +12,6 @@ import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import java.util.Optional;
 
 /**
  * Common helper methods to work with JWT
@@ -29,18 +28,20 @@ public class JwtService {
     }
 
 
-    public Optional<Claims> getClaims(String token) {
-        Optional<Claims> claims = Optional.empty();
-        try {
-            claims = Optional.of(Jwts.parser().setSigningKey(jwtSigningKey).parseClaimsJws(token).getBody());
-        } catch (Exception e) {
-            log.error(e.getMessage());
+    public Claims getClaims(String token) {
+        if (log.isDebugEnabled()) {
+            log.trace("JwtService.getClaims");
+            log.debug("token = {}", token);
         }
-        return claims;
+        return Jwts.parser()
+                .setSigningKey(jwtSigningKey)
+                .parseClaimsJws(token)
+                .getBody();
     }
 
 
     private PublicKey getPublicKey(String signingKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        log.trace("JwtService.getPublicKey");
         String publicKeyPEM = signingKey
                 .replace("-----BEGIN PUBLIC KEY-----", "")
                 .replaceAll(System.lineSeparator(), "")
