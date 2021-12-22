@@ -1,11 +1,10 @@
 package it.pagopa.selfcare.commons.web.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.impl.DefaultClaims;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -20,7 +19,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -29,14 +27,15 @@ class JwtAuthenticationFilterTest {
 
     private static final HttpServletResponse RESPONSE_MOCK = mock(HttpServletResponse.class);
     private static final FilterChain FILTER_CHAIN_MOCK = mock(FilterChain.class);
-    private static final String MDC_UID = "uid";
 
     @InjectMocks
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Mock
     private AuthenticationManager authenticationManagerMock;
-    @Mock
-    private JwtService jwtServiceMock;
+
+    @Captor
+    private ArgumentCaptor<JwtAuthenticationToken> jwtAuthenticationTokenCaptor;
 
 
     @Test
@@ -46,8 +45,12 @@ class JwtAuthenticationFilterTest {
         // when
         jwtAuthenticationFilter.doFilterInternal(requestMock, RESPONSE_MOCK, FILTER_CHAIN_MOCK);
         // then
-        Assertions.assertNull(MDC.get(MDC_UID));
-        verifyNoInteractions(jwtServiceMock, authenticationManagerMock);
+        Assertions.assertNull(SecurityContextHolder.getContext().getAuthentication());
+        verify(authenticationManagerMock, times(1))
+                .authenticate(jwtAuthenticationTokenCaptor.capture());
+        Assertions.assertNotNull(jwtAuthenticationTokenCaptor.getValue());
+        Assertions.assertNull(jwtAuthenticationTokenCaptor.getValue().getCredentials());
+        verifyNoMoreInteractions(authenticationManagerMock);
     }
 
 
@@ -60,74 +63,56 @@ class JwtAuthenticationFilterTest {
         // when
         jwtAuthenticationFilter.doFilterInternal(requestMock, RESPONSE_MOCK, FILTER_CHAIN_MOCK);
         // then
-        Assertions.assertNull(MDC.get(MDC_UID));
-        verifyNoInteractions(jwtServiceMock, authenticationManagerMock);
-    }
-
-
-    @Test
-    void doFilterInternal_invalidJwt() throws ServletException, IOException {
-        // given
-        String token = "token";
-        HttpServletRequest requestMock = mock(HttpServletRequest.class);
-        when(requestMock.getHeader(eq(HttpHeaders.AUTHORIZATION)))
-                .thenReturn("Bearer " + token);
-        when(jwtServiceMock.getClaims(any()))
-                .thenReturn(Optional.empty());
-        // when
-        jwtAuthenticationFilter.doFilterInternal(requestMock, RESPONSE_MOCK, FILTER_CHAIN_MOCK);
-        // then
-        Assertions.assertNull(MDC.get(MDC_UID));
-        verify(jwtServiceMock, times(1)).getClaims(any());
-        verifyNoMoreInteractions(jwtServiceMock);
-        verifyNoInteractions(authenticationManagerMock);
-    }
-
-
-    @Test
-    void doFilterInternal_validJwtButAuthKo() throws ServletException, IOException {
-        // given
-        String token = "token";
-        HttpServletRequest requestMock = mock(HttpServletRequest.class);
-        when(requestMock.getHeader(eq(HttpHeaders.AUTHORIZATION)))
-                .thenReturn("Bearer " + token);
-        when(jwtServiceMock.getClaims(any()))
-                .thenReturn(Optional.of(mock(Claims.class)));
-        // when
-        jwtAuthenticationFilter.doFilterInternal(requestMock, RESPONSE_MOCK, FILTER_CHAIN_MOCK);
-        // then
-        Assertions.assertNull(MDC.get(MDC_UID));
-        verify(jwtServiceMock, times(1)).getClaims(any());
-        verify(authenticationManagerMock, times(1)).authenticate(any());
-        verifyNoMoreInteractions(jwtServiceMock, authenticationManagerMock);
         Assertions.assertNull(SecurityContextHolder.getContext().getAuthentication());
+        verify(authenticationManagerMock, times(1))
+                .authenticate(jwtAuthenticationTokenCaptor.capture());
+        Assertions.assertNotNull(jwtAuthenticationTokenCaptor.getValue());
+        Assertions.assertNull(jwtAuthenticationTokenCaptor.getValue().getCredentials());
+        verifyNoMoreInteractions(authenticationManagerMock);
     }
 
 
     @Test
-    void doFilterInternal_validJwtAndAuthKo() throws ServletException, IOException {
+    void doFilterInternal_invalidToken() throws ServletException, IOException {
         // given
         String token = "token";
-        String subject = "subject";
         HttpServletRequest requestMock = mock(HttpServletRequest.class);
         when(requestMock.getHeader(eq(HttpHeaders.AUTHORIZATION)))
                 .thenReturn("Bearer " + token);
-        Claims claims = new DefaultClaims();
-        claims.setSubject(subject);
-        when(jwtServiceMock.getClaims(any()))
-                .thenReturn(Optional.of(claims));
+        // when
+        jwtAuthenticationFilter.doFilterInternal(requestMock, RESPONSE_MOCK, FILTER_CHAIN_MOCK);
+        // then
+        Assertions.assertNull(SecurityContextHolder.getContext().getAuthentication());
+        verify(authenticationManagerMock, times(1))
+                .authenticate(jwtAuthenticationTokenCaptor.capture());
+        Assertions.assertNotNull(jwtAuthenticationTokenCaptor.getValue());
+        Assertions.assertEquals(token, jwtAuthenticationTokenCaptor.getValue().getCredentials());
+        verifyNoMoreInteractions(authenticationManagerMock);
+    }
+
+
+    @Test
+    void doFilterInternal_withBearerTokenButAuthKo() throws ServletException, IOException {
+        // given
+        String token = "token";
+        HttpServletRequest requestMock = mock(HttpServletRequest.class);
+        when(requestMock.getHeader(eq(HttpHeaders.AUTHORIZATION)))
+                .thenReturn("Bearer " + token);
         doThrow(RuntimeException.class)
                 .when(authenticationManagerMock)
                 .authenticate(any());
+        String mdcKey = "key";
+        MDC.put(mdcKey, "val");
         // when
-        Executable executable = () -> jwtAuthenticationFilter.doFilterInternal(requestMock, RESPONSE_MOCK, FILTER_CHAIN_MOCK);
+        jwtAuthenticationFilter.doFilterInternal(requestMock, RESPONSE_MOCK, FILTER_CHAIN_MOCK);
         // then
-        Assertions.assertThrows(Exception.class, executable);
-        Assertions.assertNull(MDC.get(MDC_UID));
-        verify(jwtServiceMock, times(1)).getClaims(any());
-        verify(authenticationManagerMock, times(1)).authenticate(any());
-        verifyNoMoreInteractions(jwtServiceMock, authenticationManagerMock);
         Assertions.assertNull(SecurityContextHolder.getContext().getAuthentication());
+        verify(authenticationManagerMock, times(1))
+                .authenticate(jwtAuthenticationTokenCaptor.capture());
+        Assertions.assertNotNull(jwtAuthenticationTokenCaptor.getValue());
+        Assertions.assertEquals(token, jwtAuthenticationTokenCaptor.getValue().getCredentials());
+        Assertions.assertNull(MDC.get(mdcKey));
+        verifyNoMoreInteractions(authenticationManagerMock);
     }
 
 
@@ -135,27 +120,26 @@ class JwtAuthenticationFilterTest {
     void doFilterInternal_validJwtAndAuthOk() throws ServletException, IOException {
         // given
         String token = "token";
-        String uid = "uid";
+        String mdcKey = "key";
+        String mdcVal = "val";
         HttpServletRequest requestMock = mock(HttpServletRequest.class);
         when(requestMock.getHeader(eq(HttpHeaders.AUTHORIZATION)))
                 .thenReturn("Bearer " + token);
-        Claims claims = new DefaultClaims();
-        claims.put("uid", uid);
-        when(jwtServiceMock.getClaims(any()))
-                .thenReturn(Optional.of(claims));
         when(authenticationManagerMock.authenticate(any()))
                 .thenAnswer(invocationOnMock -> {
-                    Assertions.assertEquals(uid, MDC.get(MDC_UID));
+                    MDC.put(mdcKey, mdcVal);
                     return new TestingAuthenticationToken("username", "password");
                 });
         // when
         jwtAuthenticationFilter.doFilterInternal(requestMock, RESPONSE_MOCK, FILTER_CHAIN_MOCK);
         // then
-        Assertions.assertNull(MDC.get(MDC_UID));
-        verify(jwtServiceMock, times(1)).getClaims(any());
-        verify(authenticationManagerMock, times(1)).authenticate(any());
-        verifyNoMoreInteractions(jwtServiceMock, authenticationManagerMock);
-        Assertions.assertNotNull(SecurityContextHolder.getContext().getAuthentication());
+        Assertions.assertNull(SecurityContextHolder.getContext().getAuthentication());
+        verify(authenticationManagerMock, times(1))
+                .authenticate(jwtAuthenticationTokenCaptor.capture());
+        Assertions.assertNotNull(jwtAuthenticationTokenCaptor.getValue());
+        Assertions.assertEquals(token, jwtAuthenticationTokenCaptor.getValue().getCredentials());
+        Assertions.assertNull(MDC.get(mdcKey));
+        verifyNoMoreInteractions(authenticationManagerMock);
     }
 
 }

@@ -1,6 +1,8 @@
 package it.pagopa.selfcare.commons.web.config;
 
+import it.pagopa.selfcare.commons.web.security.AuthoritiesRetriever;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationFilter;
+import it.pagopa.selfcare.commons.web.security.JwtAuthenticationProvider;
 import it.pagopa.selfcare.commons.web.security.JwtService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +11,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -27,14 +30,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/swagger-ui.html",
             "/swagger-ui/**",
             "/favicon.ico",
-            "/error"
+            "/error",
+            "/actuator/**"
     };
 
     private final JwtService jwtService;
+    private final AuthoritiesRetriever authoritiesRetriever;
 
 
-    public SecurityConfig(JwtService jwtService) {
+    public SecurityConfig(JwtService jwtService, AuthoritiesRetriever authoritiesRetriever) {
         this.jwtService = jwtService;
+        this.authoritiesRetriever = authoritiesRetriever;
     }
 
 
@@ -42,6 +48,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+
+    @Override
+    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) {
+        JwtAuthenticationProvider authenticationProvider = new JwtAuthenticationProvider(jwtService, authoritiesRetriever);
+        authenticationManagerBuilder.authenticationProvider(authenticationProvider);
+        authenticationManagerBuilder.eraseCredentials(false);
     }
 
 
@@ -61,7 +75,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //        corsConfiguration.setAllowCredentials(true);
 //        corsConfiguration.setExposedHeaders(List.of("Authorization"));
 //        http.cors().configurationSource(request -> corsConfiguration)
-        http.exceptionHandling()
+
+        http.authorizeRequests()
+                .anyRequest().fullyAuthenticated()
+                .and()
+                .exceptionHandling()
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
                     log.error("{} to resource {}", accessDeniedException.getMessage(), request.getRequestURI());
                     response.setStatus(HttpStatus.FORBIDDEN.value());
@@ -78,7 +96,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()
                 .logout().disable()
                 .httpBasic().disable()
-                .addFilterBefore(new JwtAuthenticationFilter(getApplicationContext().getBean(AuthenticationManager.class), jwtService), UsernamePasswordAuthenticationFilter.class);
+                .anonymous().disable()
+                .rememberMe().disable()
+                .x509().disable()
+                .addFilterBefore(new JwtAuthenticationFilter(getApplicationContext().getBean(AuthenticationManager.class)), UsernamePasswordAuthenticationFilter.class);
     }
 
 
