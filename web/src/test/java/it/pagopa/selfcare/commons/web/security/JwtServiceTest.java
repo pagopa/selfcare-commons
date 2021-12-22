@@ -3,9 +3,11 @@ package it.pagopa.selfcare.commons.web.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.impl.DefaultClaims;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
@@ -16,24 +18,17 @@ import java.security.PrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
-import java.util.Optional;
 
 class JwtServiceTest {
 
     @Test
-    void getClaims_signatureOK() throws Exception {
+    void getClaims_cannotParseSignature() {
         // given
-        DefaultClaims claims = new DefaultClaims();
-        claims.setId("id");
-        String jwt = generateToken(loadPrivateKey(), claims);
-        File file = ResourceUtils.getFile("classpath:certs/pubkey.pem");
-        String jwtSigningKey = Files.readString(file.toPath(), Charset.defaultCharset());
-        JwtService jwtService = new JwtService(jwtSigningKey);
+        String signature = "invalid signature";
         // when
-        Optional<Claims> body = jwtService.getClaims(jwt);
+        Executable invalid_signature = () -> new JwtService(signature);
         // then
-        Assertions.assertTrue(body.isPresent());
-        Assertions.assertEquals("id", body.get().getId());
+        Assertions.assertThrows(InvalidKeySpecException.class, invalid_signature);
     }
 
 
@@ -47,20 +42,40 @@ class JwtServiceTest {
         String jwtSigningKey = Files.readString(file.toPath(), Charset.defaultCharset());
         JwtService jwtService = new JwtService(jwtSigningKey);
         // when
-        Optional<Claims> body = jwtService.getClaims(jwt);
+        Executable executable = () -> jwtService.getClaims(jwt);
         // then
-        Assertions.assertFalse(body.isPresent());
+        Assertions.assertThrows(SignatureException.class, executable);
     }
 
 
     @Test
-    void getClaims_cannotParseSignature() throws Exception {
+    void getClaims_nullToken() throws Exception {
+        // given
+        String jwt = null;
+        File file = ResourceUtils.getFile("classpath:certs/pubkey.pem");
+        String jwtSigningKey = Files.readString(file.toPath(), Charset.defaultCharset());
+        JwtService jwtService = new JwtService(jwtSigningKey);
+        // when
+        Executable executable = () -> jwtService.getClaims(jwt);
+        // then
+        Assertions.assertThrows(IllegalArgumentException.class, executable);
+    }
+
+
+    @Test
+    void getClaims_signatureOK() throws Exception {
         // given
         DefaultClaims claims = new DefaultClaims();
         claims.setId("id");
         String jwt = generateToken(loadPrivateKey(), claims);
-        // when - then
-        Assertions.assertThrows(InvalidKeySpecException.class, () -> new JwtService("invalid signature"));
+        File file = ResourceUtils.getFile("classpath:certs/pubkey.pem");
+        String jwtSigningKey = Files.readString(file.toPath(), Charset.defaultCharset());
+        JwtService jwtService = new JwtService(jwtSigningKey);
+        // when
+        Claims body = jwtService.getClaims(jwt);
+        // then
+        Assertions.assertNotNull(body);
+        Assertions.assertEquals("id", body.getId());
     }
 
 
