@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Optional;
+
 import static it.pagopa.selfcare.commons.web.handler.RestExceptionsHandler.UNHANDLED_EXCEPTION;
 
 @Slf4j
@@ -22,8 +24,9 @@ public class FeignExceptionsHandler {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpStatus httpStatus = HttpStatus.resolve(e.status());
-        if (httpStatus != null && httpStatus.is4xxClientError()) {
+        HttpStatus httpStatus = Optional.ofNullable(HttpStatus.resolve(e.status()))
+                .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
+        if (httpStatus.is4xxClientError()) {
             log.warn(UNHANDLED_EXCEPTION, e);
 
         } else {
