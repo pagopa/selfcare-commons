@@ -56,7 +56,6 @@ class ProductGrantedAuthorityTest {
         ProductGrantedAuthority authority = new ProductGrantedAuthority(selcRole, productRole, productId);
         // then
         Assertions.assertEquals(selcRole.name(), authority.getAuthority());
-        Assertions.assertEquals(selcRole, authority.getSelfCareAuthority());
         Assertions.assertEquals(productRole, authority.getProductRole());
         Assertions.assertEquals(productId, authority.getProductId());
         ProductGrantedAuthority authority2 = new ProductGrantedAuthority(SelfCareAuthority.LIMITED, "role2", productId);

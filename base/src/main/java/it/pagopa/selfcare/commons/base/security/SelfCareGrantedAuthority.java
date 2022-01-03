@@ -1,5 +1,8 @@
 package it.pagopa.selfcare.commons.base.security;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
 
@@ -11,10 +14,14 @@ import java.util.stream.Collectors;
 import static it.pagopa.selfcare.commons.base.security.SelfCareAuthority.ADMIN;
 import static it.pagopa.selfcare.commons.base.security.SelfCareAuthority.LIMITED;
 
+@ToString
+@EqualsAndHashCode(of = "institutionId")
 public class SelfCareGrantedAuthority implements GrantedAuthority {
 
+    @Getter
     private final String institutionId;
     private final SelfCareAuthority roleOnInstitution;
+    @Getter
     private final Map<String, ProductGrantedAuthority> roleOnProducts;
 
 
@@ -33,16 +40,6 @@ public class SelfCareGrantedAuthority implements GrantedAuthority {
     @Override
     public String getAuthority() {
         return this.roleOnInstitution.name();
-    }
-
-
-    public String getInstitutionId() {
-        return institutionId;
-    }
-
-
-    public Map<String, ProductGrantedAuthority> getRoleOnProducts() {
-        return roleOnProducts;
     }
 
 }
