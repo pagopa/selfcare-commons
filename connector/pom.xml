@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>selc-commons-integration</artifactId>
+    <artifactId>selc-commons-connector</artifactId>
     <packaging>pom</packaging>
     <modules>
         <module>rest</module>
