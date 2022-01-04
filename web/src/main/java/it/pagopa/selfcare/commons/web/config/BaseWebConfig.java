@@ -18,7 +18,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.Collection;
 import java.util.TimeZone;
 
-@ComponentScan(basePackages = "it.pagopa.selfcare.commons.web.interceptor")
+@ComponentScan(basePackages = {"it.pagopa.selfcare.commons.web.interceptor", "it.pagopa.selfcare.commons.web.handler"})
 public class BaseWebConfig implements WebMvcConfigurer {
 
     private final Collection<HandlerInterceptor> interceptors;
