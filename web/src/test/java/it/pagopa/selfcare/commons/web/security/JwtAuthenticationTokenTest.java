@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.commons.web.security;
 
+import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -32,14 +33,15 @@ class JwtAuthenticationTokenTest {
     void JwtAuthenticationToken_authenticatedWithNullAuthorities() {
         // given
         String token = "token";
-        String uid = "uid";
+        SelfCareUser user = SelfCareUser.builder("id").build();
         Collection<GrantedAuthority> authorities = null;
         // when
-        JwtAuthenticationToken authentication = new JwtAuthenticationToken(token, uid, authorities);
+        JwtAuthenticationToken authentication = new JwtAuthenticationToken(token, user, authorities);
         // then
         Assertions.assertEquals(token, authentication.getCredentials());
-        Assertions.assertEquals(uid, authentication.getPrincipal());
+        Assertions.assertSame(user, authentication.getPrincipal());
         Assertions.assertTrue(authentication.isAuthenticated());
+        Assertions.assertEquals(user.getId(), authentication.getName());
         Assertions.assertNotNull(authentication.getAuthorities());
         Assertions.assertTrue(authentication.getAuthorities().isEmpty());
     }
@@ -49,14 +51,15 @@ class JwtAuthenticationTokenTest {
     void JwtAuthenticationToken_authenticated() {
         // given
         String token = "token";
-        String uid = "uid";
+        SelfCareUser user = SelfCareUser.builder("id").build();
         SimpleGrantedAuthority grantedAuthority = new SimpleGrantedAuthority("role");
         // when
-        JwtAuthenticationToken authentication = new JwtAuthenticationToken(token, uid, List.of(grantedAuthority));
+        JwtAuthenticationToken authentication = new JwtAuthenticationToken(token, user, List.of(grantedAuthority));
         // then
         Assertions.assertEquals(token, authentication.getCredentials());
-        Assertions.assertEquals(uid, authentication.getPrincipal());
+        Assertions.assertSame(user, authentication.getPrincipal());
         Assertions.assertTrue(authentication.isAuthenticated());
+        Assertions.assertEquals(user.getId(), authentication.getName());
         Assertions.assertNotNull(authentication.getAuthorities());
         Assertions.assertEquals(1, authentication.getAuthorities().size());
         Assertions.assertEquals(grantedAuthority.getAuthority(), authentication.getAuthorities().iterator().next().getAuthority());

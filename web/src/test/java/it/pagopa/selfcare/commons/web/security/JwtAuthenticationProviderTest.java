@@ -2,6 +2,7 @@ package it.pagopa.selfcare.commons.web.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.impl.DefaultClaims;
+import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +25,7 @@ class JwtAuthenticationProviderTest {
 
     private static final String MDC_UID = "uid";
     private static final String CLAIM_UID = "uid";
+    private static final String CLAIM_EMAIL = "email";
 
     @InjectMocks
     private JwtAuthenticationProvider jwtAuthenticationProvider;
@@ -102,7 +104,8 @@ class JwtAuthenticationProviderTest {
         Assertions.assertNull(MDC.get(MDC_UID));
         Assertions.assertNotNull(authenticate);
         Assertions.assertEquals(token, authenticate.getCredentials());
-        Assertions.assertEquals("uid_not_provided", authenticate.getPrincipal());
+        Assertions.assertEquals(SelfCareUser.class, authenticate.getPrincipal().getClass());
+        Assertions.assertEquals("uid_not_provided", ((SelfCareUser) authenticate.getPrincipal()).getId());
         Assertions.assertNotNull(authenticate.getAuthorities());
         Assertions.assertTrue(authenticate.getAuthorities().isEmpty());
         Mockito.verify(jwtServiceMock, Mockito.times(1))
@@ -119,8 +122,9 @@ class JwtAuthenticationProviderTest {
         String token = "token";
         Authentication authentication = new JwtAuthenticationToken(token);
         String uid = "uid";
+        String email = "email@prova.com";
         Mockito.when(jwtServiceMock.getClaims(any()))
-                .thenReturn(new DefaultClaims(Map.of(CLAIM_UID, uid)));
+                .thenReturn(new DefaultClaims(Map.of(CLAIM_UID, uid, CLAIM_EMAIL, email)));
         String role = "role";
         Mockito.when(authoritiesRetrieverMock.retrieveAuthorities())
                 .thenReturn(List.of(new SimpleGrantedAuthority(role), new SimpleGrantedAuthority(role), new SimpleGrantedAuthority(role)));
@@ -130,7 +134,9 @@ class JwtAuthenticationProviderTest {
         Assertions.assertEquals(uid, MDC.get(MDC_UID));
         Assertions.assertNotNull(authenticate);
         Assertions.assertEquals(token, authenticate.getCredentials());
-        Assertions.assertEquals(uid, authenticate.getPrincipal());
+        Assertions.assertEquals(SelfCareUser.class, authenticate.getPrincipal().getClass());
+        Assertions.assertEquals(uid, ((SelfCareUser) authenticate.getPrincipal()).getId());
+        Assertions.assertEquals(email, ((SelfCareUser) authenticate.getPrincipal()).getEmail());
         Assertions.assertNotNull(authenticate.getAuthorities());
         Assertions.assertEquals(3, authenticate.getAuthorities().size());
         authenticate.getAuthorities().forEach(grantedAuthority -> Assertions.assertEquals(role, grantedAuthority.getAuthority()));
