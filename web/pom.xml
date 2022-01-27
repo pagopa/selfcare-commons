@@ -5,7 +5,7 @@
     <parent>
         <artifactId>selc-commons</artifactId>
         <groupId>it.pagopa.selfcare</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,6 +15,12 @@
         <dependency>
             <groupId>it.pagopa.selfcare</groupId>
             <artifactId>selc-commons-base</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>it.pagopa.selfcare</groupId>
+            <artifactId>selc-commons-base</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
