@@ -28,14 +28,13 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        if (log.isDebugEnabled()) {
-            log.trace("JwtAuthenticationProvider.authenticate");
-            log.debug("authentication = {}", authentication);
-        }
+        log.trace("JwtAuthenticationProvider.authenticate start");
+        log.debug("authentication = {}", authentication);
         final JwtAuthenticationToken requestAuth = (JwtAuthenticationToken) authentication;
 
         try {
             Claims claims = jwtService.getClaims(requestAuth.getCredentials());
+            log.debug("claims = {}", claims);
             Optional<String> uid = Optional.ofNullable(claims.get(CLAIMS_UID, String.class));
             uid.ifPresentOrElse(value -> MDC.put(MDC_UID, value),
                     () -> log.warn("uid claims is null"));
@@ -49,6 +48,8 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
                     authoritiesRetriever.retrieveAuthorities());
             authenticationToken.setDetails(authentication.getDetails());
 
+            log.debug("authenticate result = {}", authentication);
+            log.trace("JwtAuthenticationProvider.authenticate end");
             return authenticationToken;
 
         } catch (RuntimeException e) {
