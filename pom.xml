@@ -27,6 +27,12 @@
                 <artifactId>selc-commons-base</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
+            <dependency>
+                <groupId>it.pagopa.selfcare</groupId>
+                <artifactId>selc-commons-base</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+                <type>test-jar</type>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.commons.web.security;
 
 import io.jsonwebtoken.Claims;
+import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -14,6 +15,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     private static final String MDC_UID = "uid";
     private static final String CLAIMS_UID = "uid";
+    private static final String CLAIM_EMAIL = "email";
 
     private final JwtService jwtService;
     private final AuthoritiesRetriever authoritiesRetriever;
@@ -38,8 +40,12 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             uid.ifPresentOrElse(value -> MDC.put(MDC_UID, value),
                     () -> log.warn("uid claims is null"));
 
+            SelfCareUser user = SelfCareUser.builder(uid.orElse("uid_not_provided"))
+                    .email(claims.get(CLAIM_EMAIL, String.class))
+                    .build();
+
             JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(requestAuth.getCredentials(),
-                    uid.orElse("uid_not_provided"),
+                    user,
                     authoritiesRetriever.retrieveAuthorities());
             authenticationToken.setDetails(authentication.getDetails());
 
