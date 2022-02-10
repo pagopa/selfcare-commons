@@ -1,26 +1,36 @@
 package it.pagopa.selfcare.commons.web.security;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.impl.DefaultClaims;
+import it.pagopa.selfcare.commons.base.TargetEnvironment;
 import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import uk.org.webcompere.systemstubs.environment.EnvironmentVariables;
+import uk.org.webcompere.systemstubs.jupiter.SystemStub;
+import uk.org.webcompere.systemstubs.jupiter.SystemStubsExtension;
 
 import java.util.List;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({SystemStubsExtension.class, MockitoExtension.class})
 class JwtAuthenticationProviderTest {
 
     private static final String MDC_UID = "uid";
@@ -34,7 +44,8 @@ class JwtAuthenticationProviderTest {
     private JwtService jwtServiceMock;
     @Mock
     private AuthoritiesRetriever authoritiesRetrieverMock;
-
+    @SystemStub
+    private EnvironmentVariables environmentVariables;
 
     @Test
     void authenticate_nullAuth() {
@@ -147,6 +158,60 @@ class JwtAuthenticationProviderTest {
         Mockito.verifyNoMoreInteractions(jwtServiceMock, authoritiesRetrieverMock);
     }
 
+    @Test
+    void authenticate_doNotLog() {
+        // given
+        String token = "token";
+        Authentication authentication = new JwtAuthenticationToken(token);
+        String uid = "uid";
+        String email = "email@prova.com";
+        Mockito.when(jwtServiceMock.getClaims(any()))
+                .thenReturn(new DefaultClaims(Map.of(CLAIM_UID, uid, CLAIM_EMAIL, email)));
+        String role = "role";
+        environmentVariables.set("ENV_TARGET", TargetEnvironment.PROD);
+        Mockito.when(authoritiesRetrieverMock.retrieveAuthorities())
+                .thenReturn(List.of(new SimpleGrantedAuthority(role), new SimpleGrantedAuthority(role), new SimpleGrantedAuthority(role)));
+        ListAppender<ILoggingEvent> listAppender = Mockito.spy(new ListAppender<>());
+        Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        rootLogger.addAppender(listAppender);
+        ArgumentCaptor<ILoggingEvent> eventArgumentCaptor = ArgumentCaptor.forClass(ILoggingEvent.class);
+        // when
+        Authentication authenticate = jwtAuthenticationProvider.authenticate(authentication);
+        // then
+        if (Level.TRACE.equals(((Logger) LoggerFactory.getLogger(JwtService.class)).getEffectiveLevel())) {
+            Mockito.verify(listAppender).doAppend(eventArgumentCaptor.capture());
+            Assertions.assertEquals(0, eventArgumentCaptor.getAllValues().stream()
+                    .filter(iLoggingEvent -> Level.DEBUG.equals(iLoggingEvent.getLevel()))
+                    .count());
+        } else {
+            Mockito.verifyNoInteractions(listAppender);
+        }
+    }
+
+    @Test
+    void authenticate_log() {
+        // given
+        String token = "token";
+        Authentication authentication = new JwtAuthenticationToken(token);
+        String uid = "uid";
+        String email = "email@prova.com";
+        Mockito.when(jwtServiceMock.getClaims(any()))
+                .thenReturn(new DefaultClaims(Map.of(CLAIM_UID, uid, CLAIM_EMAIL, email)));
+        String role = "role";
+        Mockito.when(authoritiesRetrieverMock.retrieveAuthorities())
+                .thenReturn(List.of(new SimpleGrantedAuthority(role), new SimpleGrantedAuthority(role), new SimpleGrantedAuthority(role)));
+        ListAppender<ILoggingEvent> listAppender = Mockito.spy(new ListAppender<>());
+        Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        rootLogger.addAppender(listAppender);
+        ArgumentCaptor<ILoggingEvent> eventArgumentCaptor = ArgumentCaptor.forClass(ILoggingEvent.class);
+        // when
+        Authentication authenticate = jwtAuthenticationProvider.authenticate(authentication);
+        // then
+        Mockito.verify(listAppender, Mockito.atLeastOnce()).doAppend(eventArgumentCaptor.capture());
+        Assertions.assertEquals(3, eventArgumentCaptor.getAllValues().stream()
+                .filter(iLoggingEvent -> Level.DEBUG.equals(iLoggingEvent.getLevel()))
+                .count());
+    }
 
     @Test
     void supports_ko() {
