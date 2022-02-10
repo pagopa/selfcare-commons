@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.commons.web.security;
 
 import io.jsonwebtoken.Claims;
+import it.pagopa.selfcare.commons.base.TargetEnvironment;
 import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -28,13 +29,15 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        log.trace("JwtAuthenticationProvider.authenticate start");
-        log.debug("authentication = {}", authentication);
+        log.trace("authenticate start");
+        if (!TargetEnvironment.PROD.equals(TargetEnvironment.getCurrent())) {
+            log.debug("authenticate authentication = {}", authentication);
+        }
         final JwtAuthenticationToken requestAuth = (JwtAuthenticationToken) authentication;
 
         try {
             Claims claims = jwtService.getClaims(requestAuth.getCredentials());
-            log.debug("claims = {}", claims);
+            log.debug("authenticate claims = {}", claims);
             Optional<String> uid = Optional.ofNullable(claims.get(CLAIMS_UID, String.class));
             uid.ifPresentOrElse(value -> MDC.put(MDC_UID, value),
                     () -> log.warn("uid claims is null"));
@@ -47,9 +50,10 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
                     user,
                     authoritiesRetriever.retrieveAuthorities());
             authenticationToken.setDetails(authentication.getDetails());
-
-            log.debug("authenticate result = {}", authentication);
-            log.trace("JwtAuthenticationProvider.authenticate end");
+            if (!TargetEnvironment.PROD.equals(TargetEnvironment.getCurrent())) {
+                log.debug("authenticate result = {}", authentication);
+            }
+            log.trace("authenticate end");
             return authenticationToken;
 
         } catch (RuntimeException e) {

@@ -11,5 +11,12 @@
 
     <artifactId>selc-commons-base</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>uk.org.webcompere</groupId>
+            <artifactId>system-stubs-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>
