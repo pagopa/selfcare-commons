@@ -1,14 +1,26 @@
 package it.pagopa.selfcare.commons.web.security;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.impl.DefaultClaims;
+import it.pagopa.selfcare.commons.base.TargetEnvironment;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.ResourceUtils;
+import uk.org.webcompere.systemstubs.environment.EnvironmentVariables;
+import uk.org.webcompere.systemstubs.jupiter.SystemStub;
+import uk.org.webcompere.systemstubs.jupiter.SystemStubsExtension;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -19,7 +31,11 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 
+@ExtendWith(SystemStubsExtension.class)
 class JwtServiceTest {
+
+    @SystemStub
+    private EnvironmentVariables environmentVariables;
 
     @Test
     void getClaims_cannotParseSignature() {
@@ -59,6 +75,57 @@ class JwtServiceTest {
         Executable executable = () -> jwtService.getClaims(jwt);
         // then
         Assertions.assertThrows(IllegalArgumentException.class, executable);
+    }
+
+
+    @Test
+    void getClaims_logClaims() throws Exception {
+        // given
+        DefaultClaims claims = new DefaultClaims();
+        claims.setId("id");
+        String jwt = generateToken(loadPrivateKey(), claims);
+        File file = ResourceUtils.getFile("classpath:certs/pubkey.pem");
+        String jwtSigningKey = Files.readString(file.toPath(), Charset.defaultCharset());
+        JwtService jwtService = new JwtService(jwtSigningKey);
+        ListAppender<ILoggingEvent> listAppender = Mockito.spy(new ListAppender<>());
+        Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        logger.addAppender(listAppender);
+        ArgumentCaptor<ILoggingEvent> eventArgumentCaptor = ArgumentCaptor.forClass(ILoggingEvent.class);
+        // when
+        Claims body = jwtService.getClaims(jwt);
+        // then
+        Mockito.verify(listAppender, Mockito.atLeastOnce()).doAppend(eventArgumentCaptor.capture());
+        Assertions.assertEquals(1, eventArgumentCaptor.getAllValues().stream()
+                .filter(iLoggingEvent -> Level.DEBUG.equals(iLoggingEvent.getLevel()))
+                .count());
+    }
+
+
+    @Test
+    void getClaims_doNotLogClaims() throws Exception {
+        // given
+        DefaultClaims claims = new DefaultClaims();
+        claims.setId("id");
+        String jwt = generateToken(loadPrivateKey(), claims);
+        File file = ResourceUtils.getFile("classpath:certs/pubkey.pem");
+        String jwtSigningKey = Files.readString(file.toPath(), Charset.defaultCharset());
+        JwtService jwtService = new JwtService(jwtSigningKey);
+        environmentVariables.set("ENV_TARGET", TargetEnvironment.PROD);
+        ListAppender<ILoggingEvent> listAppender = Mockito.spy(new ListAppender<>());
+        Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        rootLogger.addAppender(listAppender);
+        ArgumentCaptor<ILoggingEvent> eventArgumentCaptor = ArgumentCaptor.forClass(ILoggingEvent.class);
+        // when
+        Claims body = jwtService.getClaims(jwt);
+        // then
+        if (Level.TRACE.equals(((Logger) LoggerFactory.getLogger(JwtService.class)).getEffectiveLevel())) {
+            Mockito.verify(listAppender).doAppend(eventArgumentCaptor.capture());
+            Assertions.assertEquals(0, eventArgumentCaptor.getAllValues().stream()
+                    .filter(iLoggingEvent -> Level.DEBUG.equals(iLoggingEvent.getLevel()))
+                    .count());
+        } else {
+            Mockito.verifyNoInteractions(listAppender);
+        }
     }
 
 

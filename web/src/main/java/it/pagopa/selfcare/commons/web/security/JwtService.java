@@ -2,6 +2,7 @@ package it.pagopa.selfcare.commons.web.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import it.pagopa.selfcare.commons.base.TargetEnvironment;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -29,9 +30,9 @@ public class JwtService {
 
 
     public Claims getClaims(String token) {
-        if (log.isDebugEnabled()) {
-            log.trace("JwtService.getClaims");
-            log.debug("token = {}", token);
+        log.trace("getClaims start");
+        if (!TargetEnvironment.PROD.equals(TargetEnvironment.getCurrent())) {
+            log.debug("getClaims token = {}", token);
         }
         return Jwts.parser()
                 .setSigningKey(jwtSigningKey)
@@ -41,7 +42,7 @@ public class JwtService {
 
 
     private PublicKey getPublicKey(String signingKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        log.trace("JwtService.getPublicKey");
+        log.trace("getPublicKey");
         String publicKeyPEM = signingKey
                 .replace("-----BEGIN PUBLIC KEY-----", "")
                 .replaceAll(System.lineSeparator(), "")
