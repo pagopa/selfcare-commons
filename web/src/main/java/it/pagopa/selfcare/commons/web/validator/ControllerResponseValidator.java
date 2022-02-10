@@ -26,10 +26,10 @@ public abstract class ControllerResponseValidator {
 
     @AfterReturning(pointcut = "controllersPointcut()", returning = "result")
     public void validateResponse(JoinPoint joinPoint, Object result) {
-        if (log.isDebugEnabled()) {
-            log.trace("ControllerResponseValidator.validateResponse");
-            log.debug("result = {}", result);
-        }
+
+        log.trace("validateResponse");
+        log.debug("result = {}", result);
+
         if (result != null) {
             if (Collection.class.isAssignableFrom(result.getClass())) {
                 ((Collection<?>) result).forEach(this::validate);

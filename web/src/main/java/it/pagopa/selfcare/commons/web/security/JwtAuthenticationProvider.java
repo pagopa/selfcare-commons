@@ -37,7 +37,9 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         try {
             Claims claims = jwtService.getClaims(requestAuth.getCredentials());
-            log.debug("authenticate claims = {}", claims);
+            if (!TargetEnvironment.PROD.equals(TargetEnvironment.getCurrent())) {
+                log.debug("authenticate claims = {}", claims);
+            }
             Optional<String> uid = Optional.ofNullable(claims.get(CLAIMS_UID, String.class));
             uid.ifPresentOrElse(value -> MDC.put(MDC_UID, value),
                     () -> log.warn("uid claims is null"));
