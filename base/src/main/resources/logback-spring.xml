@@ -5,7 +5,7 @@
     <springProperty scope="context" name="appName" source="spring.application.name"/>
 
     <property name="CONSOLE_LOG_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSSZZ} [${appName:-}] %-5level [%t] [%X{uid:-uid_IS_UNDEFINED}] [%c{32}.%M] - %msg%n"/>
+              value="%d{yyyy-MM-dd HH:mm:ss.SSSZZ} [${appName:-}[%t]] %-5level  [%X{uid:-uid_IS_UNDEFINED}] [%c{32}] - %msg%n"/>
 
     <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -19,6 +19,16 @@
         <discardingThreshold>0</discardingThreshold>
         <appender-ref ref="stdout"/>
     </appender>
+
+    <if condition='"TRUE".equalsIgnoreCase(property("ENABLE_CONFIDENTIAL_FILTER"))'>
+        <then>
+            <turboFilter class="ch.qos.logback.classic.turbo.MarkerFilter">
+                <Name>CONFIDENTIAL_FILTER</Name>
+                <Marker>CONFIDENTIAL</Marker>
+                <OnMatch>DENY</OnMatch>
+            </turboFilter>
+        </then>
+    </if>
 
     <root level="INFO">
         <appender-ref ref="async_stdout"/>
