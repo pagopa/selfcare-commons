@@ -20,7 +20,7 @@
         <appender-ref ref="stdout"/>
     </appender>
 
-    <if condition='"TRUE".equalsIgnoreCase(property("ENABLE_CONFIDENTIAL_FILTER"))'>
+    <if condition='"true".equalsIgnoreCase(property("ENABLE_CONFIDENTIAL_FILTER"))'>
         <then>
             <turboFilter class="ch.qos.logback.classic.turbo.MarkerFilter">
                 <Name>CONFIDENTIAL_FILTER</Name>
