@@ -3,6 +3,7 @@ package it.pagopa.selfcare.commons.web.handler;
 import it.pagopa.selfcare.commons.web.model.ErrorResource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -116,6 +117,14 @@ public class RestExceptionsHandler {
     @ExceptionHandler({AccessDeniedException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
     ErrorResource handleAccessDeniedException(AccessDeniedException e) {
+        log.warn(e.getMessage());
+        return new ErrorResource(e.getMessage());
+    }
+
+
+    @ExceptionHandler({HttpMessageNotReadableException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ErrorResource handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.warn(e.getMessage());
         return new ErrorResource(e.getMessage());
     }
