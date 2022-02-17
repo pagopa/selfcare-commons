@@ -3,6 +3,7 @@ package it.pagopa.selfcare.commons.web.handler;
 import it.pagopa.selfcare.commons.web.model.ErrorResource;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -161,6 +162,19 @@ class RestExceptionsHandlerTest {
                 .thenReturn(DETAIL_MESSAGE);
         // when
         ErrorResource resource = handler.handleAccessDeniedException(exceptionMock);
+        // then
+        assertNotNull(resource);
+        assertEquals(DETAIL_MESSAGE, resource.getMessage());
+    }
+
+    @Test
+    void handleHttpMessageNotReadableException() {
+        // given
+        HttpMessageNotReadableException exceptionMock = Mockito.mock(HttpMessageNotReadableException.class);
+        Mockito.when(exceptionMock.getMessage())
+                .thenReturn(DETAIL_MESSAGE);
+        // when
+        ErrorResource resource = handler.handleHttpMessageNotReadableException(exceptionMock);
         // then
         assertNotNull(resource);
         assertEquals(DETAIL_MESSAGE, resource.getMessage());
