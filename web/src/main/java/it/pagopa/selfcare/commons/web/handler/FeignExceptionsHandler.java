@@ -3,6 +3,8 @@ package it.pagopa.selfcare.commons.web.handler;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,6 +18,7 @@ import static it.pagopa.selfcare.commons.web.handler.RestExceptionsHandler.UNHAN
 
 @Slf4j
 @RestControllerAdvice
+@Order(Ordered.LOWEST_PRECEDENCE - 1)
 @ConditionalOnClass(FeignException.class)
 public class FeignExceptionsHandler {
 
