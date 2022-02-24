@@ -67,15 +67,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // TODO: configure CORS (if required)
-//        CorsConfiguration corsConfiguration = new CorsConfiguration();
-//        corsConfiguration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
-//        corsConfiguration.setAllowedOrigins(List.of("*"));
-//        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PUT","OPTIONS","PATCH", "DELETE"));
-//        corsConfiguration.setAllowCredentials(true);
-//        corsConfiguration.setExposedHeaders(List.of("Authorization"));
-//        http.cors().configurationSource(request -> corsConfiguration)
-
         http.authorizeRequests()
                 .anyRequest().fullyAuthenticated()
                 .and()
@@ -101,14 +92,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .x509().disable()
                 .addFilterBefore(new JwtAuthenticationFilter(getApplicationContext().getBean(AuthenticationManager.class)), UsernamePasswordAuthenticationFilter.class);
     }
-
-
-    // TODO: configure CORS (if required)
-//    @Bean
-//    protected CorsConfigurationSource corsConfigurationSource() {
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
-//        return source;
-//    }
 
 }

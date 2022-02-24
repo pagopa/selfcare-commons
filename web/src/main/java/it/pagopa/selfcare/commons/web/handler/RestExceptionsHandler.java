@@ -36,6 +36,10 @@ public class RestExceptionsHandler {
     public static final String UNHANDLED_EXCEPTION = "unhandled exception: ";
 
 
+    public RestExceptionsHandler() {
+        log.trace("Initializing {}", RestExceptionsHandler.class.getSimpleName());
+    }
+
     @ExceptionHandler({Exception.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     ErrorResource handleThrowable(Throwable e) {
