@@ -51,7 +51,7 @@ class JwtAuthenticationTokenTest {
     void JwtAuthenticationToken_authenticated() {
         // given
         String token = "token";
-        SelfCareUser user = SelfCareUser.builder("id").build();
+        SelfCareUser user = SelfCareUser.builder("id").surname("surname").name("name").email("email").build();
         SimpleGrantedAuthority grantedAuthority = new SimpleGrantedAuthority("role");
         // when
         JwtAuthenticationToken authentication = new JwtAuthenticationToken(token, user, List.of(grantedAuthority));

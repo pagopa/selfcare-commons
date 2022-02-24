@@ -19,6 +19,11 @@ import static it.pagopa.selfcare.commons.web.handler.RestExceptionsHandler.UNHAN
 @ConditionalOnClass(FeignException.class)
 public class FeignExceptionsHandler {
 
+    public FeignExceptionsHandler() {
+        log.trace("Initializing {}", FeignExceptionsHandler.class.getSimpleName());
+    }
+
+
     @ExceptionHandler(FeignException.class)
     public ResponseEntity<String> handleFeignException(FeignException e) {
         HttpHeaders httpHeaders = new HttpHeaders();
