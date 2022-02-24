@@ -2,6 +2,7 @@ package it.pagopa.selfcare.commons.web.handler;
 
 import it.pagopa.selfcare.commons.web.model.ErrorResource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -27,6 +28,7 @@ import java.util.Map;
  * The Class RestExceptionsHandler.
  */
 @Slf4j
+@Order
 @RestControllerAdvice
 public class RestExceptionsHandler {
 
