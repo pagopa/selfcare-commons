@@ -8,6 +8,7 @@ import it.pagopa.selfcare.commons.connector.rest.interceptor.QueryParamsPlusEnco
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.cloud.openfeign.support.PageableSpringEncoder;
 import org.springframework.cloud.openfeign.support.ResponseEntityDecoder;
 import org.springframework.cloud.openfeign.support.SpringDecoder;
 import org.springframework.cloud.openfeign.support.SpringEncoder;
@@ -44,7 +45,7 @@ public class RestClientBaseConfig {
         MappingJackson2HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(objectMapper);
         ObjectFactory<HttpMessageConverters> objectFactory = () -> new HttpMessageConverters(jacksonConverter);
 
-        return new SpringEncoder(objectFactory);
+        return new PageableSpringEncoder(new SpringEncoder(objectFactory));
     }
 
 }
