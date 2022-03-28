@@ -33,6 +33,7 @@ public class FeignExceptionsHandler {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
         HttpStatus httpStatus = Optional.ofNullable(HttpStatus.resolve(e.status()))
+                .filter(status -> !status.is2xxSuccessful())
                 .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
         if (httpStatus.is4xxClientError()) {
             log.warn(UNHANDLED_EXCEPTION, e);
