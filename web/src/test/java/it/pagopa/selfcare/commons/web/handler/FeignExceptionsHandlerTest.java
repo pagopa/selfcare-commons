@@ -20,7 +20,7 @@ class FeignExceptionsHandlerTest {
 
 
     @ParameterizedTest
-    @EnumSource(value = HttpStatus.class, names = {"BAD_REQUEST", "INTERNAL_SERVER_ERROR"})
+    @EnumSource(value = HttpStatus.class, names = {"BAD_REQUEST", "INTERNAL_SERVER_ERROR", "OK"})
     void handleFeignException(HttpStatus httpStatus) {
         // given
         String content = "content";
@@ -34,6 +34,6 @@ class FeignExceptionsHandlerTest {
         // then
         assertNotNull(responseEntity);
         assertEquals(content, responseEntity.getBody());
-        assertEquals(httpStatus, responseEntity.getStatusCode());
+        assertEquals(httpStatus.is2xxSuccessful() ? HttpStatus.INTERNAL_SERVER_ERROR : httpStatus, responseEntity.getStatusCode());
     }
 }
