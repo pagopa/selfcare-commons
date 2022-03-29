@@ -7,6 +7,8 @@ import feign.codec.Encoder;
 import it.pagopa.selfcare.commons.connector.rest.interceptor.QueryParamsPlusEncoderInterceptor;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.openfeign.support.PageableSpringEncoder;
 import org.springframework.cloud.openfeign.support.ResponseEntityDecoder;
@@ -41,7 +43,17 @@ public class RestClientBaseConfig {
 
 
     @Bean
+    @ConditionalOnMissingClass("org.springframework.data.domain.Pageable")
     public Encoder feignEncoder(ObjectMapper objectMapper) {
+        MappingJackson2HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(objectMapper);
+        ObjectFactory<HttpMessageConverters> objectFactory = () -> new HttpMessageConverters(jacksonConverter);
+
+        return new SpringEncoder(objectFactory);
+    }
+
+    @Bean
+    @ConditionalOnClass(name = "org.springframework.data.domain.Pageable")
+    public Encoder feignEncoderPageable(ObjectMapper objectMapper) {
         MappingJackson2HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(objectMapper);
         ObjectFactory<HttpMessageConverters> objectFactory = () -> new HttpMessageConverters(jacksonConverter);
 
