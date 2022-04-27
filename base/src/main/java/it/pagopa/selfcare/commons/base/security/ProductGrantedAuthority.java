@@ -45,9 +45,9 @@ public class ProductGrantedAuthority implements GrantedAuthority {
 
     public static final BinaryOperator<ProductGrantedAuthority> MERGE = (o1, o2) -> {
         Assert.state(o1.getAuthority().equals(o2.getAuthority()), "Multirole on product is allowed only for same PartyRole");
-        ArrayList<String> productRoles = new ArrayList<>(o1.getProductRoles());
-        productRoles.addAll(o2.getProductRoles());
-        return o1.toBuilder().productRoles(productRoles).build();
+        ArrayList<String> roles = new ArrayList<>(o1.getProductRoles());
+        roles.addAll(o2.getProductRoles());
+        return o1.toBuilder().productRoles(roles).build();
     };
 
 }

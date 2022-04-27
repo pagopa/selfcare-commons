@@ -93,8 +93,8 @@ class ProductGrantedAuthorityTest {
         String productRole1 = "productRole1";
         String productRole2 = "productRole2";
         String productId = "productId";
-        ProductGrantedAuthority authority1 = new ProductGrantedAuthority(selcRole, List.of(productRole1), productId);
-        ProductGrantedAuthority authority2 = new ProductGrantedAuthority(selcRole, List.of(productRole2), productId);
+        ProductGrantedAuthority authority1 = new ProductGrantedAuthority(selcRole, productRole1, productId);
+        ProductGrantedAuthority authority2 = new ProductGrantedAuthority(selcRole, productRole2, productId);
         // when
         ProductGrantedAuthority merged = ProductGrantedAuthority.MERGE.apply(authority1, authority2);
         // then
