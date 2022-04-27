@@ -46,9 +46,9 @@ class SelfCareGrantedAuthorityTest {
         // given
         String institutionId = "institutionId";
         ProductGrantedAuthority productRole1 =
-                TestUtils.mockInstance(new ProductGrantedAuthority(ADMIN, "productRole1", "productId1"), 1);
+                TestUtils.mockInstance(new ProductGrantedAuthority(ADMIN, List.of("productRole1"), "productId1"), 1);
         ProductGrantedAuthority productRole2 =
-                TestUtils.mockInstance(new ProductGrantedAuthority(LIMITED, "productRole2", "productId2"), 2);
+                TestUtils.mockInstance(new ProductGrantedAuthority(LIMITED, List.of("productRole2"), "productId2"), 2);
         Collection<ProductGrantedAuthority> roleOnProducts =
                 List.of(productRole1, productRole2);
         // when
