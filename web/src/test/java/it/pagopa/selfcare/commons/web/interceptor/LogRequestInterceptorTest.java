@@ -40,7 +40,7 @@ class LogRequestInterceptorTest {
         boolean result = logRequestInterceptorUnderTest.preHandle(mockHttpServletRequest, mockHttpServletResponse, "controller");
         // then
         Assertions.assertTrue(result);
-        Assertions.assertEquals(0, output.length());
+        Assertions.assertTrue(output.getOut().isEmpty());
     }
 
 }

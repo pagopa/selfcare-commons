@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.commons.utils;
 
 import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.util.StringUtils;
 
@@ -21,26 +22,8 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+@Slf4j
 public final class TestUtils {
-    public static final String ANSI_BRIGHT_BLACK = "\u001B[90m";
-
-    public static final String ANSI_RESET = "\u001B[0m";
-
-    public static final String ANSI_BLACK = "\u001B[30m";
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_YELLOW = "\u001B[33m";
-    public static final String ANSI_BLUE = "\u001B[34m";
-    public static final String ANSI_PURPLE = "\u001B[35m";
-    public static final String ANSI_CYAN = "\u001B[36m";
-    public static final String ANSI_WHITE = "\u001B[37m";
-    public static final String ANSI_BRIGHT_RED = "\u001B[91m";
-    public static final String ANSI_BRIGHT_GREEN = "\u001B[92m";
-    public static final String ANSI_BRIGHT_BLUE = "\u001B[94m";
-    public static final String ANSI_BRIGHT_YELLOW = "\u001B[93m";
-    public static final String ANSI_BRIGHT_CYAN = "\u001B[96m";
-    public static final String ANSI_BRIGHT_PURPLE = "\u001B[95m";
-    public static final String ANSI_BRIGHT_WHITE = "\u001B[97m";
 
     private TestUtils() {
     }
@@ -76,7 +59,7 @@ public final class TestUtils {
             }
 
             if (logCombination) {
-                System.out.printf("Executing using combination indexes: %s%n", combinationIndexes.stream().map(Object::toString).collect(Collectors.joining(";")));
+                log.debug("Executing using combination indexes: {}", combinationIndexes.stream().map(Object::toString).collect(Collectors.joining(";")));
             }
 
             consumeCombination.accept(new CombinationIndex(i, combinations), object);
@@ -136,19 +119,21 @@ public final class TestUtils {
                         m.invoke(o, ZonedDateTime.now());
                     } else if (OffsetDateTime.class.isAssignableFrom(type)) {
                         m.invoke(o, OffsetDateTime.now());
+                    } else if (UUID.class.isAssignableFrom(type)) {
+                        m.invoke(o, UUID.randomUUID());
                     } else {
                         try {
                             if (checkPrintLevel(printLevel, Level.INFO)) {
-                                System.out.printf("Mocking object %s%n", type);
+                                log.debug("Mocking object {}", type);
                             }
-                            m.invoke(o, mockInstance(type.newInstance(), bias));
+                            m.invoke(o, mockInstance(type.getDeclaredConstructor().newInstance(), bias));
                         } catch (Exception e) {
                             if (checkPrintLevel(printLevel, Level.WARNING)) {
                                 String errorMessage = e.getMessage();
                                 if (e instanceof InvocationTargetException) {
                                     errorMessage = ((InvocationTargetException) e).getTargetException().getMessage();
                                 }
-                                System.out.println(String.format("[WARNING] Cannot mock using setter %s accepting type %s: %s - %s", m.getName(), type.getName(), e.getClass().getName(), errorMessage));
+                                log.warn("Cannot mock using setter {} accepting type {}: {}} - {}", m.getName(), type.getName(), e.getClass().getName(), errorMessage);
                             }
                         }
                     }
@@ -230,7 +215,7 @@ public final class TestUtils {
 
                         Assertions.assertTrue(result, String.format("Invalid compare between methods%n%s = %s%n%s = %s", m1.toString(), v1, m2.toString(), v2));
                     } catch (NoSuchMethodException e) {
-                        System.out.println(String.format("[WARNING] Method %s is not defined in %s%n%s", m1.toString(), o2.getClass().getName(), e.getMessage()));
+                        log.warn("Method {} is not defined in {}{}", m1.toString(), o2.getClass().getName(), e.getMessage());
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         throw new IllegalStateException(String.format("[ERROR] Something gone wrong comparing %s with %s%n%s", m1.toString(), m2.toString(), e.getMessage()));
                     }
