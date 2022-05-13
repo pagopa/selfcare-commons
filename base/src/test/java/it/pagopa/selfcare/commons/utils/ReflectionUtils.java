@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.lang.reflect.*;
 import java.math.BigInteger;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -43,7 +41,7 @@ public class ReflectionUtils {
      * @param clazz the clazz
      * @return the field
      */
-    public Field getField(String name, Class clazz) {
+    public Field getField(String name, Class<?> clazz) {
         if (name != null && clazz != null) {
             try {
                 Field f = clazz.getDeclaredField(name);
@@ -63,7 +61,7 @@ public class ReflectionUtils {
      * @param clazz the clazz
      * @return the object
      */
-    public Object newInstance(Class clazz) {
+    public Object newInstance(Class<?> clazz) {
         if (clazz != null) {
             try {
                 return clazz.newInstance();
@@ -101,7 +99,7 @@ public class ReflectionUtils {
      * @param genericIndex the generic index
      * @return the generic type class
      */
-    public static final Object getGenericTypeClass(Class myclass, int genericIndex) {
+    public static Object getGenericTypeClass(Class<?> myclass, int genericIndex) {
         try {
             Type actualType = ((ParameterizedType) myclass.getGenericSuperclass()).getActualTypeArguments()[genericIndex];
             if (actualType instanceof Class) {
@@ -121,7 +119,7 @@ public class ReflectionUtils {
     /**
      * It will transform the input enum into a String, using the same logic of Jackson
      */
-    public static String enum2String(Enum o) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public static String enum2String(Enum<?> o) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         final Object result = enum2Object(o);
 
         return result != null ? result.toString() : null;
@@ -130,7 +128,7 @@ public class ReflectionUtils {
     /**
      * It will transform the input enum into a BigInteger, using the same logic of Jackson
      */
-    public static BigInteger enum2BigInteger(Enum o) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public static BigInteger enum2BigInteger(Enum<?> o) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         final Object result = enum2Object(o);
 
         return result != null ? new BigInteger(result.toString()) : null;
@@ -139,7 +137,7 @@ public class ReflectionUtils {
     /**
      * It will transform the input enum into an Object, using the same logic of Jackson
      */
-    private static Object enum2Object(Enum o) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    private static Object enum2Object(Enum<?> o) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Method jsonValueMethod = null;
         for (Method m : o.getClass().getMethods()) {
             if (m.getAnnotation(JsonValue.class) != null) {
@@ -158,7 +156,7 @@ public class ReflectionUtils {
     /**
      * It will transform the input string into an Enum, using the same logic of Jackson
      */
-    public static <T extends Enum> T string2Enum(String o, Class<T> enumClass) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public static <T extends Enum<?>> T string2Enum(String o, Class<T> enumClass) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Method enumCreatorMethod = null;
         for (Method m : enumClass.getMethods()) {
             if (m.getAnnotation(JsonCreator.class) != null) {
@@ -178,16 +176,15 @@ public class ReflectionUtils {
     private static final Map<Class<?>, Class<?>> primitiveWrapperMap;
 
     static {
-        Map<Class<?>, Class<?>> tmp = new HashMap<>();
-        tmp.put(boolean.class, Boolean.class);
-        tmp.put(byte.class, Byte.class);
-        tmp.put(char.class, Character.class);
-        tmp.put(double.class, Double.class);
-        tmp.put(float.class, Float.class);
-        tmp.put(int.class, Integer.class);
-        tmp.put(long.class, Long.class);
-        tmp.put(short.class, Short.class);
-        primitiveWrapperMap = Collections.unmodifiableMap(tmp);
+        primitiveWrapperMap = Map.of(
+                boolean.class, Boolean.class,
+                byte.class, Byte.class,
+                char.class, Character.class,
+                double.class, Double.class,
+                float.class, Float.class,
+                int.class, Integer.class,
+                long.class, Long.class,
+                short.class, Short.class);
     }
 
     /**
