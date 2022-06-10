@@ -11,7 +11,7 @@ import springfox.documentation.spi.DocumentationType;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-public class ServerSwaggerConfiguration implements WebMvcOpenApiTransformationFilter {
+public class ServerSwaggerConfig implements WebMvcOpenApiTransformationFilter {
 
     @Override
     public OpenAPI transform(OpenApiTransformationContext<HttpServletRequest> context) {

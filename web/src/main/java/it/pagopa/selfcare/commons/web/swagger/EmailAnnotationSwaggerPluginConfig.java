@@ -14,7 +14,7 @@ import javax.validation.constraints.Email;
 import java.util.Optional;
 
 @Order(SwaggerPluginSupport.SWAGGER_PLUGIN_ORDER)
-public class EmailAnnotationSwaggerPlugin implements ModelPropertyBuilderPlugin {
+public class EmailAnnotationSwaggerPluginConfig implements ModelPropertyBuilderPlugin {
 
     private static final ModelSpecification EMAIL_MODEL_SPEC = new ModelSpecificationBuilder()
             .scalarModel(ScalarType.EMAIL)
