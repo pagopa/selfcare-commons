@@ -1,5 +1,7 @@
 package it.pagopa.selfcare.commons.web.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.commons.web.security.AuthoritiesRetriever;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationFilter;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationProvider;
@@ -7,9 +9,11 @@ import it.pagopa.selfcare.commons.web.security.JwtService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,6 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Slf4j
 @PropertySource("classpath:config/jwt.properties")
 @ComponentScan(basePackages = "it.pagopa.selfcare.commons.web.security")
+@Import(BaseWebConfig.class)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] AUTH_WHITELIST = {
@@ -36,11 +41,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtService jwtService;
     private final AuthoritiesRetriever authoritiesRetriever;
+    private final ObjectMapper objectMapper;
 
 
-    public SecurityConfig(JwtService jwtService, AuthoritiesRetriever authoritiesRetriever) {
+    public SecurityConfig(JwtService jwtService, AuthoritiesRetriever authoritiesRetriever, ObjectMapper objectMapper) {
         this.jwtService = jwtService;
         this.authoritiesRetriever = authoritiesRetriever;
+        this.objectMapper = objectMapper;
     }
 
 
@@ -74,11 +81,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
                     log.error("{} to resource {}", accessDeniedException.getMessage(), request.getRequestURI());
                     response.setStatus(HttpStatus.FORBIDDEN.value());
+                    response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
+                    final Problem problem = new Problem(HttpStatus.FORBIDDEN, accessDeniedException.getMessage());
+                    response.getOutputStream().print(objectMapper.writeValueAsString(problem));
                 })
                 .authenticationEntryPoint((request, response, authException) -> {
                     log.error("{} {}", authException.getMessage(), request.getRequestURI());
                     response.addHeader(HttpHeaders.WWW_AUTHENTICATE, "Bearer realm=\"selfcare\"");
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                    response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
+                    final Problem problem = new Problem(HttpStatus.UNAUTHORIZED, authException.getMessage());
+                    response.getOutputStream().print(objectMapper.writeValueAsString(problem));
                 })
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()

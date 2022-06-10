@@ -1,28 +1,26 @@
 package it.pagopa.selfcare.commons.web.handler;
 
-import it.pagopa.selfcare.commons.web.model.ErrorResource;
+import it.pagopa.selfcare.commons.web.model.Problem;
+import it.pagopa.selfcare.commons.web.model.mapper.ProblemMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import javax.servlet.ServletException;
 import javax.validation.ValidationException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.springframework.http.HttpStatus.*;
 
 /**
  * The Class RestExceptionsHandler.
@@ -32,9 +30,6 @@ import java.util.Map;
 @RestControllerAdvice
 public class RestExceptionsHandler {
 
-    /**
-     * The Constant UNHANDLED_EXCEPTION.
-     */
     public static final String UNHANDLED_EXCEPTION = "unhandled exception: ";
 
 
@@ -42,97 +37,57 @@ public class RestExceptionsHandler {
         log.trace("Initializing {}", RestExceptionsHandler.class.getSimpleName());
     }
 
+
     @ExceptionHandler({Exception.class})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    ErrorResource handleThrowable(Throwable e) {
+    ResponseEntity<Problem> handleThrowable(Throwable e) {
         log.error(UNHANDLED_EXCEPTION, e);
-        return new ErrorResource(e.getMessage());
+        return ProblemMapper.toResponseEntity(new Problem(INTERNAL_SERVER_ERROR, e.getMessage()));
     }
 
 
-    @ExceptionHandler({ValidationException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    ErrorResource handleValidationException(ValidationException e) {
-        log.warn(e.getMessage());
-        return new ErrorResource(e.getMessage());
-    }
-
-
-    @ExceptionHandler({BindException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    ErrorResource handleBindException(BindException e) {
-        log.warn(e.getMessage());
-        return new ErrorResource(e.getMessage());
-    }
-
-
-    @ExceptionHandler({ServletException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    ErrorResource handleServletException(ServletException e) {
-        log.warn(e.getMessage());
-        return new ErrorResource(e.getMessage());
+    @ExceptionHandler({
+            ValidationException.class,
+            BindException.class,
+            ServletException.class,
+            MethodArgumentTypeMismatchException.class,
+            MaxUploadSizeExceededException.class,
+            HttpMessageNotReadableException.class
+    })
+    ResponseEntity<Problem> handleBadRequestException(Exception e) {
+        log.warn(e.toString());
+        return ProblemMapper.toResponseEntity(new Problem(BAD_REQUEST, e.getMessage()));
     }
 
 
     @ExceptionHandler({HttpMediaTypeNotAcceptableException.class})
-    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
-    ErrorResource handleHttpMediaTypeNotAcceptableException(HttpMediaTypeNotAcceptableException e) {
-        log.warn(e.getMessage());
-        return new ErrorResource(e.getMessage());
+    ResponseEntity<Problem> handleHttpMediaTypeNotAcceptableException(HttpMediaTypeNotAcceptableException e) {
+        log.warn(e.toString());
+        return ProblemMapper.toResponseEntity(new Problem(NOT_ACCEPTABLE, e.getMessage()));
     }
 
 
     @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
-    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
-    ErrorResource handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
-        log.warn(e.getMessage());
-        return new ErrorResource(e.getMessage());
-    }
-
-
-    @ExceptionHandler({MethodArgumentTypeMismatchException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    ErrorResource handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
-        log.warn(e.getMessage());
-        return new ErrorResource(e.getMessage());
-    }
-
-
-    @ExceptionHandler({MaxUploadSizeExceededException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    ErrorResource handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
-        log.warn(e.getMessage());
-        return new ErrorResource(e.getMessage());
+    ResponseEntity<Problem> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+        log.warn(e.toString());
+        return ProblemMapper.toResponseEntity(new Problem(METHOD_NOT_ALLOWED, e.getMessage()));
     }
 
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    ErrorResource handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        Map<String, List<String>> errorMessage = new HashMap<>();
-        e.getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            errorMessage.computeIfAbsent(fieldName, s -> new ArrayList<>())
-                    .add(error.getCode() + " constraint violation");
-        });
-        log.warn(errorMessage.toString());
-        return new ErrorResource(errorMessage.toString());
+    ResponseEntity<Problem> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        final Problem problem = new Problem(BAD_REQUEST, "Validation failed");
+        problem.setInvalidParams(e.getFieldErrors().stream()
+                .map(fieldError -> new Problem.InvalidParam(fieldError.getObjectName() + "." + fieldError.getField(), fieldError.getDefaultMessage()))
+                .collect(Collectors.toList()));
+        log.warn(e.toString());
+        return ProblemMapper.toResponseEntity(problem);
     }
 
 
     @ExceptionHandler({AccessDeniedException.class})
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    ErrorResource handleAccessDeniedException(AccessDeniedException e) {
-        log.warn(e.getMessage());
-        return new ErrorResource(e.getMessage());
-    }
-
-
-    @ExceptionHandler({HttpMessageNotReadableException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    ErrorResource handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        log.warn(e.getMessage());
-        return new ErrorResource(e.getMessage());
+    ResponseEntity<Problem> handleAccessDeniedException(AccessDeniedException e) {
+        log.warn(e.toString());
+        return ProblemMapper.toResponseEntity(new Problem(FORBIDDEN, e.getMessage()));
     }
 
 }
