@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.commons.web.handler;
 
 import feign.FeignException;
+import it.pagopa.selfcare.commons.web.model.Problem;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
@@ -30,10 +31,11 @@ class FeignExceptionsHandlerTest {
         Mockito.when(exceptionMock.status())
                 .thenReturn(httpStatus.value());
         // when
-        ResponseEntity<String> responseEntity = handler.handleFeignException(exceptionMock);
+        ResponseEntity<Problem> responseEntity = handler.handleFeignException(exceptionMock);
         // then
         assertNotNull(responseEntity);
-        assertEquals(content, responseEntity.getBody());
         assertEquals(httpStatus.is2xxSuccessful() ? HttpStatus.INTERNAL_SERVER_ERROR : httpStatus, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
+        assertEquals(content, responseEntity.getBody().getDetail());
     }
 }

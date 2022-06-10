@@ -1,13 +1,13 @@
 package it.pagopa.selfcare.commons.web.handler;
 
 import feign.FeignException;
+import it.pagopa.selfcare.commons.web.model.Problem;
+import it.pagopa.selfcare.commons.web.model.mapper.ProblemMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -28,21 +28,16 @@ public class FeignExceptionsHandler {
 
 
     @ExceptionHandler(FeignException.class)
-    public ResponseEntity<String> handleFeignException(FeignException e) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-
+    public ResponseEntity<Problem> handleFeignException(FeignException e) {
         HttpStatus httpStatus = Optional.ofNullable(HttpStatus.resolve(e.status()))
                 .filter(status -> !status.is2xxSuccessful())
                 .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
         if (httpStatus.is4xxClientError()) {
-            log.warn(UNHANDLED_EXCEPTION, e);
-
+            log.warn(e.toString());
         } else {
             log.error(UNHANDLED_EXCEPTION, e);
         }
-
-        return new ResponseEntity<>(e.contentUTF8(), httpHeaders, httpStatus);
+        return ProblemMapper.toResponseEntity(new Problem(httpStatus, "An error occurred during a downstream service request"));
     }
 
 }
