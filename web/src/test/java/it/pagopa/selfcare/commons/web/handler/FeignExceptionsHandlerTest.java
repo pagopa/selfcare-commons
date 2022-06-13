@@ -24,10 +24,7 @@ class FeignExceptionsHandlerTest {
     @EnumSource(value = HttpStatus.class, names = {"BAD_REQUEST", "INTERNAL_SERVER_ERROR", "OK"})
     void handleFeignException(HttpStatus httpStatus) {
         // given
-        String content = "content";
         FeignException exceptionMock = Mockito.mock(FeignException.class);
-        Mockito.when(exceptionMock.contentUTF8())
-                .thenReturn(content);
         Mockito.when(exceptionMock.status())
                 .thenReturn(httpStatus.value());
         // when
@@ -36,6 +33,7 @@ class FeignExceptionsHandlerTest {
         assertNotNull(responseEntity);
         assertEquals(httpStatus.is2xxSuccessful() ? HttpStatus.INTERNAL_SERVER_ERROR : httpStatus, responseEntity.getStatusCode());
         assertNotNull(responseEntity.getBody());
-        assertEquals(content, responseEntity.getBody().getDetail());
+        assertEquals("An error occurred during a downstream service request", responseEntity.getBody().getDetail());
     }
+
 }
