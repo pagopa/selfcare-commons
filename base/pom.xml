@@ -5,10 +5,23 @@
     <parent>
         <artifactId>selc-commons</artifactId>
         <groupId>it.pagopa.selfcare</groupId>
-        <version>1.5.1</version>
+        <version>1.6.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>selc-commons-base</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.qos.logback.contrib</groupId>
+            <artifactId>logback-json-classic</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback.contrib</groupId>
+            <artifactId>logback-jackson</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
 
 </project>
