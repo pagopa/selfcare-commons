@@ -16,15 +16,18 @@ public class ServerSwaggerConfig implements WebMvcOpenApiTransformationFilter {
     @Override
     public OpenAPI transform(OpenApiTransformationContext<HttpServletRequest> context) {
         OpenAPI openApi = context.getSpecification();
-        final ServerVariable basePathVariable = new ServerVariable();
-        basePathVariable.setDefault("http://localhost");
+        final ServerVariable urlVariable = new ServerVariable();
+        urlVariable.setDefault("http://localhost");
         final ServerVariable portVariable = new ServerVariable();
         portVariable.setDefault("8080");
+        final ServerVariable basePathVariable = new ServerVariable();
+        basePathVariable.setDefault("");
         final ServerVariables serverVariables = new ServerVariables();
-        serverVariables.addServerVariable("basePath", basePathVariable);
+        serverVariables.addServerVariable("url", urlVariable);
         serverVariables.addServerVariable("port", portVariable);
+        serverVariables.addServerVariable("basePath", basePathVariable);
         Server server = new Server();
-        server.setUrl("{basePath}:{port}");
+        server.setUrl("{url}:{port}{basePath}");
         server.setVariables(serverVariables);
         openApi.setServers(List.of(server));
         return openApi;
