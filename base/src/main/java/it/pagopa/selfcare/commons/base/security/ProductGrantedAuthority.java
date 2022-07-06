@@ -15,23 +15,24 @@ import java.util.function.BinaryOperator;
 @Builder(access = AccessLevel.PRIVATE, toBuilder = true)
 public class ProductGrantedAuthority implements GrantedAuthority {
 
-    private final SelfCareAuthority selfCareAuthority;
+    @Getter
+    private final PartyRole partyRole;
     @Getter
     private final Collection<String> productRoles;
     @Getter
     private final String productId;
 
 
-    public ProductGrantedAuthority(SelfCareAuthority selfCareAuthority, String productRole, String productId) {
-        this(selfCareAuthority, List.of(productRole), productId);
+    public ProductGrantedAuthority(PartyRole partyRole, String productRole, String productId) {
+        this(partyRole, List.of(productRole), productId);
     }
 
 
-    public ProductGrantedAuthority(SelfCareAuthority selfCareAuthority, Collection<String> productRoles, String productId) {
-        Assert.notNull(selfCareAuthority, "A Self Care granted authority is required");
+    public ProductGrantedAuthority(PartyRole partyRole, Collection<String> productRoles, String productId) {
+        Assert.notNull(partyRole, "A Party Role is required");
         Assert.notEmpty(productRoles, "At least one Product granted authority textual representation is required");
         Assert.hasText(productId, "A Product id is required");
-        this.selfCareAuthority = selfCareAuthority;
+        this.partyRole = partyRole;
         this.productRoles = Collections.unmodifiableCollection(productRoles);
         this.productId = productId;
     }
@@ -39,7 +40,7 @@ public class ProductGrantedAuthority implements GrantedAuthority {
 
     @Override
     public String getAuthority() {
-        return selfCareAuthority.name();
+        return partyRole.getSelfCareAuthority().name();
     }
 
 
