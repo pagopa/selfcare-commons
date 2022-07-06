@@ -1,6 +1,5 @@
 package it.pagopa.selfcare.commons.base.security;
 
-import it.pagopa.selfcare.commons.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -9,8 +8,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import static it.pagopa.selfcare.commons.base.security.PartyRole.MANAGER;
+import static it.pagopa.selfcare.commons.base.security.PartyRole.OPERATOR;
 import static it.pagopa.selfcare.commons.base.security.SelfCareAuthority.ADMIN;
 import static it.pagopa.selfcare.commons.base.security.SelfCareAuthority.LIMITED;
+import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SelfCareGrantedAuthorityTest {
@@ -46,9 +48,9 @@ class SelfCareGrantedAuthorityTest {
         // given
         String institutionId = "institutionId";
         ProductGrantedAuthority productRole1 =
-                TestUtils.mockInstance(new ProductGrantedAuthority(ADMIN, List.of("productRole1"), "productId1"), 1);
+                mockInstance(new ProductGrantedAuthority(MANAGER, List.of("productRole1"), "productId1"), 1);
         ProductGrantedAuthority productRole2 =
-                TestUtils.mockInstance(new ProductGrantedAuthority(LIMITED, List.of("productRole2"), "productId2"), 2);
+                mockInstance(new ProductGrantedAuthority(OPERATOR, List.of("productRole2"), "productId2"), 2);
         Collection<ProductGrantedAuthority> roleOnProducts =
                 List.of(productRole1, productRole2);
         // when
@@ -65,9 +67,9 @@ class SelfCareGrantedAuthorityTest {
         // given
         String institutionId = "institutionId";
         ProductGrantedAuthority productRole1 =
-                TestUtils.mockInstance(new ProductGrantedAuthority(LIMITED, "productRole1", "productId1"), 1);
+                mockInstance(new ProductGrantedAuthority(OPERATOR, "productRole1", "productId1"), 1);
         ProductGrantedAuthority productRole2 =
-                TestUtils.mockInstance(new ProductGrantedAuthority(LIMITED, "productRole2", "productId2"), 2);
+                mockInstance(new ProductGrantedAuthority(OPERATOR, "productRole2", "productId2"), 2);
         Collection<ProductGrantedAuthority> roleOnProducts =
                 List.of(productRole1, productRole2);
         // when
