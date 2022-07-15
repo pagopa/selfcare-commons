@@ -98,7 +98,7 @@ class JwtAuthenticationFilterTest {
         HttpServletRequest requestMock = mock(HttpServletRequest.class);
         when(requestMock.getHeader(eq(HttpHeaders.AUTHORIZATION)))
                 .thenReturn("Bearer " + token);
-        doThrow(RuntimeException.class)
+        doThrow(JwtAuthenticationException.class)
                 .when(authenticationManagerMock)
                 .authenticate(any());
         String mdcKey = "key";

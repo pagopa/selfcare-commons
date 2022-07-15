@@ -103,7 +103,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anonymous().disable()
                 .rememberMe().disable()
                 .x509().disable()
-                .addFilterBefore(new JwtAuthenticationFilter(getApplicationContext().getBean(AuthenticationManager.class)), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(getApplicationContext().getBean(AuthenticationManager.class), objectMapper), UsernamePasswordAuthenticationFilter.class);
     }
 
 }
