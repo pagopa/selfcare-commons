@@ -6,8 +6,4 @@ public class AuthoritiesRetrieverException extends RuntimeException {
         super(msg, cause);
     }
 
-    public AuthoritiesRetrieverException(String msg) {
-        super(msg);
-    }
-
 }
