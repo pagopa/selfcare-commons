@@ -81,7 +81,7 @@ class JwtAuthenticationProviderTest {
         // when
         Executable executable = () -> jwtAuthenticationProvider.authenticate(authentication);
         // then
-        Assertions.assertThrows(JwtAuthenticationException.class, executable);
+        Assertions.assertThrows(AuthoritiesRetrieverException.class, executable);
         Assertions.assertNull(MDC.get(MDC_UID));
         Mockito.verify(jwtServiceMock, Mockito.times(1))
                 .getClaims(token);

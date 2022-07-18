@@ -1,10 +1,15 @@
 package it.pagopa.selfcare.commons.web.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.selfcare.commons.web.model.Problem;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -15,32 +20,44 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static it.pagopa.selfcare.commons.web.handler.RestExceptionsHandler.UNHANDLED_EXCEPTION;
+
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final AuthenticationManager authenticationManager;
+    private final ObjectMapper objectMapper;
 
 
-    public JwtAuthenticationFilter(final AuthenticationManager authenticationManager) {
+    public JwtAuthenticationFilter(final AuthenticationManager authenticationManager,
+                                   final ObjectMapper objectMapper) {
         this.authenticationManager = authenticationManager;
+        this.objectMapper = objectMapper;
     }
 
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(final HttpServletRequest request,
+                                    final HttpServletResponse response,
+                                    final FilterChain filterChain) throws ServletException, IOException {
         log.trace("doFilterInternal");
         try {
 
             try {
-                JwtAuthenticationToken authRequest = new JwtAuthenticationToken(parseJwt(request));
-                Authentication authentication = authenticationManager.authenticate(authRequest);
+                final JwtAuthenticationToken authRequest = new JwtAuthenticationToken(parseJwt(request));
+                final Authentication authentication = authenticationManager.authenticate(authRequest);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            } catch (RuntimeException e) {
+                filterChain.doFilter(request, response);
+            } catch (AuthenticationException e) {
                 log.error("Cannot set user authentication", e);
+                filterChain.doFilter(request, response);
+            } catch (final Exception e) {
+                log.error(UNHANDLED_EXCEPTION, e);
+                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+                response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
+                final Problem problem = new Problem(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+                response.getOutputStream().print(objectMapper.writeValueAsString(problem));
             }
-
-            filterChain.doFilter(request, response);
 
         } finally {
             SecurityContextHolder.clearContext();
