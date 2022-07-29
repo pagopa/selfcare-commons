@@ -2,7 +2,7 @@ package it.pagopa.selfcare.commons.web.swagger;
 
 import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.classmate.TypeResolver;
-import org.springframework.core.env.Environment;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Pageable;
 import springfox.documentation.builders.RequestParameterBuilder;
 import springfox.documentation.schema.ScalarType;
@@ -18,13 +18,13 @@ import java.util.List;
 
 public class PageableParameterConfig implements OperationBuilderPlugin {
 
-    private final Environment environment;
+    private final SpringDataWebProperties springDataWebProperties;
     private final TypeResolver resolver;
 
 
-    public PageableParameterConfig(Environment environment,
+    public PageableParameterConfig(SpringDataWebProperties springDataWebProperties,
                                    TypeResolver resolver) {
-        this.environment = environment;
+        this.springDataWebProperties = springDataWebProperties;
         this.resolver = resolver;
     }
 
@@ -38,21 +38,25 @@ public class PageableParameterConfig implements OperationBuilderPlugin {
             if (pageableType.equals(resolvedType)) {
                 parameters.add(new RequestParameterBuilder()
                         .in(ParameterType.QUERY)
-                        .name("page")
+                        .name(springDataWebProperties.getPageable().getPageParameter())
                         .query(q -> q.model(m -> m.scalarModel(ScalarType.INTEGER)))
-                        .description("Results page you want to retrieve (0..N)").build());
+                        .description(String.format("The page number to access (%s indexed, defaults to %s)",
+                                springDataWebProperties.getPageable().isOneIndexedParameters() ? "1" : "0",
+                                springDataWebProperties.getPageable().isOneIndexedParameters() ? "1" : "0"))
+                        .build());
                 parameters.add(new RequestParameterBuilder()
                         .in(ParameterType.QUERY)
-                        .name("size")
+                        .name(springDataWebProperties.getPageable().getSizeParameter())
                         .query(q -> q.model(m -> m.scalarModel(ScalarType.INTEGER)))
-                        .description("Number of records per page").build());
+                        .description(String.format("Number of records per page (defaults to %d, max %d)",
+                                springDataWebProperties.getPageable().getDefaultPageSize(),
+                                springDataWebProperties.getPageable().getMaxPageSize()))
+                        .build());
                 parameters.add(new RequestParameterBuilder()
                         .in(ParameterType.QUERY)
-                        .name("sort")
+                        .name(springDataWebProperties.getSort().getSortParameter())
                         .query(q -> q.model(m -> m.collectionModel(c -> c.model(cm -> cm.scalarModel(ScalarType.STRING)))))
-                        .description("Sorting criteria in the format: property(,asc|desc). "
-                                + "Default sort order is ascending. "
-                                + "Multiple sort criteria are supported.")
+                        .description("Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.")
                         .build());
                 context.operationBuilder().requestParameters(parameters);
             }
