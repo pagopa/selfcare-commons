@@ -10,6 +10,7 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -40,6 +41,7 @@ public class Problem implements Serializable {
     private String instance;
 
     @ApiModelProperty(value = "A list of invalid parameters details.")
+    @Valid
     private List<InvalidParam> invalidParams;
 
 
