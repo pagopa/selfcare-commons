@@ -9,12 +9,10 @@ public class PageMapper {
         if (page != null) {
             result = new Page<>();
             result.setContent(page.getContent());
-            final Page.PageInfo pageInfo = new Page.PageInfo();
-            pageInfo.setTotalElements(page.getTotalElements());
-            pageInfo.setTotalPages(page.getTotalPages());
-            pageInfo.setNumber(page.getNumber());
-            pageInfo.setSize(page.getSize());
-            result.setPage(pageInfo);
+            result.setTotalElements(page.getTotalElements());
+            result.setTotalPages(page.getTotalPages());
+            result.setNumber(page.getNumber());
+            result.setSize(page.getSize());
         }
         return result;
     }

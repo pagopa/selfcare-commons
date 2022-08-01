@@ -35,7 +35,7 @@ public class RestClientBaseConfig {
 
     @Bean
     public Decoder feignDecoder(ObjectMapper objectMapper) {
-        MappingJackson2HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(objectMapper);
+        MappingJackson2HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(objectMapper.registerModule(new PageJacksonModule()));
         ObjectFactory<HttpMessageConverters> objectFactory = () -> new HttpMessageConverters(jacksonConverter);
 
         return new ResponseEntityDecoder(new SpringDecoder(objectFactory));
