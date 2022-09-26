@@ -2,6 +2,7 @@ package it.pagopa.selfcare.commons.web.swagger;
 
 import com.fasterxml.classmate.TypeResolver;
 import it.pagopa.selfcare.commons.web.model.Problem;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -77,6 +78,7 @@ public class BaseSwaggerConfig {
 
 
     @Bean
+    @ConditionalOnClass(name = "org.springframework.data.domain.Pageable")
     public PageableParameterConfig pageableParameterConfig(SpringDataWebProperties springDataWebProperties,
                                                            TypeResolver resolver) {
         return new PageableParameterConfig(springDataWebProperties, resolver);
