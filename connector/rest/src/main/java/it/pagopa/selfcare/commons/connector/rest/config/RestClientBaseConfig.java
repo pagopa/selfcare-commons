@@ -34,11 +34,19 @@ public class RestClientBaseConfig {
 
 
     @Bean
+    @ConditionalOnMissingClass("org.springframework.data.domain.Page")
     public Decoder feignDecoder(ObjectMapper objectMapper) {
-        MappingJackson2HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(objectMapper.registerModule(new PageJacksonModule()));
+        MappingJackson2HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(objectMapper);
         ObjectFactory<HttpMessageConverters> objectFactory = () -> new HttpMessageConverters(jacksonConverter);
 
         return new ResponseEntityDecoder(new SpringDecoder(objectFactory));
+    }
+
+
+    @Bean
+    @ConditionalOnClass(name = "org.springframework.data.domain.Page")
+    public Decoder feignPageDecoder(ObjectMapper objectMapper) {
+        return feignDecoder(objectMapper.registerModule(new PageJacksonModule()));
     }
 
 
@@ -51,13 +59,11 @@ public class RestClientBaseConfig {
         return new SpringEncoder(objectFactory);
     }
 
+
     @Bean
     @ConditionalOnClass(name = "org.springframework.data.domain.Pageable")
     public Encoder feignEncoderPageable(ObjectMapper objectMapper) {
-        MappingJackson2HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(objectMapper);
-        ObjectFactory<HttpMessageConverters> objectFactory = () -> new HttpMessageConverters(jacksonConverter);
-
-        return new PageableSpringEncoder(new SpringEncoder(objectFactory));
+        return new PageableSpringEncoder(feignEncoder(objectMapper));
     }
 
 }
