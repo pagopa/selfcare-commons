@@ -10,12 +10,13 @@ import springfox.documentation.spi.DocumentationType;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ServerSwaggerConfig implements WebMvcOpenApiTransformationFilter {
 
-    private static final Pattern PATTERN = Pattern.compile("^([^:]+:\\/\\/[^:]+):(\\d{2,4}).*$");
+    private static final Pattern PATTERN = Pattern.compile("^([^:]+:\\/\\/[^(?:\\:|\\/)]+)(?:(?:\\:(\\d+)\\/)|\\/).*$");
 
 
     @Override
@@ -30,7 +31,7 @@ public class ServerSwaggerConfig implements WebMvcOpenApiTransformationFilter {
                 .orElse("http://localhost:8080"));
         if (matcher.matches()) {
             urlVariable.setDefault(matcher.group(1));
-            portVariable.setDefault(matcher.group(2));
+            portVariable.setDefault(Optional.ofNullable(matcher.group(2)).orElse("80"));
         }
         basePathVariable.setDefault("");
         final ServerVariables serverVariables = new ServerVariables();
