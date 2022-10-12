@@ -26,6 +26,7 @@ class JwtAuthenticationProviderTest {
     private static final String MDC_UID = "uid";
     private static final String CLAIM_UID = "uid";
     private static final String CLAIM_EMAIL = "email";
+    private static final String CLAIM_FISCAL_CODE = "fiscal_number";
 
     @InjectMocks
     private JwtAuthenticationProvider jwtAuthenticationProvider;
@@ -123,8 +124,9 @@ class JwtAuthenticationProviderTest {
         Authentication authentication = new JwtAuthenticationToken(token);
         String uid = "uid";
         String email = "email@prova.com";
+        String fiscalCode = "fiscalCode";
         Mockito.when(jwtServiceMock.getClaims(any()))
-                .thenReturn(new DefaultClaims(Map.of(CLAIM_UID, uid, CLAIM_EMAIL, email)));
+                .thenReturn(new DefaultClaims(Map.of(CLAIM_UID, uid, CLAIM_EMAIL, email, CLAIM_FISCAL_CODE, fiscalCode)));
         String role = "role";
         Mockito.when(authoritiesRetrieverMock.retrieveAuthorities())
                 .thenReturn(List.of(new SimpleGrantedAuthority(role), new SimpleGrantedAuthority(role), new SimpleGrantedAuthority(role)));
@@ -137,6 +139,7 @@ class JwtAuthenticationProviderTest {
         Assertions.assertEquals(SelfCareUser.class, authenticate.getPrincipal().getClass());
         Assertions.assertEquals(uid, ((SelfCareUser) authenticate.getPrincipal()).getId());
         Assertions.assertEquals(email, ((SelfCareUser) authenticate.getPrincipal()).getEmail());
+        Assertions.assertEquals(fiscalCode, ((SelfCareUser) authenticate.getPrincipal()).getFiscalCode());
         Assertions.assertNotNull(authenticate.getAuthorities());
         Assertions.assertEquals(3, authenticate.getAuthorities().size());
         authenticate.getAuthorities().forEach(grantedAuthority -> Assertions.assertEquals(role, grantedAuthority.getAuthority()));
