@@ -62,6 +62,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         try {
             authorities = authoritiesRetriever.retrieveAuthorities();
         } catch (Exception e) {
+            MDC.remove(MDC_UID);
             throw new AuthoritiesRetrieverException("An error occurred during authorities retrieval", e);
         }
         JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(requestAuth.getCredentials(),
