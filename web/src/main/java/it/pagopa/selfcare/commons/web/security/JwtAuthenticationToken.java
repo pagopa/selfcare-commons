@@ -1,7 +1,7 @@
 package it.pagopa.selfcare.commons.web.security;
 
-import it.pagopa.selfcare.commons.base.security.SelfCareUser;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
 
@@ -34,10 +34,10 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
      * authentication token.
      *
      * @param token       The JWT token for this user
-     * @param user        The user
+     * @param user        The authenticated user
      * @param authorities The user authorities
      */
-    JwtAuthenticationToken(final String token, final SelfCareUser user, Collection<GrantedAuthority> authorities) {
+    JwtAuthenticationToken(final String token, final AuthenticatedPrincipal user, Collection<GrantedAuthority> authorities) {
         super(authorities);
         this.token = token;
         principal = user;

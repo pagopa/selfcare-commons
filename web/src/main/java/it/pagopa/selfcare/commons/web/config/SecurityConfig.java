@@ -2,10 +2,9 @@ package it.pagopa.selfcare.commons.web.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.commons.web.model.Problem;
-import it.pagopa.selfcare.commons.web.security.AuthoritiesRetriever;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationFilter;
 import it.pagopa.selfcare.commons.web.security.JwtAuthenticationProvider;
-import it.pagopa.selfcare.commons.web.security.JwtService;
+import it.pagopa.selfcare.commons.web.security.JwtAuthenticationStrategyFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -25,7 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Slf4j
 @PropertySource("classpath:config/jwt.properties")
 @ComponentScan(basePackages = "it.pagopa.selfcare.commons.web.security")
-@Import(BaseWebConfig.class)
+@Import({BaseWebConfig.class, K8sAuthenticationConfig.class})
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] AUTH_WHITELIST = {
@@ -39,14 +38,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/actuator/**"
     };
 
-    private final JwtService jwtService;
-    private final AuthoritiesRetriever authoritiesRetriever;
+    private final JwtAuthenticationStrategyFactory jwtAuthenticationStrategyFactory;
     private final ObjectMapper objectMapper;
 
 
-    public SecurityConfig(JwtService jwtService, AuthoritiesRetriever authoritiesRetriever, ObjectMapper objectMapper) {
-        this.jwtService = jwtService;
-        this.authoritiesRetriever = authoritiesRetriever;
+    public SecurityConfig(JwtAuthenticationStrategyFactory jwtAuthenticationStrategyFactory, ObjectMapper objectMapper) {
+        this.jwtAuthenticationStrategyFactory = jwtAuthenticationStrategyFactory;
         this.objectMapper = objectMapper;
     }
 
@@ -60,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) {
-        JwtAuthenticationProvider authenticationProvider = new JwtAuthenticationProvider(jwtService, authoritiesRetriever);
+        JwtAuthenticationProvider authenticationProvider = new JwtAuthenticationProvider(jwtAuthenticationStrategyFactory);
         authenticationManagerBuilder.authenticationProvider(authenticationProvider);
         authenticationManagerBuilder.eraseCredentials(false);
     }
