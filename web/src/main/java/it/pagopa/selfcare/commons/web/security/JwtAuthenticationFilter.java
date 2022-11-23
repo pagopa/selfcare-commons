@@ -10,7 +10,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -24,6 +26,17 @@ import static it.pagopa.selfcare.commons.web.handler.RestExceptionsHandler.UNHAN
 
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private static final AuthenticationConverter authenticationConverter = request -> {
+        String jwt = null;
+        String headerAuth = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            jwt = headerAuth.substring(7);
+        }
+
+        return new JwtAuthenticationToken(jwt);
+    };
 
     private final AuthenticationManager authenticationManager;
     private final ObjectMapper objectMapper;
@@ -40,13 +53,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(final HttpServletRequest request,
                                     final HttpServletResponse response,
                                     final FilterChain filterChain) throws ServletException, IOException {
-        log.trace("doFilterInternal");
+        log.trace("doFilterInternal start");
         try {
 
             try {
-                final JwtAuthenticationToken authRequest = new JwtAuthenticationToken(parseJwt(request));
-                final Authentication authentication = authenticationManager.authenticate(authRequest);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                final Authentication authentication = authenticationManager.authenticate(authenticationConverter.convert(request));
+                SecurityContext context = SecurityContextHolder.createEmptyContext();
+                context.setAuthentication(authentication);
+                SecurityContextHolder.setContext(context);
                 filterChain.doFilter(request, response);
             } catch (AuthenticationException e) {
                 log.warn("Cannot set user authentication", e);
@@ -62,20 +76,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } finally {
             SecurityContextHolder.clearContext();
             MDC.clear();
+            log.trace("doFilterInternal end");
         }
-    }
-
-
-    private String parseJwt(HttpServletRequest request) {
-        log.trace("parseJwt");
-        String jwt = null;
-        String headerAuth = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            jwt = headerAuth.substring(7);
-        }
-
-        return jwt;
     }
 
 }
