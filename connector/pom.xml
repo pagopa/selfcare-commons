@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>rest</module>
+        <module>soap</module>
     </modules>
 
     <dependencies>
