@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.commons.connector.soap.aruba.sign.config;
 
+import it.pagopa.selfcare.commons.connector.soap.aruba.sign.generated.client.Auth;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -13,4 +14,5 @@ public class ArubaSignConfig {
     private String baseUrl;
     private Integer connectTimeoutMs;
     private Integer requestTimeoutMs;
+    private Auth auth;
 }

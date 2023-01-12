@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/",
+    "headers": {
+      "SOAPAction": {"equalTo": "\"http://arubasignservice.arubapec.it/ArubaSignService/pdfsignatureV2Request\""},
+      "Accept": {"equalTo": "text/xml, multipart/related"}
+    }
+  },
+  "response": {
+    "status": "200",
+    "body": "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope/\"><soap:Body><m:a><m:test>success</m:test></m:a></soap:Body></soap:Envelope>",
+    "headers": {
+      "Content-Type": "text/xml"
+    }
+  }
+}
