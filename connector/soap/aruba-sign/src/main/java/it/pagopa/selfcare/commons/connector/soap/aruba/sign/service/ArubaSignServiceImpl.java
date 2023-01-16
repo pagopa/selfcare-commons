@@ -2,29 +2,33 @@ package it.pagopa.selfcare.commons.connector.soap.aruba.sign.service;
 
 import com.sun.xml.ws.developer.JAXWSProperties;
 import it.pagopa.selfcare.commons.connector.soap.aruba.sign.config.ArubaSignConfig;
-import it.pagopa.selfcare.commons.connector.soap.aruba.sign.generated.client.*;
-import jakarta.activation.DataHandler;
-import jakarta.activation.FileDataSource;
+import it.pagopa.selfcare.commons.connector.soap.aruba.sign.generated.client.ArubaSignServiceService;
+import it.pagopa.selfcare.commons.connector.soap.aruba.sign.generated.client.SignHashRequest;
+import it.pagopa.selfcare.commons.connector.soap.aruba.sign.generated.client.SignHashReturn;
+import it.pagopa.selfcare.commons.connector.soap.aruba.sign.utils.SoapLoggingHandler;
 import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.handler.Handler;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.nio.file.Files;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 @Service
 public class ArubaSignServiceImpl implements ArubaSignService {
 
-    private static final DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-
     private final ArubaSignConfig config;
+    private final SoapLoggingHandler soapLoggingHandler;
 
     private final ArubaSignServiceService arubaSignServiceService;
 
-    public ArubaSignServiceImpl(ArubaSignConfig config) {
+
+    public ArubaSignServiceImpl(ArubaSignConfig config, SoapLoggingHandler soapLoggingHandler) {
         this.config = config;
+        this.soapLoggingHandler = soapLoggingHandler;
 
         this.arubaSignServiceService = new ArubaSignServiceService();
     }
@@ -42,39 +46,48 @@ public class ArubaSignServiceImpl implements ArubaSignService {
 
         //TODO is custom SSL cert necessary? what protocol? ((BindingProvider)client).getRequestContext().put(JAXWSProperties.SSL_SOCKET_FACTORY, SSLContext.getInstance("TLSv1.3"));
 
+        @SuppressWarnings("rawtypes")
+        List<Handler> handlerChain = ((BindingProvider) client).getBinding().getHandlerChain();
+        handlerChain.add(soapLoggingHandler);
+        ((BindingProvider) client).getBinding().setHandlerChain(handlerChain);
+
         return client;
     }
 
     @Override
-    public OutputStream sign(File pdfFile) {
+    public byte[] hashSign(File pdfFile) {
         it.pagopa.selfcare.commons.connector.soap.aruba.sign.generated.client.ArubaSignService client = getClient();
-        SignRequestV2 request = buildSignRequestV2(pdfFile);
-        try {
-            SignReturnV2 result = client.pdfsignatureV2(request, null, null, null, null, null); // TODO null? possibily it is not the right service
-            if("OK".equals(result.getStatus())){
-                return result.getStream().getOutputStream();
-            } else {
-                throw new IllegalStateException(String.format("Something gone wrong while signing input file: %s; obtained the following error: returnCode: %s; description:%s", pdfFile.getName(), result.getReturnCode(), result.getDescription()));
-            }
-        } catch (TypeOfTransportNotImplemented_Exception | IOException e) {
-            throw new IllegalStateException(String.format("Something gone wrong while signing input file: %s", pdfFile.getName()), e);
+        SignHashRequest request = buildSignHashRequest(pdfFile);
+        SignHashReturn result = client.signhash(request);
+        if ("OK".equals(result.getStatus())) {
+            return result.getSignature();
+        } else {
+            throw new IllegalStateException(String.format("Something gone wrong while signing input file: %s; obtained the following error: returnCode: %s; description:%s", pdfFile.getName(), result.getReturnCode(), result.getDescription()));
         }
     }
 
-    private SignRequestV2 buildSignRequestV2(File pdfFile) {
-        SignRequestV2 request = new SignRequestV2();
+    private SignHashRequest buildSignHashRequest(File pdfFile) {
+        SignHashRequest request = new SignHashRequest();
 
         request.setCertID("AS0");
-        request.setProfile("NULL");
-
         request.setIdentity(config.getAuth());
 
-        request.setTransport(TypeTransport.STREAM);
-        request.setStream(new DataHandler(new FileDataSource(pdfFile)));
+        request.setHash(getDigest(pdfFile));
+        request.setHashtype("SHA256");
 
-        request.setRequiredmark(false); // TODO to confirm
-        request.setSigningTime(df.format(LocalDateTime.now()));
+        request.setRequirecert(false);
 
         return request;
+    }
+
+    private byte[] getDigest(File pdfFile) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            return digest.digest(Files.readAllBytes(pdfFile.toPath()));
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException(String.format("Something gone wrong while calculating digest for input file: %s", pdfFile.getName()), e);
+        } catch (IOException e) {
+            throw new IllegalArgumentException(String.format("Something gone wrong while reading pdfFile %s", pdfFile), e);
+        }
     }
 }
