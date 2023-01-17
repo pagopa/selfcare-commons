@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.commons.utils.crypto.service;
 
 import it.pagopa.selfcare.commons.utils.crypto.model.SignatureInformation;
+import it.pagopa.selfcare.commons.utils.crypto.utils.CryptoUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.interactive.digitalsignature.PDSignature;
 import org.apache.pdfbox.pdmodel.interactive.digitalsignature.SignatureOptions;
@@ -8,9 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Calendar;
 
 @Service
@@ -24,14 +22,7 @@ class PadesSignServiceImpl implements PadesSignService {
 
     @Override
     public void padesSign(File pdfFile, File signedPdfFile, SignatureInformation signInfo) {
-        Path destDir = signedPdfFile.toPath().getParent();
-        if (!Files.exists(destDir)) {
-            try {
-                Files.createDirectories(destDir);
-            } catch (IOException e) {
-                throw new IllegalArgumentException(String.format("Something gone wrong while creating destination folder: %s", destDir), e);
-            }
-        }
+        CryptoUtils.createParentDirectoryIfNotExists(signedPdfFile);
 
         try (
                 FileOutputStream fos = new FileOutputStream(signedPdfFile);

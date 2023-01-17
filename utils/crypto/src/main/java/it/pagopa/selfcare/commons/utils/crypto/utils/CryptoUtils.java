@@ -1,9 +1,12 @@
 package it.pagopa.selfcare.commons.utils.crypto.utils;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -17,6 +20,17 @@ import java.util.Base64;
 
 public final class CryptoUtils {
     private CryptoUtils(){}
+
+    public static void createParentDirectoryIfNotExists(File destFile) {
+        Path destDir = destFile.toPath().getParent();
+        if (!Files.exists(destDir)) {
+            try {
+                Files.createDirectories(destDir);
+            } catch (IOException e) {
+                throw new IllegalArgumentException(String.format("Something gone wrong while creating destination folder: %s", destDir), e);
+            }
+        }
+    }
 
     public static byte[] getDigest(InputStream is) {
         try {
