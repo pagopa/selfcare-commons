@@ -1,12 +1,12 @@
-package it.pagopa.selfcare.commons.connector.soap.aruba.sign.utils;
+package it.pagopa.selfcare.commons.utils.crypto.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public final class Utils {
-    private Utils(){}
+public final class CryptoUtils {
+    private CryptoUtils(){}
 
     public static byte[] getDigest(InputStream is) {
         try {

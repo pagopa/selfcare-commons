@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>aruba-sign</module>
+        <module>utils</module>
     </modules>
 
     <dependencies>

@@ -1,4 +1,4 @@
-package it.pagopa.selfcare.commons.connector.soap.aruba.sign.utils;
+package it.pagopa.selfcare.commons.connector.soap.utils;
 
 import jakarta.xml.soap.SOAPException;
 import jakarta.xml.soap.SOAPMessage;

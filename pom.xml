@@ -7,6 +7,7 @@
         <module>connector</module>
         <module>base</module>
         <module>web</module>
+        <module>utils</module>
     </modules>
     <parent>
         <groupId>it.pagopa.selfcare</groupId>
@@ -14,7 +15,7 @@
         <version>0.0.1-SNAPSHOT</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>it.pagopa.selfcare</groupId>
+
     <artifactId>selc-commons</artifactId>
     <version>2.3.0</version>
     <name>selc-commons</name>
@@ -33,6 +34,23 @@
                 <version>2.3.0</version>
                 <type>test-jar</type>
             </dependency>
+            <dependency>
+                <groupId>it.pagopa.selfcare.utils</groupId>
+                <artifactId>selc-commons-crypto</artifactId>
+                <version>2.3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>it.pagopa.selfcare.utils</groupId>
+                <artifactId>selc-commons-crypto</artifactId>
+                <version>2.3.0</version>
+                <type>test-jar</type>
+            </dependency>
+            <dependency>
+                <groupId>it.pagopa.selfcare.soap</groupId>
+                <artifactId>selc-commons-connector-soap-utils</artifactId>
+                <version>2.3.0</version>
+            </dependency>
+
             <dependency>
                 <groupId>ch.qos.logback.contrib</groupId>
                 <artifactId>logback-json-classic</artifactId>

@@ -3,31 +3,19 @@ package it.pagopa.selfcare.commons.connector.soap.aruba.sign.service;
 import com.sun.xml.ws.developer.JAXWSProperties;
 import it.pagopa.selfcare.commons.connector.soap.aruba.sign.config.ArubaSignConfig;
 import it.pagopa.selfcare.commons.connector.soap.aruba.sign.generated.client.*;
-import it.pagopa.selfcare.commons.connector.soap.aruba.sign.utils.SoapLoggingHandler;
-import it.pagopa.selfcare.commons.connector.soap.aruba.sign.utils.Utils;
+import it.pagopa.selfcare.commons.connector.soap.utils.SoapLoggingHandler;
+import it.pagopa.selfcare.commons.utils.crypto.utils.CryptoUtils;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.handler.Handler;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.interactive.digitalsignature.PDSignature;
-import org.apache.pdfbox.pdmodel.interactive.digitalsignature.SignatureInterface;
-import org.apache.pdfbox.pdmodel.interactive.digitalsignature.SignatureOptions;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Objects;
 
 @Service
-public class ArubaSignServiceImpl implements ArubaSignService {
+class ArubaSignServiceImpl implements ArubaSignService {
 
     private static final DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
@@ -35,12 +23,10 @@ public class ArubaSignServiceImpl implements ArubaSignService {
     private final SoapLoggingHandler soapLoggingHandler;
 
     private final ArubaSignServiceService arubaSignServiceService;
-    private final SignatureInterface pkcs7Signature;
 
-    public ArubaSignServiceImpl(ArubaSignConfig config, SoapLoggingHandler soapLoggingHandler, @Autowired(required = false) SignatureInterface pkcs7Signature) {
+    public ArubaSignServiceImpl(ArubaSignConfig config, SoapLoggingHandler soapLoggingHandler) {
         this.config = config;
         this.soapLoggingHandler = soapLoggingHandler;
-        this.pkcs7Signature = Objects.requireNonNullElseGet(pkcs7Signature, () -> this::arubaPkcs7Signhash);
 
         this.arubaSignServiceService = new ArubaSignServiceService();
     }
@@ -66,6 +52,7 @@ public class ArubaSignServiceImpl implements ArubaSignService {
         return client;
     }
 
+//region hashSign request
     @Override
     public byte[] hashSign(InputStream is) {
         it.pagopa.selfcare.commons.connector.soap.aruba.sign.generated.client.ArubaSignService client = getClient();
@@ -84,24 +71,18 @@ public class ArubaSignServiceImpl implements ArubaSignService {
         request.setCertID("AS0");
         request.setIdentity(config.getAuth());
 
-        request.setHash(Utils.getDigest(is));
+        request.setHash(CryptoUtils.getDigest(is));
         request.setHashtype("SHA256");
 
         request.setRequirecert(false);
 
         return request;
     }
+//endregion
 
+//region pkcs7Signhash request
     @Override
     public byte[] pkcs7Signhash(InputStream is) {
-        try {
-            return pkcs7Signature.sign(is);
-        } catch (IOException e) {
-            throw new IllegalStateException("Something gone wrong while reading input stream to pkcs7 hash sign", e);
-        }
-    }
-
-    private byte[] arubaPkcs7Signhash(InputStream is){
         it.pagopa.selfcare.commons.connector.soap.aruba.sign.generated.client.ArubaSignService client = getClient();
         SignRequestV2 request = buildSignRequest(is);
         try {
@@ -124,51 +105,13 @@ public class ArubaSignServiceImpl implements ArubaSignService {
         request.setIdentity(config.getAuth());
 
         request.setTransport(TypeTransport.BYNARYNET);
-        request.setBinaryinput(Utils.getDigest(is));
+        request.setBinaryinput(CryptoUtils.getDigest(is));
 
         request.setRequiredmark(false);
         request.setSigningTime(df.format(LocalDateTime.now()));
 
         return request;
     }
-
-    @Override
-    public void padesSign(File pdfFile, File signedPdfFile) {
-        Path destDir=signedPdfFile.toPath().getParent();
-        if(!Files.exists(destDir)){
-            try {
-                Files.createDirectories(destDir);
-            } catch (IOException e) {
-                throw new IllegalArgumentException(String.format("Something gone wrong while creating destination folder: %s", destDir), e);
-            }
-        }
-
-        try (
-                FileOutputStream fos = new FileOutputStream(signedPdfFile);
-                PDDocument doc = PDDocument.load(pdfFile)) {
-            // create signature dictionary
-            PDSignature signature = new PDSignature();
-            signature.setFilter(PDSignature.FILTER_ADOBE_PPKLITE);
-            signature.setSubFilter(PDSignature.SUBFILTER_ADBE_PKCS7_DETACHED);
-            signature.setName("Example User");
-            signature.setLocation("Los Angeles, CA");
-            signature.setReason("Testing");
-
-            // the signing date, needed for valid signature
-            signature.setSignDate(Calendar.getInstance());
-
-            SignatureOptions signatureOptions = new SignatureOptions();
-            // Size can vary, but should be enough for purpose.
-            signatureOptions.setPreferredSignatureSize(SignatureOptions.DEFAULT_SIGNATURE_SIZE * 2);
-            // register signature dictionary and sign interface
-            doc.addSignature(signature, pkcs7Signature, signatureOptions);
-
-            // write incremental (only for signing purpose)
-            doc.saveIncremental(fos);
-
-        } catch (Exception e) {
-            throw new IllegalStateException(String.format("Something gone wrong while signing input pdf %s and storing it into %s", pdfFile.getAbsolutePath(), signedPdfFile.getAbsolutePath()), e);
-        }
-    }
+//endregion
 
 }

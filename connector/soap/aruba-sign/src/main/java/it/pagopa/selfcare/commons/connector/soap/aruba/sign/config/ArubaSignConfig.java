@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource("classpath:config/arubaSignService.properties")
+@PropertySource("classpath:config/arubaSignServiceConfiguration.properties")
 @ConfigurationProperties("aruba.sign-service")
 @Data
 public class ArubaSignConfig {
