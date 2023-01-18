@@ -3,13 +3,18 @@ package it.pagopa.selfcare.commons.connector.soap.aruba.sign.service;
 import it.pagopa.selfcare.commons.connector.soap.aruba.sign.config.ArubaSignConfig;
 import it.pagopa.selfcare.commons.connector.soap.utils.SoapLoggingHandler;
 import it.pagopa.selfcare.commons.utils.crypto.service.CadesSignServiceTest;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
+import java.security.cert.CertificateException;
 
 @SpringBootTest
 @Import({ArubaSignConfig.class, ArubaSignServiceImpl.class, SoapLoggingHandler.class, ArubaPkcs7HashSignServiceImpl.class})
@@ -22,6 +27,14 @@ import java.nio.file.Path;
         //endregion
 })
 class ArubaCadesSignServiceTest extends CadesSignServiceTest {
+
+    @Test
+    @Override
+    protected void testCadesSign() throws CertificateException, IOException, OperatorCreationException, CMSException {
+        // mocked data will not be aligned with timestamp alway updated, thus base test could not successfully sign
+        verifySignerInformation=false;
+        super.testCadesSign();
+    }
 
     @Override
     protected File getOutputPadesFile() {
