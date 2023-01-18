@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 
-/* Download /secrets/arubaSignServiceSecrets.properties from the following link: TODO */
+/* Download /secrets/arubaSignServiceSecrets.properties from the following link: https://pagopa.atlassian.net/wiki/spaces/SCP/pages/616857618/Firma+digitale+per+mezzo+dei+servizi+di+Aruba */
 @TestPropertySource(locations = {
         "classpath:/secrets/arubaSignServiceSecrets.properties",
 },

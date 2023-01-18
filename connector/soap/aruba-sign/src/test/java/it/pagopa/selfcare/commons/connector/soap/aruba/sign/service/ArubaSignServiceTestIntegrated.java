@@ -3,7 +3,7 @@ package it.pagopa.selfcare.commons.connector.soap.aruba.sign.service;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.test.context.TestPropertySource;
 
-/* Download /secrets/arubaSignServiceSecrets.properties from the following link: TODO */
+/* Download /secrets/arubaSignServiceSecrets.properties from the following link: https://pagopa.atlassian.net/wiki/spaces/SCP/pages/616857618/Firma+digitale+per+mezzo+dei+servizi+di+Aruba */
 @TestPropertySource(locations = {
         "classpath:/secrets/arubaSignServiceSecrets.properties",
 },
