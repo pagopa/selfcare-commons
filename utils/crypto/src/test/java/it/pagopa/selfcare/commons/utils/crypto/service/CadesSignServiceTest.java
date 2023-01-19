@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -36,10 +35,11 @@ public class CadesSignServiceTest {
 
     // mocked data will not be aligned with timestamp alway updated, thus base test could not successfully sign
     protected boolean verifySignerInformation = true;
+    protected Path inputFilePath = Path.of("src/test/resources/signTest.pdf");
 
     @Test
     protected void testCadesSign() throws IOException, CertificateException, OperatorCreationException, CMSException {
-        File inputFile = new ClassPathResource("signTest.pdf").getFile();
+        File inputFile = inputFilePath.toFile();
         File outputFile = getOutputPadesFile();
         if (outputFile.exists()) {
             Assertions.assertTrue(outputFile.delete());

@@ -36,6 +36,7 @@ class ArubaPadesSignServiceTest extends PadesSignServiceTest {
     protected void testPadesSign() throws IOException, GeneralSecurityException, OperatorCreationException, CMSException {
         // mocked data will not be aligned with timestamp alway updated, thus base test could not successfully sign
         verifySignerInformation=false;
+        inputFilePath=Path.of("../../../utils/crypto", inputFilePath.toString());
         super.testPadesSign();
     }
 

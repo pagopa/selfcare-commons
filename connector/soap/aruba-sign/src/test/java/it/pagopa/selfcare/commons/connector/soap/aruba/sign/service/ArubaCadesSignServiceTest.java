@@ -33,6 +33,7 @@ class ArubaCadesSignServiceTest extends CadesSignServiceTest {
     protected void testCadesSign() throws CertificateException, IOException, OperatorCreationException, CMSException {
         // mocked data will not be aligned with timestamp alway updated, thus base test could not successfully sign
         verifySignerInformation=false;
+        inputFilePath=Path.of("../../../utils/crypto", inputFilePath.toString());
         super.testCadesSign();
     }
 
