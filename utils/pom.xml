@@ -9,18 +9,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>selc-commons-connector</artifactId>
+    <artifactId>selc-common-utils</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>rest</module>
-        <module>soap</module>
+        <module>crypto</module>
     </modules>
-
-    <dependencies>
-        <dependency>
-            <groupId>it.pagopa.selfcare</groupId>
-            <artifactId>selc-commons-base</artifactId>
-        </dependency>
-    </dependencies>
 
 </project>
