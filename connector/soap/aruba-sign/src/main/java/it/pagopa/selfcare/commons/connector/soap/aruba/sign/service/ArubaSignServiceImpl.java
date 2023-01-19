@@ -42,8 +42,6 @@ class ArubaSignServiceImpl implements ArubaSignService {
             ((BindingProvider) client).getRequestContext().put(JAXWSProperties.REQUEST_TIMEOUT, config.getRequestTimeoutMs());
         }
 
-        //TODO is custom SSL cert necessary? what protocol? ((BindingProvider)client).getRequestContext().put(JAXWSProperties.SSL_SOCKET_FACTORY, SSLContext.getInstance("TLSv1.3"));
-
         @SuppressWarnings("rawtypes")
         List<Handler> handlerChain = ((BindingProvider) client).getBinding().getHandlerChain();
         handlerChain.add(soapLoggingHandler);

@@ -18,6 +18,7 @@ import java.security.GeneralSecurityException;
                 "aruba.sign-service.baseUrl=https://arss.demo.firma-automatica.it:443/ArubaSignService/ArubaSignService"
         }
 )
+@SuppressWarnings({"squid:S3577", "NewClassNamingConvention"}) // The name is intended to be different from maven's default because it should be manually executed once obtained secrets file
 class ArubaPadesSignServiceTestIntegrated extends ArubaPadesSignServiceTest {
 
         @Test

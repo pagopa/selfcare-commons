@@ -37,10 +37,10 @@ public class SoapLoggingHandler implements SOAPHandler<SOAPMessageContext> {
     }
 
     @Override
-    public boolean handleMessage(SOAPMessageContext arg0) {
+    public boolean handleMessage(SOAPMessageContext msg) {
         if(log.isDebugEnabled()) {
-            SOAPMessage message = arg0.getMessage();
-            boolean isOutboundMessage = (Boolean) arg0.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+            SOAPMessage message = msg.getMessage();
+            boolean isOutboundMessage = (Boolean) msg.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
             String msgType = isOutboundMessage
                     ? "OUTBOUND MESSAGE"
                     : "INBOUND MESSAGE";

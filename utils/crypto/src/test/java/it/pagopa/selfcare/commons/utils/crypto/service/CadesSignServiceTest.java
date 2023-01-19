@@ -28,6 +28,7 @@ import java.util.Iterator;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CadesSignServiceImpl.class, CryptoConfig.class, LocalCryptoConfig.class, Pkcs7HashSignServiceImpl.class})
+@SuppressWarnings("squid:S5786") // There is at least one module which will extend this test class
 public class CadesSignServiceTest {
 
     @Autowired
