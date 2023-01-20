@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
-class ArubaSignServiceImpl implements ArubaSignService {
+public class ArubaSignServiceImpl implements ArubaSignService {
 
     private static final DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 

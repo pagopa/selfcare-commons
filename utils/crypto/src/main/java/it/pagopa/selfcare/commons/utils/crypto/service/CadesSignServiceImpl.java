@@ -18,7 +18,7 @@ import java.io.*;
 import java.util.Collection;
 
 @Service
-class CadesSignServiceImpl implements CadesSignService {
+public class CadesSignServiceImpl implements CadesSignService {
 
     private final Pkcs7HashSignService pkcs7Signature;
 
