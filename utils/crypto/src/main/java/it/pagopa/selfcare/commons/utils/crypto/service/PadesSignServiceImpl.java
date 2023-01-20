@@ -12,7 +12,7 @@ import java.io.FileOutputStream;
 import java.util.Calendar;
 
 @Service
-class PadesSignServiceImpl implements PadesSignService {
+public class PadesSignServiceImpl implements PadesSignService {
 
     private final Pkcs7HashSignService pkcs7Signature;
 
