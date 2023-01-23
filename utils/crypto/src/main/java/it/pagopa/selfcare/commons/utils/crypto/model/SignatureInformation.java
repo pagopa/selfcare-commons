@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SignatureInformation {
+    /** Used only when the certificate used doesn't contain it */
     private String name;
     private String location;
     private String reason;
