@@ -28,7 +28,7 @@ public class ArubaSignServiceImpl implements ArubaSignService {
         this.config = config;
         this.soapLoggingHandler = soapLoggingHandler;
 
-        this.arubaSignServiceService = new ArubaSignServiceService(getClass().getClassLoader().getResource("classpath:docs/aruba/ArubaSignService.wsdl"));
+        this.arubaSignServiceService = new ArubaSignServiceService(getClass().getClassLoader().getResource("docs/aruba/ArubaSignService.wsdl"));
     }
 
     private it.pagopa.selfcare.commons.connector.soap.aruba.sign.generated.client.ArubaSignService getClient() {
