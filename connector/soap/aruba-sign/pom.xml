@@ -43,7 +43,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <wsdlDirectory>${project.basedir}/docs/</wsdlDirectory>
+                    <wsdlDirectory>src/main/resources/docs/aruba/</wsdlDirectory>
                     <packageName>it.pagopa.selfcare.commons.connector.soap.aruba.sign.generated.client</packageName>
                     <sourceDestDir>${project.build.directory}/generated-sources/wsimport/</sourceDestDir>
                 </configuration>
