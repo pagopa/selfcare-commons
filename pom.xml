@@ -13,7 +13,7 @@
         <groupId>it.pagopa.selfcare</groupId>
         <artifactId>selc-starter-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <!-- <relativePath/>  lookup parent from repository -->
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <artifactId>selc-commons</artifactId>
