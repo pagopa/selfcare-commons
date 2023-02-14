@@ -13,7 +13,7 @@
         <groupId>it.pagopa.selfcare</groupId>
         <artifactId>selc-starter-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath/> <!-- lookup parent from repository -->
+         <!-- <relativePath/> lookup parent from repository -->
     </parent>
 
     <artifactId>selc-commons</artifactId>
@@ -68,6 +68,13 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>selfcare-platform</id>
+            <url>https://pkgs.dev.azure.com/pagopaspa/selfcare-platform-app-projects/_packaging/selfcare-platform/maven/v1</url>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
