@@ -2,7 +2,6 @@ package it.pagopa.selfcare.commons.base.utils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import org.apache.kafka.common.errors.InvalidRequestException;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
@@ -38,7 +37,7 @@ public enum Origin {
             return Arrays.stream(values())
                     .filter(origin -> origin.toString().equals(value))
                     .findAny()
-                    .orElseThrow(() -> new InvalidRequestException("Valid value for Origin are: IPA, INFOCAMERE, SELC or static"));
+                    .orElseThrow(() -> new IllegalArgumentException("Valid value for Origin are: IPA, INFOCAMERE, SELC or static"));
         } else {
             return Origin.UNKNOWN;
         }
