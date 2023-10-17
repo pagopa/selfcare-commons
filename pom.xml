@@ -17,7 +17,7 @@
     </parent>
 
     <artifactId>selc-commons</artifactId>
-    <version>2.4.8</version>
+    <version>2.4.9</version>
     <name>selc-commons</name>
     <description>Self Care Commons</description>
 
@@ -26,29 +26,29 @@
             <dependency>
                 <groupId>it.pagopa.selfcare</groupId>
                 <artifactId>selc-commons-base</artifactId>
-                <version>2.4.8</version>
+                <version>2.4.9</version>
             </dependency>
             <dependency>
                 <groupId>it.pagopa.selfcare</groupId>
                 <artifactId>selc-commons-base</artifactId>
-                <version>2.4.8</version>
+                <version>2.4.9</version>
                 <type>test-jar</type>
             </dependency>
             <dependency>
                 <groupId>it.pagopa.selfcare.utils</groupId>
                 <artifactId>selc-commons-crypto</artifactId>
-                <version>2.4.8</version>
+                <version>2.4.9</version>
             </dependency>
             <dependency>
                 <groupId>it.pagopa.selfcare.utils</groupId>
                 <artifactId>selc-commons-crypto</artifactId>
-                <version>2.4.8</version>
+                <version>2.4.9</version>
                 <type>test-jar</type>
             </dependency>
             <dependency>
                 <groupId>it.pagopa.selfcare.soap</groupId>
                 <artifactId>selc-commons-connector-soap-utils</artifactId>
-                <version>2.4.8</version>
+                <version>2.4.9</version>
             </dependency>
 
             <dependency>
