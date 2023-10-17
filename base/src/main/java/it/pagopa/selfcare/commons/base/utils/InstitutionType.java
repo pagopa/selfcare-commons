@@ -7,5 +7,6 @@ public enum InstitutionType {
     SA,
     PT,
     SCP,
-    PSP
+    PSP,
+    AS
 }
