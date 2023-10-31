@@ -13,7 +13,8 @@ public enum Origin {
     UNKNOWN("UNKNOWN"),
     ADE("ADE"),
     INFOCAMERE("INFOCAMERE"),
-    ANAC("ANAC");
+    ANAC("ANAC"),
+    IVASS("IVASS");
 
     private final String value;
 
