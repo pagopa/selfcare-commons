@@ -33,3 +33,12 @@ build/
 .vscode/
 
 **/src/test/resources/secrets/**
+
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+**/.tfsec/*
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
