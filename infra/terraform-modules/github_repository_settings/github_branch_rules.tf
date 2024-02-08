@@ -3,9 +3,17 @@ resource "github_branch_default" "default_main" {
   branch     = "main"
 }
 
-resource "github_branch_protection_v3" "protection_main" {
-  repository = var.github.repository
-  branch     = "main"
+resource "github_branch_protection" "protection_main" {
+  repository_id = var.github.repository
+  pattern       = "main"
+
+  required_status_checks {
+    strict   = false
+    contexts = []
+  }
+
+  require_conversation_resolution = true
+  require_signed_commits          = true
 
   required_pull_request_reviews {
     dismiss_stale_reviews           = false
@@ -13,22 +21,20 @@ resource "github_branch_protection_v3" "protection_main" {
     required_approving_review_count = 1
   }
 
-  required_status_checks {
-    checks = []
-  }
+  allows_deletions = false
 }
 
 resource "github_branch_protection" "protection_releases" {
   repository_id = var.github.repository
   pattern       = "releases/*"
 
-  require_conversation_resolution = true
-
   required_status_checks {
-    strict = true
+    strict   = true
+    contexts = []
   }
 
-  require_signed_commits = true
+  require_conversation_resolution = true
+  require_signed_commits          = true
 
   required_pull_request_reviews {
     dismiss_stale_reviews           = true

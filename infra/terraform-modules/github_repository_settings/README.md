@@ -65,8 +65,8 @@ No modules.
 | [github_actions_secret.repo_secrets](https://registry.terraform.io/providers/integrations/github/5.45.0/docs/resources/actions_secret) | resource |
 | [github_actions_variable.repo_variables](https://registry.terraform.io/providers/integrations/github/5.45.0/docs/resources/actions_variable) | resource |
 | [github_branch_default.default_main](https://registry.terraform.io/providers/integrations/github/5.45.0/docs/resources/branch_default) | resource |
+| [github_branch_protection.protection_main](https://registry.terraform.io/providers/integrations/github/5.45.0/docs/resources/branch_protection) | resource |
 | [github_branch_protection.protection_releases](https://registry.terraform.io/providers/integrations/github/5.45.0/docs/resources/branch_protection) | resource |
-| [github_branch_protection_v3.protection_main](https://registry.terraform.io/providers/integrations/github/5.45.0/docs/resources/branch_protection_v3) | resource |
 | [github_repository_environment.github_repository_environment_dev_cd](https://registry.terraform.io/providers/integrations/github/5.45.0/docs/resources/repository_environment) | resource |
 | [github_repository_environment.github_repository_environment_dev_ci](https://registry.terraform.io/providers/integrations/github/5.45.0/docs/resources/repository_environment) | resource |
 | [github_repository_environment.github_repository_environment_prod_cd](https://registry.terraform.io/providers/integrations/github/5.45.0/docs/resources/repository_environment) | resource |
