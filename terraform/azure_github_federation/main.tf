@@ -17,8 +17,8 @@ terraform {
 provider "azurerm" {
   alias = "dev"
 
-  tenant_id       = var.tenant_id
-  subscription_id = var.subscription_id_dev
+  tenant_id       = local.tenant_id
+  subscription_id = local.subscription_id_dev
 
   features {}
 }
@@ -26,8 +26,8 @@ provider "azurerm" {
 provider "azurerm" {
   alias = "uat"
 
-  tenant_id       = var.tenant_id
-  subscription_id = var.subscription_id_uat
+  tenant_id       = local.tenant_id
+  subscription_id = local.subscription_id_uat
 
   features {}
 }
@@ -35,8 +35,8 @@ provider "azurerm" {
 provider "azurerm" {
   alias = "prod"
 
-  tenant_id       = var.tenant_id
-  subscription_id = var.subscription_id_prod
+  tenant_id       = local.tenant_id
+  subscription_id = local.subscription_id_prod
 
   features {}
 }

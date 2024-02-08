@@ -9,8 +9,9 @@ data "github_team" "team_admins" {
 
 data "azurerm_key_vault" "key_vault_dev" {
   provider = azurerm.dev
-  name                = format(local.key_vault_name, "d")
-  resource_group_name = format(local.key_vault_resource_group_name, "d")
+
+  name                = format(local.key_vault_name, local.dev_alias)
+  resource_group_name = format(local.key_vault_resource_group_name, local.dev_alias)
 }
 
 data "azurerm_key_vault_secret" "key_vault_sonar" {
@@ -21,52 +22,40 @@ data "azurerm_key_vault_secret" "key_vault_sonar" {
 data "azurerm_user_assigned_identity" "identity_dev_ci" {
   provider = azurerm.dev
 
-  name                = format(local.identity_ci_name, "d")
-  resource_group_name = format(local.identity_resource_group_name, "d")
+  name                = format(local.identity_ci_name, local.dev_alias)
+  resource_group_name = format(local.identity_resource_group_name, local.dev_alias)
 }
 
 data "azurerm_user_assigned_identity" "identity_dev_cd" {
   provider = azurerm.dev
 
-  name                = format(local.identity_ci_name, "d")
-  resource_group_name = format(local.identity_resource_group_name, "d")
+  name                = format(local.identity_cd_name, local.dev_alias)
+  resource_group_name = format(local.identity_resource_group_name, local.dev_alias)
 }
 
 data "azurerm_user_assigned_identity" "identity_uat_ci" {
   provider = azurerm.uat
 
-  name                = format(local.identity_ci_name, "u")
-  resource_group_name = format(local.identity_resource_group_name, "u")
+  name                = format(local.identity_ci_name, local.uat_alias)
+  resource_group_name = format(local.identity_resource_group_name, local.uat_alias)
 }
 
 data "azurerm_user_assigned_identity" "identity_uat_cd" {
-  provider = azurerm.uat
-  name                = format(local.identity_ci_name, "u")
-  resource_group_name = format(local.identity_resource_group_name, "u")
+  provider            = azurerm.uat
+  name                = format(local.identity_cd_name, local.uat_alias)
+  resource_group_name = format(local.identity_resource_group_name, local.uat_alias)
 }
 
 data "azurerm_user_assigned_identity" "identity_prod_ci" {
   provider = azurerm.prod
 
-  name                = format(local.identity_ci_name, "p")
-  resource_group_name = format(local.identity_resource_group_name, "p")
+  name                = format(local.identity_ci_name, local.prod_alias)
+  resource_group_name = format(local.identity_resource_group_name, local.prod_alias)
 }
 
 data "azurerm_user_assigned_identity" "identity_prod_cd" {
   provider = azurerm.prod
 
-  name                = format(local.identity_ci_name, "p")
-  resource_group_name = format(local.identity_resource_group_name, "p")
-}
-
-data "azurerm_subscriptions" "subscription_dev" {
-  display_name_contains = "DEV-SelfCare"
-}
-
-data "azurerm_subscriptions" "subscription_uat" {
-  display_name_contains = "UAT-SelfCare"
-}
-
-data "azurerm_subscriptions" "subscription_prod" {
-  display_name_contains = "PROD-SelfCare"
+  name                = format(local.identity_cd_name, local.prod_alias)
+  resource_group_name = format(local.identity_resource_group_name, local.prod_alias)
 }
