@@ -8,6 +8,7 @@ data "github_team" "team_admins" {
 }
 
 data "azurerm_key_vault" "key_vault_dev" {
+  provider = azurerm.dev
   name                = format(local.key_vault_name, "dev")
   resource_group_name = format(local.key_vault_resource_group_name, "dev")
 }
@@ -18,32 +19,42 @@ data "azurerm_key_vault_secret" "key_vault_sonar" {
 }
 
 data "azurerm_user_assigned_identity" "identity_dev_ci" {
+  provider = azurerm.dev
+
   name                = format(local.identity_ci_name, "dev")
   resource_group_name = format(local.identity_resource_group_name, "dev")
 }
 
 data "azurerm_user_assigned_identity" "identity_dev_cd" {
+  provider = azurerm.dev
+
   name                = format(local.identity_ci_name, "dev")
   resource_group_name = format(local.identity_resource_group_name, "dev")
 }
 
 data "azurerm_user_assigned_identity" "identity_uat_ci" {
+  provider = azurerm.uat
+
   name                = format(local.identity_ci_name, "uat")
   resource_group_name = format(local.identity_resource_group_name, "uat")
 }
 
 data "azurerm_user_assigned_identity" "identity_uat_cd" {
+  provider = azurerm.uat
   name                = format(local.identity_ci_name, "uat")
   resource_group_name = format(local.identity_resource_group_name, "uat")
 }
 
 data "azurerm_user_assigned_identity" "identity_prod_ci" {
+  provider = azurerm.prod
 
   name                = format(local.identity_ci_name, "prod")
   resource_group_name = format(local.identity_resource_group_name, "prod")
 }
 
 data "azurerm_user_assigned_identity" "identity_prod_cd" {
+  provider = azurerm.prod
+
   name                = format(local.identity_ci_name, "prod")
   resource_group_name = format(local.identity_resource_group_name, "prod")
 }

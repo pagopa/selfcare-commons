@@ -6,7 +6,7 @@ terraform {
       source  = "hashicorp/azurerm"
       version = ">= 3.90.0"
     }
-    
+
     github = {
       source  = "integrations/github"
       version = "5.45.0"
@@ -15,6 +15,29 @@ terraform {
 }
 
 provider "azurerm" {
+  alias = "dev"
+
+  tenant_id       = var.tenant_id
+  subscription_id = var.subscription_id_dev
+
+  features {}
+}
+
+provider "azurerm" {
+  alias = "uat"
+
+  tenant_id       = var.tenant_id
+  subscription_id = var.subscription_id_uat
+
+  features {}
+}
+
+provider "azurerm" {
+  alias = "prod"
+
+  tenant_id       = var.tenant_id
+  subscription_id = var.subscription_id_prod
+
   features {}
 }
 

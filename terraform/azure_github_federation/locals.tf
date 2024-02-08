@@ -43,7 +43,7 @@ locals {
     ci = {
       protected_branches     = false
       custom_branch_policies = true
-      reviewers_teams         = ["selfcare-contributors"]
+      reviewers_teams        = ["selfcare-contributors"]
       branch_pattern         = "releases/*"
       variables = {
         "AZURE_SUBSCRIPTION_ID" = data.azurerm_subscriptions.subscription_uat.subscriptions[0].subscription_id
@@ -55,7 +55,7 @@ locals {
     cd = {
       protected_branches     = false
       custom_branch_policies = true
-      reviewers_teams         = ["selfcare-contributors"]
+      reviewers_teams        = ["selfcare-contributors"]
       branch_pattern         = "releases/*"
       variables = {
         "AZURE_SUBSCRIPTION_ID" = data.azurerm_subscriptions.subscription_uat.subscriptions[0].subscription_id
@@ -70,7 +70,7 @@ locals {
     ci = {
       protected_branches     = false
       custom_branch_policies = true
-      reviewers_teams         = ["selfcare-contributors"]
+      reviewers_teams        = ["selfcare-contributors"]
       branch_pattern         = "releases/*"
       variables = {
         "AZURE_SUBSCRIPTION_ID" = data.azurerm_subscriptions.subscription_prod.subscriptions[0].subscription_id
@@ -82,7 +82,7 @@ locals {
     cd = {
       protected_branches     = false
       custom_branch_policies = true
-      reviewers_teams         = ["selfcare-contributors"]
+      reviewers_teams        = ["selfcare-contributors"]
       branch_pattern         = "releases/*"
       variables = {
         "AZURE_SUBSCRIPTION_ID" = data.azurerm_subscriptions.subscription_prod.subscriptions[0].subscription_id
