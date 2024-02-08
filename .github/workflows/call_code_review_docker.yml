@@ -4,7 +4,11 @@ on:
       dockerfile_path:
         type: string
         required: false
-        default: ./Dockerfile
+        default: './Dockerfile'
+      dockerfile_context:
+        type: string
+        required: false
+        default: '.'
 
 jobs:
 
@@ -25,7 +29,7 @@ jobs:
       - name: Build Image
         uses: docker/build-push-action@4a13e500e55cf31b7a5d59a38ab2040ab0f42f56 #v5.1.0
         with:
-          context: .
+          context: ${{ inputs.dockerfile_context }}
           file: ${{ inputs.dockerfile_path }}
           push: false
           secrets: |
