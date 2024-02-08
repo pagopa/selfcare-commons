@@ -1,6 +1,3 @@
-
-
-<!-- markdownlint-disable -->
 # SelfCare GitHub Repository Settings
 
 This module contains some common settings to apply to SelfCare repositories.
@@ -25,6 +22,7 @@ module "repo_settings" {
 }
 ```
 
+<!-- markdownlint-disable -->
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
