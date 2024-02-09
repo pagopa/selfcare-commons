@@ -18,7 +18,7 @@ locals {
   identity_cd_name             = "${local.project}-ms-github-cd-identity"
 
   repo_variables = {
-    "AZURE_TENANT_ID" = data.azurerm_client_config.current.tenant_id,
+    "ARM_TENANT_ID" = data.azurerm_client_config.current.tenant_id,
   }
 
   repo_secrets = {
@@ -30,20 +30,20 @@ locals {
       protected_branches     = false
       custom_branch_policies = false
       variables = {
-        "AZURE_SUBSCRIPTION_ID" = local.subscription_id_dev
+        "ARM_SUBSCRIPTION_ID" = local.subscription_id_dev
       }
       secrets = {
-        "AZURE_CLIENT_ID" = data.azurerm_user_assigned_identity.identity_dev_ci.client_id
+        "ARM_CLIENT_ID" = data.azurerm_user_assigned_identity.identity_dev_ci.client_id
       }
     }
     cd = {
       protected_branches     = false
       custom_branch_policies = false
       variables = {
-        "AZURE_SUBSCRIPTION_ID" = local.subscription_id_dev
+        "ARM_SUBSCRIPTION_ID" = local.subscription_id_dev
       }
       secrets = {
-        "AZURE_CLIENT_ID" = data.azurerm_user_assigned_identity.identity_dev_cd.client_id
+        "ARM_CLIENT_ID" = data.azurerm_user_assigned_identity.identity_dev_cd.client_id
       }
     }
   }
@@ -55,10 +55,10 @@ locals {
       reviewers_teams        = ["selfcare-contributors"]
       branch_pattern         = "releases/*"
       variables = {
-        "AZURE_SUBSCRIPTION_ID" = local.subscription_id_uat
+        "ARM_SUBSCRIPTION_ID" = local.subscription_id_uat
       }
       secrets = {
-        "AZURE_CLIENT_ID" = data.azurerm_user_assigned_identity.identity_uat_ci.client_id
+        "ARM_CLIENT_ID" = data.azurerm_user_assigned_identity.identity_uat_ci.client_id
       }
     }
     cd = {
@@ -67,10 +67,10 @@ locals {
       reviewers_teams        = ["selfcare-contributors"]
       branch_pattern         = "releases/*"
       variables = {
-        "AZURE_SUBSCRIPTION_ID" = local.subscription_id_uat
+        "ARM_SUBSCRIPTION_ID" = local.subscription_id_uat
       }
       secrets = {
-        "AZURE_CLIENT_ID" = data.azurerm_user_assigned_identity.identity_uat_cd.client_id
+        "ARM_CLIENT_ID" = data.azurerm_user_assigned_identity.identity_uat_cd.client_id
       }
     }
   }
@@ -82,10 +82,10 @@ locals {
       reviewers_teams        = ["selfcare-contributors"]
       branch_pattern         = "releases/*"
       variables = {
-        "AZURE_SUBSCRIPTION_ID" = local.subscription_id_prod
+        "ARM_SUBSCRIPTION_ID" = local.subscription_id_prod
       }
       secrets = {
-        "AZURE_CLIENT_ID" = data.azurerm_user_assigned_identity.identity_prod_ci.client_id
+        "ARM_CLIENT_ID" = data.azurerm_user_assigned_identity.identity_prod_ci.client_id
       }
     }
     cd = {
@@ -94,10 +94,10 @@ locals {
       reviewers_teams        = ["selfcare-contributors"]
       branch_pattern         = "releases/*"
       variables = {
-        "AZURE_SUBSCRIPTION_ID" = local.subscription_id_prod
+        "ARM_SUBSCRIPTION_ID" = local.subscription_id_prod
       }
       secrets = {
-        "AZURE_CLIENT_ID" = data.azurerm_user_assigned_identity.identity_prod_cd.client_id
+        "ARM_CLIENT_ID" = data.azurerm_user_assigned_identity.identity_prod_cd.client_id
       }
     }
   }
