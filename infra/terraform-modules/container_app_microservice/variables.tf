@@ -61,6 +61,11 @@ variable "image_name" {
   description = "Name of the image to use, hosted on GitHub container registry"
 }
 
+variable "container_app_name" {
+  type        = string
+  description = "Container App name suffix"
+}
+
 variable "port" {
   type        = number
   default     = 8080

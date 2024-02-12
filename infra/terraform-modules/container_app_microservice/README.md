@@ -47,6 +47,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_app_settings"></a> [app\_settings](#input\_app\_settings) | n/a | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | n/a | yes |
 | <a name="input_container_app"></a> [container\_app](#input\_container\_app) | Container App configuration | <pre>object({<br>    min_replicas = number<br>    max_replicas = number<br><br>    scale_rules = list(object({<br>      name = string<br>      custom = object({<br>        metadata = map(string)<br>        type     = string<br>      })<br>    }))<br><br>    cpu    = number<br>    memory = string<br>  })</pre> | n/a | yes |
+| <a name="input_container_app_name"></a> [container\_app\_name](#input\_container\_app\_name) | Container App name suffix | `string` | n/a | yes |
 | <a name="input_env_short"></a> [env\_short](#input\_env\_short) | Environment short name | `string` | n/a | yes |
 | <a name="input_image_name"></a> [image\_name](#input\_image\_name) | Name of the image to use, hosted on GitHub container registry | `string` | n/a | yes |
 | <a name="input_image_tag"></a> [image\_tag](#input\_image\_tag) | Image tag to use for the container | `string` | `"latest"` | no |

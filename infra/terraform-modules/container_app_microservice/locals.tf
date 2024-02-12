@@ -7,7 +7,7 @@ locals {
   key_vault_resource_group_name           = "${local.project}${local.pnpg_suffix}-sec-rg"
   key_vault_name                          = "${local.project}${local.pnpg_suffix}-kv"
   container_app_environment_name          = "${local.project}${local.pnpg_suffix}-cae"
-  container_name                          = "${local.project}${local.pnpg_suffix}-core-ms"
+  container_name                          = "${local.project}${local.pnpg_suffix}-${var.container_app_name}"
   app_name                                = "${local.container_name}-ca"
   container_app_environment_dns_zone_name = "azurecontainerapps.io"
 
