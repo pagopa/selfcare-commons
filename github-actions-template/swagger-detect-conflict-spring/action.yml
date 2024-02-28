@@ -1,19 +1,17 @@
 name: Swagger Detect Conflict and Update with Spring
 
-on:
-  workflow_call:
-    inputs:
-      path_openapi_docs:
-        type: string
-        required: true
-      branch_ref:
-        type: string
-        required: true
+inputs:
+  path_openapi_docs:
+    type: string
+    required: true
+  branch_ref:
+    type: string
+    required: true
 
 env:
   HEAD_REF: ${{ github.head_ref }}
 
-jobs:
+runs:
   build:
     runs-on: ubuntu-latest
     permissions: write-all
