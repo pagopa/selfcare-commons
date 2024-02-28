@@ -5,9 +5,11 @@ inputs:
   path_openapi_docs:
     type: string
     required: true
+    description: 'Path to the OpenAPI documentation'
   branch_ref:
     type: string
     required: true
+    description: 'Branch reference to compare with'
 
 env:
   HEAD_REF: ${{ github.head_ref }}
