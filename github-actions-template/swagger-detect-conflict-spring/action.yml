@@ -1,4 +1,5 @@
-name: Swagger Detect Conflict and Update with Spring
+name: 'Swagger Detect Conflict and Update with Spring'
+description: 'Detects conflicts in the OpenAPI documentation and updates the Spring application'
 
 inputs:
   path_openapi_docs:

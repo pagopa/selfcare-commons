@@ -1,5 +1,5 @@
-name: Swagger Detect Conflict and Update with Quarkus in monorepo
-
+name: 'Swagger Detect Conflict and Update with Quarkus in monorepo'
+description: 'Detects conflicts in the OpenAPI documentation and updates the Quarkus application'
 
 inputs:
   path_openapi_docs:
