@@ -44,10 +44,11 @@ runs:
         base-spec: base/apps/${{ inputs.module }}/${{ inputs.path_openapi_docs }}
     - name: Commit api-docs
       working-directory: head
+      shell: bash
+      env:
+        HEAD_REF: ${{ github.head_ref }}
       run: |
         git ls-files ./apps/${{ inputs.module }}/** | grep 'api-docs*' | xargs git add .
         git config --global user.email "selfcare-github@pagopa.it"
         git config --global user.name "selfcare-github-bot"
         git commit -m "Update Swagger documentation" || exit 0
-        git push origin ${{ github.head_ref }}
-      shell: bash
