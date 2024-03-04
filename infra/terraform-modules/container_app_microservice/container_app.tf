@@ -65,7 +65,7 @@ resource "azapi_resource" "container_app" {
                   scheme = "HTTP"
                 }
                 timeoutSeconds   = 30
-                failureThreshold = 120
+                failureThreshold = 30
                 type             = "Startup"
               }
             ]
