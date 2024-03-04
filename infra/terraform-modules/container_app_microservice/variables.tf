@@ -73,7 +73,15 @@ variable "port" {
 }
 
 variable "probes" {
-  type        = list(map(any))
+  type = list(object({
+    httpGet = object({
+      path   = string
+      port   = number
+      scheme = string
+    })
+    timeoutSeconds = number
+    type           = string
+  }))
   description = "Container probes"
   default = [
     {
