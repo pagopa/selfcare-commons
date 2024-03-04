@@ -136,7 +136,7 @@ jobs:
   release:
     name: 'Release'
     runs-on: ubuntu-20.04
-    needs: [build, tf_plan]
+    needs: [build_push_docker, tf_plan]
     environment: ${{ inputs.environment }}-cd
     permissions:
       id-token: write
