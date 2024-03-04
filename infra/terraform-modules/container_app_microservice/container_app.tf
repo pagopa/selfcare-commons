@@ -39,36 +39,7 @@ resource "azapi_resource" "container_app" {
               cpu    = var.container_app.cpu
               memory = var.container_app.memory
             }
-            probes = [
-              {
-                httpGet = {
-                  path   = "q/health/live"
-                  port   = 8080
-                  scheme = "HTTP"
-                }
-                timeoutSeconds = 5
-                type           = "Liveness"
-              },
-              {
-                httpGet = {
-                  path   = "q/health/ready"
-                  port   = 8080
-                  scheme = "HTTP"
-                }
-                timeoutSeconds = 5
-                type           = "Readiness"
-              },
-              {
-                httpGet = {
-                  path   = "q/health/started"
-                  port   = 8080
-                  scheme = "HTTP"
-                }
-                timeoutSeconds   = 5
-                failureThreshold = 5
-                type             = "Startup"
-              }
-            ]
+            probes = var.probes
           }
         ]
         scale = {

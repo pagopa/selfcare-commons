@@ -18,10 +18,10 @@ locals {
       keyVaultUrl = data.azurerm_key_vault_secret.keyvault_secret["${secret}"].id
   }]
 
-  secrets_env = [for env,secret in var.secrets_names :
+  secrets_env = [for env, secret in var.secrets_names :
     {
       name      = env
       secretRef = secret
   }]
-  
+
 }

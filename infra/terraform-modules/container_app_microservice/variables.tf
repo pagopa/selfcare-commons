@@ -71,3 +71,38 @@ variable "port" {
   default     = 8080
   description = "Container binding port"
 }
+
+variable "probes" {
+  type        = list(map(any))
+  description = "Container probes"
+  default = [
+    {
+      httpGet = {
+        path   = "q/health/live"
+        port   = 8080
+        scheme = "HTTP"
+      }
+      timeoutSeconds = 5
+      type           = "Liveness"
+    },
+    {
+      httpGet = {
+        path   = "q/health/ready"
+        port   = 8080
+        scheme = "HTTP"
+      }
+      timeoutSeconds = 5
+      type           = "Readiness"
+    },
+    {
+      httpGet = {
+        path   = "q/health/started"
+        port   = 8080
+        scheme = "HTTP"
+      }
+      timeoutSeconds   = 5
+      failureThreshold = 5
+      type             = "Startup"
+    }
+  ]
+}
