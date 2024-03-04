@@ -133,7 +133,7 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-release:
+  release:
     name: 'Release'
     runs-on: ubuntu-20.04
     needs: [build, tf_plan]
