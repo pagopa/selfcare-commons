@@ -23,4 +23,5 @@ locals {
       name      = upper(secret)
       secretRef = secret
   }]
+  
 }
