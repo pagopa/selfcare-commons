@@ -23,4 +23,5 @@ locals {
       name      = env
       secretRef = secret
     }]
+    
 }
