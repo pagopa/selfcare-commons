@@ -52,8 +52,8 @@ variable "app_settings" {
 }
 
 variable "secrets_names" {
-  type        = list(string)
-  description = "KeyVault secrets to get values from"
+  type        = map(string)
+  description = "KeyVault secrets to get values from <env,secret-ref>"
 }
 
 variable "image_name" {
@@ -71,3 +71,4 @@ variable "port" {
   default     = 8080
   description = "Container binding port"
 }
+

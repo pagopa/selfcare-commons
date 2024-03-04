@@ -42,30 +42,30 @@ resource "azapi_resource" "container_app" {
             probes = [
               {
                 httpGet = {
-                  path   = "q/health/live"
+                  path   = "actuator/health"
                   port   = 8080
                   scheme = "HTTP"
                 }
-                timeoutSeconds = 5
+                timeoutSeconds = 30
                 type           = "Liveness"
               },
               {
                 httpGet = {
-                  path   = "q/health/ready"
+                  path   = "actuator/health"
                   port   = 8080
                   scheme = "HTTP"
                 }
-                timeoutSeconds = 5
+                timeoutSeconds = 30
                 type           = "Readiness"
               },
               {
                 httpGet = {
-                  path   = "q/health/started"
+                  path   = "actuator/health"
                   port   = 8080
                   scheme = "HTTP"
                 }
-                timeoutSeconds   = 5
-                failureThreshold = 5
+                timeoutSeconds   = 30
+                failureThreshold = 30
                 type             = "Startup"
               }
             ]
