@@ -32,6 +32,7 @@ runs:
     - name: Build with Maven
       working-directory: head
       run: mvn test -Dtest=SwaggerConfigTest#swaggerSpringPlugin -DfailIfNoTests=false
+      shell: bash
     - name: Run OpenAPI Diff (from HEAD revision)
       uses: mvegter/openapi-diff-action@72cde50f8d3a75f770f08e23b815d5ebe69ff757
       with:
