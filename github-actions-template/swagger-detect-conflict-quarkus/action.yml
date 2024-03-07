@@ -1,0 +1,55 @@
+name: 'Swagger Detect Conflict and Update with Quarkus in monorepo'
+description: 'Detects conflicts in the OpenAPI documentation and updates the Quarkus application'
+
+inputs:
+  path_openapi_docs:
+    type: string
+    required: true
+    description: 'Path to the OpenAPI documentation'
+  branch_ref:
+    type: string
+    required: true
+    description: 'Branch reference to compare with'
+  module:
+    type: string
+    required: true
+    description: 'Module to build'
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      with:
+        ref: ${{ github.head_ref }}
+        path: head
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+    - name: Check out BASE revision
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      with:
+        ref: ${{ inputs.branch_ref }}
+        path: base
+    - name: Build with Maven
+      working-directory: head
+      run: mvn --projects :${{ inputs.module }} --also-make package -DskipTests
+      shell: bash
+    - name: Run OpenAPI Diff (from HEAD revision)
+      uses: mvegter/openapi-diff-action@72cde50f8d3a75f770f08e23b815d5ebe69ff757
+      with:
+        head-spec: head/apps/${{ inputs.module }}/${{ inputs.path_openapi_docs }}
+        base-spec: base/apps/${{ inputs.module }}/${{ inputs.path_openapi_docs }}
+    - name: Commit api-docs
+      working-directory: head
+      shell: bash
+      env:
+        HEAD_REF: ${{ github.head_ref }}
+      run: |
+        git ls-files ./apps/${{ inputs.module }}/** | grep 'openapi*' | xargs git add .
+        git config --global user.email "selfcare-github@pagopa.it"
+        git config --global user.name "selfcare-github-bot"
+        git commit -m "Update Swagger documentation" || exit 0
+        git push origin $HEAD_REF
