@@ -21,7 +21,7 @@ on:
       docker_image_name:
         type: string
         required: false
-        default: ${{ github.repository }}-ms
+        default: ${{ github.repository }}
 
 env:
   ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
@@ -64,7 +64,7 @@ jobs:
             type=ref,event=branch
             type=sha
           labels:
-            org.opencontainers.image.title=${{ github.repository }}-ms
+            org.opencontainers.image.title=${{ inputs.docker_image_name }}
             org.opencontainers.image.description=${{ github.repository }} microservice image
             org.opencontainers.image.authors=PagoPA
             org.opencontainers.image.url=github.com/pagopa/${{ github.repository }}
