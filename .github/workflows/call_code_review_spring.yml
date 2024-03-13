@@ -36,6 +36,11 @@ jobs:
           maven-version: '3.9.5'
           cache-enabled: true
 
+      # Selfcare-onboarding
+      - uses: s4u/maven-settings-action@7802f6aec16c9098b4798ad1f1d8ac75198194bd # v3.0.0
+        with:
+          servers: '[{"id": "selfcare-onboarding", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}"}]'
+
       - name: Build
         run: |
           mvn -f ./pom.xml \
