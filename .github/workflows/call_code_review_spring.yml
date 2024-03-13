@@ -28,13 +28,18 @@ jobs:
     steps:
 
       - name: Setup Maven Action
-        uses: s4u/setup-maven-action@fa2c7e4517ed008b1f73e7e0195a9eecf5582cd4 # v1.11.0
+        uses: s4u/setup-maven-action@7802f6aec16c9098b4798ad1f1d8ac75198194bd # v3.0.0
         with:
           checkout-fetch-depth: 0
           java-version: 17
           java-distribution: 'temurin'
           maven-version: '3.9.5'
           cache-enabled: true
+
+      # Selfcare-onboarding
+      - uses: s4u/maven-settings-action@7802f6aec16c9098b4798ad1f1d8ac75198194bd # v3.0.0
+        with:
+          servers: '[{"id": "selfcare-onboarding", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}"}]'
 
       - name: Build
         run: |
