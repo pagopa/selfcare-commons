@@ -38,6 +38,51 @@ variable "container_app" {
   })
 }
 
+variable "probes" {
+  type = list(object({
+    type             = string
+    timeoutSeconds   = number
+    failureThreshold = number
+    httpGet = object({
+      path   = string
+      scheme = string
+      port   = number
+    })
+  }))
+  default = [
+    {
+      httpGet = {
+        path   = "actuator/health"
+        port   = 8080
+        scheme = "HTTP"
+      }
+      timeoutSeconds   = 30
+      type             = "Liveness"
+      failureThreshold = 3
+    },
+    {
+      httpGet = {
+        path   = "actuator/health"
+        port   = 8080
+        scheme = "HTTP"
+      }
+      timeoutSeconds   = 30
+      type             = "Readiness"
+      failureThreshold = 48
+    },
+    {
+      httpGet = {
+        path   = "actuator/health"
+        port   = 8080
+        scheme = "HTTP"
+      }
+      timeoutSeconds   = 30
+      failureThreshold = 30
+      type             = "Startup"
+    }
+  ]
+}
+
 variable "image_tag" {
   type        = string
   default     = "latest"
