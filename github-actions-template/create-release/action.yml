@@ -84,6 +84,9 @@ runs:
     - name: Create Release Variables
       shell: bash
       run: |
+        git config --global user.email "selfcare-github@pagopa.it"
+        git config --global user.name "selfcare-github-bot"
+        
         gh variable set CURRENT_UAT_VERSION \
           --body "${{ env.NEW_VERSION }}"
 
