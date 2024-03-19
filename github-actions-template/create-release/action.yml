@@ -10,10 +10,6 @@ inputs:
       - patch
     default: patch
     description: 'Major, Minor, or Patch version bump'
-  github_token:
-    type: string
-    required: true
-    description: 'Github token'
 
 runs:
   using: "composite"
