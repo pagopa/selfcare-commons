@@ -3,12 +3,12 @@ name: Create Release branch
 inputs:
   version-bump:
     type: choice
+    required: false
     options:
       - major
       - minor
       - patch
     default: patch
-    required: false
     description: 'Major, Minor, or Patch version bump'
   github-token:
     type: string
