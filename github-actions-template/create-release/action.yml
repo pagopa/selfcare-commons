@@ -10,10 +10,6 @@ inputs:
       - patch
     default: patch
     description: 'Major, Minor, or Patch version bump'
-  github_path_token:
-    type: string
-    required: true
-    description: 'Github token'
 
 runs:
   using: "composite"
@@ -86,12 +82,10 @@ runs:
       run: |
         git config --global user.email "selfcare-github@pagopa.it"
         git config --global user.name "selfcare-github-bot"
-        
+
         gh variable set CURRENT_UAT_VERSION \
           --body "${{ env.NEW_VERSION }}"
 
         gh variable set CURRENT_PROD_VERSION \
           --body "${{ env.OLD_VERSION }}"
-      env:
-        GH_TOKEN: ${{ inputs.github_path_token }}
 
