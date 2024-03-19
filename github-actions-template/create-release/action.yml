@@ -67,6 +67,7 @@ runs:
       shell: bash
       run: |
         git push origin $NEW_BRANCH_NAME
+        
 
     - name: Create Repository Release
       shell: bash
@@ -77,6 +78,8 @@ runs:
           --generate-notes \
           --notes-start-tag v${{ env.OLD_VERSION }} \
           --prerelease
+      env:
+        GH_TOKEN: ${{ github.token }}
 
     - name: Create Release Variables
       shell: bash
@@ -87,5 +90,5 @@ runs:
         gh variable set CURRENT_PROD_VERSION \
           --body "${{ env.OLD_VERSION }}"
       env:
-        GH_TOKEN: ${{ inputs.github_token }}
+        GH_TOKEN: ${{ github.token }}
 
