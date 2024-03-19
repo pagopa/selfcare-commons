@@ -68,7 +68,7 @@ variable "probes" {
       }
       timeoutSeconds   = 30
       type             = "Readiness"
-      failureThreshold = 48
+      failureThreshold = 30
     },
     {
       httpGet = {
