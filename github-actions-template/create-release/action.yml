@@ -10,6 +10,10 @@ inputs:
       - patch
     default: patch
     description: 'Major, Minor, or Patch version bump'
+  github_path_token:
+    type: string
+    required: true
+    description: 'Github token'
 
 runs:
   using: "composite"
@@ -86,5 +90,5 @@ runs:
         gh variable set CURRENT_PROD_VERSION \
           --body "${{ env.OLD_VERSION }}"
       env:
-        GH_TOKEN: ${{ github.token }}
+        GH_TOKEN: ${{ inputs.github_path_token }}
 
