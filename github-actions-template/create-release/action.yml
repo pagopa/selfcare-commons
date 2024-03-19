@@ -16,7 +16,7 @@ inputs:
     description: 'Github token'
   
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_TOKEN: ${{ inputs.github-token }}
 
 runs:
   using: "composite"
