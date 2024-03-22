@@ -15,8 +15,13 @@ inputs:
     required: true
     description: 'Github token'
 
+outputs: 
+  new_branch_name:
+    value: ${{ steps.set_output.outputs.new_branch_name }}
+    description: 'New branch name'
+
 runs:
-  using: "composite"
+  using: "composite"  
   steps:
     - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       name: Checkout
@@ -39,7 +44,6 @@ runs:
         echo "RELEASE_BRANCH=${RELEASE_BRANCH}" >> $GITHUB_ENV
 
     - name: Set Branch Name
-      id: set_branch
       shell: bash
       run: |
 
@@ -86,9 +90,11 @@ runs:
       run: |
         gh variable set CURRENT_UAT_VERSION \
           --body "${{ env.NEW_VERSION }}"
-
-        gh variable set CURRENT_PROD_VERSION \
-          --body "${{ env.OLD_VERSION }}"
       env:
         GH_TOKEN: ${{ inputs.github_path_token }}
+
+    - name: Set Output
+      id: set_output
+      shell: bash
+      run: echo "new_branch_name=${{ env.NEW_BRANCH_NAME }}" >> $GITHUB_OUTPUT
 

@@ -17,3 +17,6 @@ This GitHub Action automates the process of creating release branches for a repo
     version-bump: 'patch'
     github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+## Outputs
+``new_branch_name`` Name of the newly created branch.
