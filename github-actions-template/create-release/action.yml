@@ -96,6 +96,5 @@ runs:
     - name: Set Output
       id: set_output
       shell: bash
-      run: |
-        echo "new_branch_name=${echo $NEW_BRANCH_NAME}" >> $GITHUB_OUTPUT
+      run: echo "new_branch_name=${{ env.NEW_BRANCH_NAME }}" >> $GITHUB_OUTPUT
 
