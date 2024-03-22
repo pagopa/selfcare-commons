@@ -18,7 +18,7 @@ inputs:
 runs:
   using: "composite"  
   outputs: 
-    new_branch_name: ${{ steps.set_branch.outputs.NEW_BRANCH_NAME }}
+    new_branch_name: ${{ steps.set_output.outputs.NEW_BRANCH_NAME }}
   steps:
     - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       name: Checkout
@@ -41,7 +41,6 @@ runs:
         echo "RELEASE_BRANCH=${RELEASE_BRANCH}" >> $GITHUB_ENV
 
     - name: Set Branch Name
-      id: set_branch
       shell: bash
       run: |
 
@@ -92,6 +91,7 @@ runs:
         GH_TOKEN: ${{ inputs.github_path_token }}
 
     - name: Set Output
+      id: set_output
       shell: bash
       run: |
         echo "NEW_BRANCH_NAME=${NEW_BRANCH_NAME}" >> $GITHUB_OUTPUT
