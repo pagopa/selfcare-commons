@@ -6,6 +6,10 @@ inputs:
     type: string
     required: true
     description: 'Github token'
+  release_version:
+    type: string
+    required: true
+    description: 'Release version'
 
 runs:
   using: "composite" 
@@ -14,14 +18,14 @@ runs:
     - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       name: Checkout
       with:
-        ref: releases/${{ vars.CURRENT_UAT_VERSION }}
+        ref: releases/${{ inputs.release_version }}
         fetch-depth: 0
 
     - name: Promote Repository Release
       shell: bash
       run: |
-        gh release edit v${{ vars.CURRENT_UAT_VERSION }} \
-          --target releases/${{ vars.CURRENT_UAT_VERSION }} \
+        gh release edit v${{ inputs.release_version }} \
+          --target releases/${{ inputs.release_version }} \
           --prerelease=false \
           --latest \
           --verify-tag
@@ -32,6 +36,6 @@ runs:
       shell: bash
       run: |
         gh variable set CURRENT_PROD_VERSION \
-          --body "${{ vars.CURRENT_UAT_VERSION }}"
+          --body "${{ inputs.release_version }}"
       env:
         GH_TOKEN: ${{ inputs.github_path_token }}
