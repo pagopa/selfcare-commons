@@ -14,14 +14,14 @@ runs:
     - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       name: Checkout
       with:
-        ref: releases/${{ env.CURRENT_PROD_VERSION }}
+        ref: releases/${{ vars.CURRENT_UAT_VERSION }}
         fetch-depth: 0
 
     - name: Promote Repository Release
       shell: bash
       run: |
-        gh release edit v${{ env.CURRENT_UAT_VERSION }} \
-          --target releases/${{ env.CURRENT_UAT_VERSION }} \
+        gh release edit v${{ vars.CURRENT_UAT_VERSION }} \
+          --target releases/${{ vars.CURRENT_UAT_VERSION }} \
           --prerelease=false \
           --latest \
           --verify-tag
@@ -32,6 +32,6 @@ runs:
       shell: bash
       run: |
         gh variable set CURRENT_PROD_VERSION \
-          --body "${{ env.CURRENT_UAT_VERSION }}"
+          --body "${{ vars.CURRENT_UAT_VERSION }}"
       env:
         GH_TOKEN: ${{ inputs.github_path_token }}
