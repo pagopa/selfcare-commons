@@ -19,8 +19,8 @@ runs:
 
     - name: Promote Repository Release
       run: |
-        gh release edit v${{ vars.CURRENT_UAT_VERSION }} \
-          --target releases/${{ vars.CURRENT_UAT_VERSION }} \
+        gh release edit v${{ env.CURRENT_UAT_VERSION }} \
+          --target releases/${{ env.CURRENT_UAT_VERSION }} \
           --prerelease=false \
           --latest \
           --verify-tag
