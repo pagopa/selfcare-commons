@@ -18,6 +18,7 @@ runs:
         fetch-depth: 0
 
     - name: Promote Repository Release
+      shell: bash
       run: |
         gh release edit v${{ env.CURRENT_UAT_VERSION }} \
           --target releases/${{ env.CURRENT_UAT_VERSION }} \
