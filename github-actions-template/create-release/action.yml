@@ -17,7 +17,7 @@ inputs:
 
 outputs: 
   new_branch_name:
-    value: ${{ steps.set_output.outputs.NEW_BRANCH_NAME }}
+    value: ${{ steps.set_output.outputs.new_branch_name }}
     description: 'New branch name'
 
 runs:
@@ -97,5 +97,5 @@ runs:
       id: set_output
       shell: bash
       run: |
-        echo "NEW_BRANCH_NAME=${NEW_BRANCH_NAME}" >> $GITHUB_OUTPUT
+        echo "new_branch_name=${echo NEW_BRANCH_NAME}" >> $GITHUB_OUTPUT
 
