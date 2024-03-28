@@ -117,3 +117,8 @@ variable "port" {
   description = "Container binding port"
 }
 
+variable "workload_profile_name" {
+  type        = string
+  description = "Workload Profile name to use"
+  default     = "Consumption"
+}

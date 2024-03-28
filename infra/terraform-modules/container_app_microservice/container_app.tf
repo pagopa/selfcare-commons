@@ -48,6 +48,7 @@ resource "azapi_resource" "container_app" {
           rules       = var.container_app.scale_rules
         }
       }
+      workloadProfileName = var.workload_profile_name
     }
   })
 }
