@@ -122,3 +122,8 @@ variable "workload_profile_name" {
   description = "Workload Profile name to use"
   default     = "Consumption"
 }
+
+variable "container_app_environment_name" {
+  type        = string
+  description = "Container app environment name to use"
+}
