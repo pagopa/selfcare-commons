@@ -127,3 +127,8 @@ variable "container_app_environment_name" {
   type        = string
   description = "Container app environment name to use"
 }
+
+variable "resource_group_name" {
+  type        = string
+  description = "Container app environment resource group name"
+}
