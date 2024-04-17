@@ -43,6 +43,7 @@ variable "probes" {
     type             = string
     timeoutSeconds   = number
     failureThreshold = number
+    initialDelaySeconds = number
     httpGet = object({
       path   = string
       scheme = string
@@ -59,6 +60,7 @@ variable "probes" {
       timeoutSeconds   = 30
       type             = "Liveness"
       failureThreshold = 3
+      initialDelaySeconds = 1
     },
     {
       httpGet = {
@@ -69,6 +71,7 @@ variable "probes" {
       timeoutSeconds   = 30
       type             = "Readiness"
       failureThreshold = 30
+      initialDelaySeconds = 30
     },
     {
       httpGet = {
@@ -79,6 +82,7 @@ variable "probes" {
       timeoutSeconds   = 30
       failureThreshold = 30
       type             = "Startup"
+      initialDelaySeconds = 30
     }
   ]
 }
