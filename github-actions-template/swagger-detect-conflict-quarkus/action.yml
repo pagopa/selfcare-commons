@@ -36,15 +36,17 @@ runs:
 
     - name: Install Optic
       run: npm install --location global @useoptic/optic
+      shell: bash
 
     - name: Extract branch name
       id: extract_branch
-      shell: bash
       run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+      shell: bash
 
     - name: Check Open API by Optic
       id: optic_diff
       run: optic diff apps/${{ inputs.module }}/${{ inputs.path_openapi_docs }} --base ${{ steps.extract_branch.outputs.branch }}
+      shell: bash
 
     - name: Commit api-docs
       shell: bash
