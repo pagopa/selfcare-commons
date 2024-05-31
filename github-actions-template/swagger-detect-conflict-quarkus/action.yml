@@ -45,7 +45,7 @@ runs:
 
     - name: Check Open API by Optic
       id: optic_diff
-      run: optic diff apps/${{ inputs.module }}/${{ inputs.path_openapi_docs }} --base ${{ steps.extract_branch.outputs.branch }}
+      run: optic diff apps/${{ inputs.module }}/${{ inputs.path_openapi_docs }} --base ${{ steps.extract_branch.outputs.branch }} --check
       shell: bash
 
     - name: Commit api-docs
