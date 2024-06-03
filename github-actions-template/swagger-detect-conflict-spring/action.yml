@@ -47,4 +47,4 @@ runs:
       env:
         HEAD_REF: ${{ github.head_ref }}
       run: |
-        git ls-files ./app** | grep 'api-docs*' 
+        git ls-files ./app** | grep 'api-docs*' | xargs git add

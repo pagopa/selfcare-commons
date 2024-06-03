@@ -53,4 +53,4 @@ runs:
       env:
         HEAD_REF: ${{ github.head_ref }}
       run: |
-        git ls-files ./apps/${{ inputs.module }}/** | grep 'openapi*' 
+        git ls-files ./apps/${{ inputs.module }}/** | grep 'openapi*' | xargs git add
