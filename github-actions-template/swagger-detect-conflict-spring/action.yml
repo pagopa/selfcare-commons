@@ -34,7 +34,7 @@ runs:
 
     - name: Extract branch name
       id: extract_branch
-      run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+      run: echo "branch=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
       shell: bash
 
     - name: Check Open API by Optic
@@ -47,8 +47,9 @@ runs:
       env:
         HEAD_REF: ${{ github.head_ref }}
       run: |
-        git ls-files ./app** | grep 'api-docs*' | xargs git add .
+        git ls-files ./apps/${{ inputs.module }}/** | grep 'openapi*' 
+      #  | xargs git add .
         git config --global user.email "selfcare-github@pagopa.it"
         git config --global user.name "selfcare-github-bot"
-        git commit -m "Update Swagger documentation" || exit 0
-        git push origin $HEAD_REF
+      #  git commit -m "Update Swagger documentation" || exit 0
+      #  git push origin $HEAD_REF
