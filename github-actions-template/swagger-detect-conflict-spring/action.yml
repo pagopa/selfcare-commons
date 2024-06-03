@@ -48,8 +48,3 @@ runs:
         HEAD_REF: ${{ github.head_ref }}
       run: |
         git ls-files ./apps/${{ inputs.module }}/** | grep 'openapi*' 
-      #  | xargs git add .
-        git config --global user.email "selfcare-github@pagopa.it"
-        git config --global user.name "selfcare-github-bot"
-      #  git commit -m "Update Swagger documentation" || exit 0
-      #  git push origin $HEAD_REF
