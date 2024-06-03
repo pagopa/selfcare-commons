@@ -45,7 +45,7 @@ runs:
 
     - name: Check Open API by Optic
       id: optic_diff
-      run: optic diff apps/${{ inputs.module }}/${{ inputs.path_openapi_docs }} --base origin/${{ steps.extract_branch.outputs.branch }}
+      run: optic diff apps/${{ inputs.module }}/${{ inputs.path_openapi_docs }} --base origin/${{ steps.extract_branch.outputs.branch }} --check
       shell: bash
 
     - name: Commit api-docs
@@ -54,3 +54,7 @@ runs:
         HEAD_REF: ${{ github.head_ref }}
       run: |
         git ls-files ./apps/${{ inputs.module }}/** | grep 'openapi*' | xargs git add
+        git config --global user.email "selfcare-github@pagopa.it"
+        git config --global user.name "selfcare-github-bot"
+        git commit -m "Update Swagger documentation" || exit 0
+        git push origin $HEAD_REF
