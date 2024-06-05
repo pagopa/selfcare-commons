@@ -24,10 +24,11 @@ runs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-        # Selfcare-onboarding
-        server-id: "selfcare-onboarding"
-        server-username: ${{ github.actor }}
-        server-password: ${{ inputs.github_token }}
+        
+    # Selfcare-onboarding
+    - uses: s4u/maven-settings-action@7802f6aec16c9098b4798ad1f1d8ac75198194bd # v3.0.0     
+      with:
+        servers: '[{"id": "selfcare-onboarding", "username": "${{ github.actor }}", "password": "${{ inputs.github_token }}"}]'
 
     - name: Build with Maven
       run: mvn test -Dtest=SwaggerConfigTest#swaggerSpringPlugin -DfailIfNoTests=false
