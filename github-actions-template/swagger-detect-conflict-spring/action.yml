@@ -6,10 +6,10 @@ inputs:
     type: string
     required: true
     description: 'Path to the OpenAPI documentation'
-  branch_ref:
+  github_token:
     type: string
     required: true
-    description: 'Branch reference to compare with'
+    description: 'Github token'
 
 runs:
   using: "composite"

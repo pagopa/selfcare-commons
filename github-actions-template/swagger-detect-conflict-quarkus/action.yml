@@ -6,14 +6,14 @@ inputs:
     type: string
     required: true
     description: 'Path to the OpenAPI documentation'
-  branch_ref:
-    type: string
-    required: true
-    description: 'Branch reference to compare with'
   module:
     type: string
     required: true
     description: 'Module to build'
+  github_token:
+    type: string
+    required: true
+    description: 'Github token'
 
 runs:
   using: "composite"
