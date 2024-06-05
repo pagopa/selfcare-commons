@@ -53,7 +53,7 @@ runs:
       env:
         HEAD_REF: ${{ github.head_ref }}
       run: |
-        git ls-files ./app** | grep 'api-docs*' | xargs git add
-        git config --global user.email "selfcare-github@pagopa.it"
-        git config --global user.name "selfcare-github-bot"
-        echo "Swagger documentation is not updated!!" || exit 1
+        if git diff --name-only HEAD | grep -q 'app/.*/api-docs'; then
+          echo "Swagger documentation is older!!"
+          exit 1
+        fi
