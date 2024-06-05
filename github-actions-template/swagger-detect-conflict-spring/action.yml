@@ -25,7 +25,7 @@ runs:
         distribution: 'temurin'
         cache: maven
         # Selfcare-onboarding
-        server-id: selfcare-onboarding
+        server-id: "selfcare-onboarding"
         server-username: ${{ github.actor }}
         server-password: ${{ inputs.github_token }}
 
