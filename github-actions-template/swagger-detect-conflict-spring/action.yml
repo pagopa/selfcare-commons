@@ -56,5 +56,4 @@ runs:
         git ls-files ./app** | grep 'api-docs*' | xargs git add
         git config --global user.email "selfcare-github@pagopa.it"
         git config --global user.name "selfcare-github-bot"
-        git commit -m "chore: Update Swagger documentation" || exit 0
-        git push origin $HEAD_REF
+        echo "Swagger documentation is not updated!!" || exit -1
