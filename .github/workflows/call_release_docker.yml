@@ -24,7 +24,7 @@ on:
         default: ${{ github.repository }}
       path_openapi_docs:
         type: string
-        required: true
+        required: false
         description: 'Path to the OpenAPI documentation'
         default: app/src/main/resources/swagger/api-docs.json
       upload_openapi_enabled:
