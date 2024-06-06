@@ -232,7 +232,7 @@ jobs:
 
       - name: Extract environment short
         id: extract_env_short
-        run: echo "env_short=first_char::${${{ inputs.environment }}:0:1}" >> $GITHUB_OUTPUT
+        run: echo "env_short=${${{ inputs.environment }}:0:1}" >> $GITHUB_OUTPUT
 
       - name: Upload to blob storage
         uses: azure/CLI@965c8d7571d2231a54e321ddd07f7b10317f34d9 # v2
