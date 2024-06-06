@@ -234,5 +234,5 @@ jobs:
         uses: azure/CLI@965c8d7571d2231a54e321ddd07f7b10317f34d9 # v2
         with:
           inlineScript: |
-            az storage blob upload --auth-mode key -f ${{ inputs.path_openapi_docs }} --account-name selc${{ inputs.environment[0] }}checkoutsa  -c ${{ inputs.docker_image_name }}/selc-openapi -n openapi.json
+            az storage blob upload --auth-mode key -f  ${{ inputs.docker_image_name }}/${{ inputs.path_openapi_docs }} --account-name selc${{ inputs.environment[0] }}checkoutsa  -c selc-openapi -n openapi.json
        
