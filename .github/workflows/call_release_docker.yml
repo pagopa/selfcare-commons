@@ -230,9 +230,13 @@ jobs:
           tenant-id: ${{ vars.ARM_TENANT_ID }}
           subscription-id: ${{ vars.ARM_SUBSCRIPTION_ID }}
 
+      - name: Extract environment short
+        id: extract_env_short
+        run: echo "env_short=first_char::${${{ inputs.environment }}:0:1}" >> $GITHUB_OUTPUT
+
       - name: Upload to blob storage
         uses: azure/CLI@965c8d7571d2231a54e321ddd07f7b10317f34d9 # v2
         with:
           inlineScript: |
-            az storage blob upload --auth-mode key -f  ${{ inputs.docker_image_name }}/${{ inputs.path_openapi_docs }} --account-name selc${{ inputs.environment[0] }}checkoutsa  -c selc-openapi -n openapi.json
+            az storage blob upload --auth-mode key -f  ${{ inputs.docker_image_name }}/${{ inputs.path_openapi_docs }} --account-name selc${{ steps.extract_env_short.outputs.env_short }}checkoutsa  -c selc-openapi -n openapi.json
        
