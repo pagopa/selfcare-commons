@@ -2,5 +2,6 @@ package it.pagopa.selfcare.commons.base.security;
 
 public enum SelfCareAuthority {
     ADMIN,
-    LIMITED
+    LIMITED,
+    ADMIN_EA
 }
