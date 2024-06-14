@@ -6,19 +6,6 @@ resource "github_repository_environment" "github_repository_environment_dev_cd" 
 resource "github_repository_environment" "github_repository_environment_uat_cd" {
   environment = "uat-cd"
   repository  = var.github.repository
-
-  reviewers {
-    teams = matchkeys(
-      data.github_organization_teams.all.teams[*].id,
-      data.github_organization_teams.all.teams[*].slug,
-      local.uat.cd.reviewers_teams
-    )
-  }
-
-  deployment_branch_policy {
-    protected_branches     = local.uat.cd.protected_branches
-    custom_branch_policies = local.uat.cd.custom_branch_policies
-  }
 }
 
 resource "github_repository_environment" "github_repository_environment_prod_cd" {
