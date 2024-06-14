@@ -6,6 +6,11 @@ resource "github_repository_environment" "github_repository_environment_dev_cd" 
 resource "github_repository_environment" "github_repository_environment_uat_cd" {
   environment = "uat-cd"
   repository  = var.github.repository
+
+  deployment_branch_policy {
+    protected_branches     = local.uat.cd.protected_branches
+    custom_branch_policies = local.uat.cd.custom_branch_policies
+  }
 }
 
 resource "github_repository_environment" "github_repository_environment_prod_cd" {
