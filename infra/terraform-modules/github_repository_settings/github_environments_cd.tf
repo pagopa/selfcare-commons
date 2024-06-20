@@ -17,14 +17,6 @@ resource "github_repository_environment" "github_repository_environment_prod_cd"
   environment = "prod-cd"
   repository  = var.github.repository
 
-  reviewers {
-    teams = matchkeys(
-      data.github_organization_teams.all.teams[*].id,
-      data.github_organization_teams.all.teams[*].slug,
-      local.prod.cd.reviewers_teams
-    )
-  }
-
   deployment_branch_policy {
     protected_branches     = local.prod.cd.protected_branches
     custom_branch_policies = local.prod.cd.custom_branch_policies
