@@ -53,7 +53,7 @@ runs:
       shell: bash
 
     - name: Check Linter Open API by Optic
-      id: optic_diff
+      id: optic_linter
       run: optic lint ${{ inputs.path_openapi_docs }}
       shell: bash
 
