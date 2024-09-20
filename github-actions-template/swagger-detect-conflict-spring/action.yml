@@ -44,7 +44,7 @@ runs:
       shell: bash
 
     - name: Download optic.yml
-      run: curl https://github.com/pagopa/selfcare-commons/blob/main/optic.yml -o optic.yml
+      run: curl https://github.com/pagopa/selfcare-commons/blob/add-check-linter/optic.yml -o optic.yml
       shell: bash
 
     - name: Check Open API by Optic
