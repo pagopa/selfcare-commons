@@ -43,18 +43,13 @@ runs:
       run: echo "branch=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
       shell: bash
 
+    - name: Download optic.yml
+      run: curl https://raw.githubusercontent.com/pagopa/selfcare-commons/refs/heads/add-check-linter/optic.yml -o optic.yml
+      shell: bash
+
     - name: Check Open API by Optic
       id: optic_diff
       run: optic diff ${{ inputs.path_openapi_docs }} --base origin/${{ steps.extract_branch.outputs.branch }} --check
-      shell: bash
-
-    - name: Download optic.yml
-      run: curl https://github.com/pagopa/selfcare-commons/blob/add-check-linter/optic.yml -o optic.yml
-      shell: bash
-
-    - name: Check Linter Open API by Optic
-      id: optic_linter
-      run: optic lint ${{ inputs.path_openapi_docs }}
       shell: bash
 
     - name: Commit api-docs
