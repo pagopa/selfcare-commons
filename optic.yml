@@ -1,0 +1,18 @@
+ruleset:
+  - naming:
+      required_on: always
+      #operationId:  camelCase
+      requestHeaders: param-case
+      responseHeaders: param-case
+      pathComponents:  param-case
+      queryParameters: camelCase
+  
+  - documentation:
+      # This will apply the rule to only new names (existing ones will be exempted)
+      # Change to always if you want to fail on legacy names
+      # Change to addedOrChanged if you want it to run on added or changed parts of the spec
+      required_on: always
+      #require_property_descriptions: true
+      require_operation_summary: true
+      require_operation_description: true
+      require_operation_id: true
