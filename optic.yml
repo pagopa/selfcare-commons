@@ -1,4 +1,5 @@
 ruleset:
+  - breaking-changes:
   - naming:
       required_on: always
       #operationId:  camelCase
