@@ -21,6 +21,7 @@ provider "azurerm" {
   subscription_id = local.subscription_id_dev
 
   features {}
+  skip_provider_registration = true
 }
 
 provider "azurerm" {
@@ -30,6 +31,7 @@ provider "azurerm" {
   subscription_id = local.subscription_id_uat
 
   features {}
+  skip_provider_registration = true
 }
 
 provider "azurerm" {
@@ -39,6 +41,7 @@ provider "azurerm" {
   subscription_id = local.subscription_id_prod
 
   features {}
+  skip_provider_registration = true
 }
 
 provider "github" {
