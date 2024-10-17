@@ -142,3 +142,12 @@ variable "image_registry" {
   description = "Docker registry where download image"
   default     = "ghcr.io/pagopa"
 }
+
+variable "volume_mounts" {
+  description = "Lista dei mount point dei volumi per il container"
+  type = list(object({
+    mount_path  = string
+    volume_name = string
+  }))
+  default = []
+}

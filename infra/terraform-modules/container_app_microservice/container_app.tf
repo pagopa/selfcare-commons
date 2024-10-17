@@ -40,6 +40,13 @@ resource "azapi_resource" "container_app" {
               memory = var.container_app.memory
             }
             probes = var.probes
+
+            volumeMounts = length(var.volume_mounts) > 0 ? [
+              for vm in var.volume_mounts : {
+                mountPath  = vm.mount_path
+                volumeName = vm.volume_name
+              }
+            ] : []
           }
         ]
         scale = {
@@ -48,6 +55,15 @@ resource "azapi_resource" "container_app" {
           rules       = var.container_app.scale_rules
         }
       }
+
+      volumes = length(var.volume_mounts) > 0 ? [
+        for vm in var.volume_mounts : {
+          name         = vm.volume_name
+          storageType  = "AzureFile"
+          storageName  = replace(vm.volume_name, "-", "")
+        }
+      ] : []
+      
       workloadProfileName = var.workload_profile_name
     }
   })
