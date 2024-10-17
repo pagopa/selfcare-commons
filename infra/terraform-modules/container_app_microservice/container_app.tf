@@ -54,16 +54,16 @@ resource "azapi_resource" "container_app" {
           minReplicas = var.container_app.min_replicas
           rules       = var.container_app.scale_rules
         }
+
+        volumes = length(var.volume_mounts) > 0 ? [
+          for vm in var.volume_mounts : {
+            name         = vm.volume_name
+            storageType  = "AzureFile"
+            storageName  = replace(vm.volume_name, "-", "")
+          }
+        ] : []
       }
 
-      volumes = length(var.volume_mounts) > 0 ? [
-        for vm in var.volume_mounts : {
-          name         = vm.volume_name
-          storageType  = "AzureFile"
-          storageName  = replace(vm.volume_name, "-", "")
-        }
-      ] : []
-      
       workloadProfileName = var.workload_profile_name
     }
   })
