@@ -136,3 +136,9 @@ variable "resource_group_name" {
   type        = string
   description = "Container app environment resource group name"
 }
+
+variable "image_registry" {
+  type        = string
+  description = "Docker registry where download image"
+  default     = "ghcr.io/pagopa"
+}

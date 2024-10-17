@@ -33,7 +33,7 @@ resource "azapi_resource" "container_app" {
         containers = [
           {
             env   = concat(var.app_settings, local.secrets_env)
-            image = "ghcr.io/pagopa/${var.image_name}:${var.image_tag}"
+            image = "${var.image_registry}/${var.image_name}:${var.image_tag}"
             name  = "${local.container_name}"
             resources = {
               cpu    = var.container_app.cpu
