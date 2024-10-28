@@ -81,6 +81,10 @@ jobs:
         # Loading environment variables from ${{ env.ENV_FILE }}
         export $(cat ./.github/workflows/env/${{ env.ENV_FILE }} | xargs)
 
+        echo "TEST"
+        printenv
+        echo "END TEST"
+
         # Build
         yarn build
       shell: bash
@@ -137,16 +141,28 @@ jobs:
           tenant-id: ${{ env.ARM_TENANT_ID }}
           subscription-id: ${{ env.ARM_SUBSCRIPTION_ID }}
       
-      - name: CDN Code Deploy
-        uses: pagopa/dx/.github/actions/cdn_code_deploy@main
-        with:
-          sync_dir_name: ${{ env.BUNDLE_NAME }}
-          resource_group_name: ${{ env.RESOURCE_GROUP }}
-          storage_account_name: ${{ env.STORAGE_ACCOUNT_NAME }}
-          profile_name: ${{ env.CDN_PROFILE }}
-          endpoint_name: ${{ env.ENDPOINT_NAME }}
-          blob_container_name: ${{ env.BLOB_CONTAINER_NAME }}
-          selective_purge_paths: "/${{ env.BASE_PATH }} /${{ env.BASE_PATH }}/*"
+      # - name: CDN Code Deploy
+      #   uses: pagopa/dx/.github/actions/cdn_code_deploy@main
+      #   with:
+      #     sync_dir_name: ${{ env.BUNDLE_NAME }}
+      #     resource_group_name: ${{ env.RESOURCE_GROUP }}
+      #     storage_account_name: ${{ env.STORAGE_ACCOUNT_NAME }}
+      #     profile_name: ${{ env.CDN_PROFILE }}
+      #     endpoint_name: ${{ env.ENDPOINT_NAME }}
+      #     blob_container_name: ${{ env.BLOB_CONTAINER_NAME }}
+      #     selective_purge_paths: "/${{ env.BASE_PATH }} /${{ env.BASE_PATH }}/*"
+      #   env:
+      #     BLOB_CONTAINER_NAME: "$web"
+      #     STORAGE_ACCOUNT_NAME: "selc${{ env.ENV_SHORT }}${{ inputs.storage_account_name }}"
+      #     CDN_PROFILE: selc-${{ env.ENV_SHORT }}-${{ inputs.profile_name}}
+      #     ENDPOINT_NAME: selc-${{ env.ENV_SHORT }}-${{ inputs.endpoint_name }}
+      #     RESOURCE_GROUP: selc-${{ env.ENV_SHORT }}-${{ inputs.resource_group_name }}
+      #     BASE_PATH: ${{ inputs.base_path }}
+
+      - name: Test Code Deploy
+        run: |
+          az storage blob list -c '${{ env.BLOB_CONTAINER_NAME }}' --account-name ${{ env.STORAGE_ACCOUNT_NAME }}
+          az cdn endpoint list -g ${{ env.RESOURCE_GROUP }} --profile-name ${{ env.CDN_PROFILE }}
         env:
           BLOB_CONTAINER_NAME: "$web"
           STORAGE_ACCOUNT_NAME: "selc${{ env.ENV_SHORT }}${{ inputs.storage_account_name }}"
