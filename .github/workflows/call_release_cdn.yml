@@ -82,10 +82,7 @@ jobs:
         export $(cat ./.github/workflows/env/${{ env.ENV_FILE }} | xargs)
 
         echo "TEST"
-        pwd
-        ls ./.github/workflows
-        ls ./.github/workflows/env
-        # printenv
+        printenv
         echo "END TEST"
 
         # Build
