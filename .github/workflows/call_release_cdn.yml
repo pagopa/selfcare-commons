@@ -136,31 +136,13 @@ jobs:
           client-id: ${{ env.ARM_CLIENT_ID }}
           tenant-id: ${{ env.ARM_TENANT_ID }}
           subscription-id: ${{ env.ARM_SUBSCRIPTION_ID }}
-      
-      # - name: CDN Code Deploy
-      #   uses: pagopa/dx/.github/actions/cdn_code_deploy@main
-      #   with:
-      #     sync_dir_name: ${{ env.BUNDLE_NAME }}
-      #     resource_group_name: ${{ env.RESOURCE_GROUP }}
-      #     storage_account_name: ${{ env.STORAGE_ACCOUNT_NAME }}
-      #     profile_name: ${{ env.CDN_PROFILE }}
-      #     endpoint_name: ${{ env.ENDPOINT_NAME }}
-      #     blob_container_name: ${{ env.BLOB_CONTAINER_NAME }}
-      #     selective_purge_paths: "/${{ env.BASE_PATH }} /${{ env.BASE_PATH }}/*"
-      #   env:
-      #     BLOB_CONTAINER_NAME: '\$web'
-      #     STORAGE_ACCOUNT_NAME: "selc${{ env.ENV_SHORT }}${{ inputs.storage_account_name }}"
-      #     CDN_PROFILE: selc-${{ env.ENV_SHORT }}-${{ inputs.profile_name}}
-      #     ENDPOINT_NAME: selc-${{ env.ENV_SHORT }}-${{ inputs.endpoint_name }}
-      #     RESOURCE_GROUP: selc-${{ env.ENV_SHORT }}-${{ inputs.resource_group_name }}
-      #     BASE_PATH: ${{ inputs.base_path }}
 
       - name: CDN Code Deploy
         run: |
-          az storage blob sync -c '$web' --account-name ${{ env.STORAGE_ACCOUNT_NAME }} -s "./${{ env.BUNDLE_NAME }}"
-          az cdn endpoint purge -g ${{ env.RESOURCE_GROUP }} -n ${{ env.ENDPOINT_NAME }} --profile-name ${{ env.CDN_PROFILE }} --content-paths /${{ env.BASE_PATH }} /${{ env.BASE_PATH }}/*
+          az storage blob sync -c '${{ env.BLOB_CONTAINER_NAME }}' --account-name ${{ env.STORAGE_ACCOUNT_NAME }} -s "./${{ env.BUNDLE_NAME }}" --destination '${{ env.BASE_PATH }}/'
+          az cdn endpoint purge -g ${{ env.RESOURCE_GROUP }} -n ${{ env.ENDPOINT_NAME }} --profile-name ${{ env.CDN_PROFILE }} --content-paths "/${{ env.BASE_PATH }}" "/${{ env.BASE_PATH }}/*"
         env:
-          BLOB_CONTAINER_NAME: '$web'
+          BLOB_CONTAINER_NAME: ${{ inputs.blob_container_name }}
           STORAGE_ACCOUNT_NAME: "selc${{ env.ENV_SHORT }}${{ inputs.storage_account_name }}"
           CDN_PROFILE: selc-${{ env.ENV_SHORT }}-${{ inputs.profile_name}}
           ENDPOINT_NAME: selc-${{ env.ENV_SHORT }}-${{ inputs.endpoint_name }}
