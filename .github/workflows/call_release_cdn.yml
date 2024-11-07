@@ -148,7 +148,7 @@ jobs:
           blob_container_name: ${{ env.BLOB_CONTAINER_NAME }}
           selective_purge_paths: "/${{ env.BASE_PATH }} /${{ env.BASE_PATH }}/*"
         env:
-          BLOB_CONTAINER_NAME: '$web'
+          BLOB_CONTAINER_NAME: '\$web'
           STORAGE_ACCOUNT_NAME: "selc${{ env.ENV_SHORT }}${{ inputs.storage_account_name }}"
           CDN_PROFILE: selc-${{ env.ENV_SHORT }}-${{ inputs.profile_name}}
           ENDPOINT_NAME: selc-${{ env.ENV_SHORT }}-${{ inputs.endpoint_name }}
