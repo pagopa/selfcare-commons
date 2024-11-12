@@ -82,7 +82,7 @@ jobs:
         REACT_APP_OT_TERMS_AND_CONDITION_RESOURCE: "${{ env.REACT_APP_OT_TERMS_CONDITION_RESOURCE }}"
         REACT_APP_OT_TOS_RESOURCE: "${{ env.REACT_APP_OT_TOS_RESOURCE }}"
       run: |
-        ENV_ENDPOINT="https://raw.githubusercontent.com/pagopa/selfcare-commons/refs/heads/feature/SELC-5984/.github/workflows/env/${{ inputs.file_environment }}"
+        ENV_ENDPOINT="https://raw.githubusercontent.com/pagopa/selfcare-commons/refs/heads/main/.github/workflows/env/${{ inputs.file_environment }}"
         export $(curl -s "$ENV_ENDPOINT" | xargs)
 
         # Build
