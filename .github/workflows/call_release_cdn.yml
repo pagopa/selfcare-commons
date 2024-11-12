@@ -7,6 +7,10 @@ on:
         required: true
         description: The environment to use
         type: string
+      file_environment:
+        type: string
+        required: false
+        description: File presents on selfcare-common/github/workflows/env where retrieve environment variables
       storage_account_name:
         required: true
         description: Storage account name
@@ -78,8 +82,8 @@ jobs:
         REACT_APP_OT_TERMS_AND_CONDITION_RESOURCE: "${{ env.REACT_APP_OT_TERMS_CONDITION_RESOURCE }}"
         REACT_APP_OT_TOS_RESOURCE: "${{ env.REACT_APP_OT_TOS_RESOURCE }}"
       run: |
-        # Loading environment variables from ${{ env.ENV_FILE }}
-        export $(cat ./.github/workflows/env/${{ env.ENV_FILE }} | xargs)
+        ENV_ENDPOINT="https://raw.githubusercontent.com/pagopa/selfcare-commons/refs/heads/feature/SELC-5984/.github/workflows/env/${{ inputs.file_environment }}"
+        export $(curl -s "$ENV_ENDPOINT" | xargs)
 
         # Build
         yarn build
