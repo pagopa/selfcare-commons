@@ -23,6 +23,7 @@ locals {
 
   repo_secrets = {
     "SONAR_TOKEN" = data.azurerm_key_vault_secret.key_vault_sonar.value,
+    "GH_PAT_VARIABLES" = data.azurerm_key_vault_secret.key_github_path_token.value,
   }
 
   dev = {
