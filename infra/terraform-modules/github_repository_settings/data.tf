@@ -19,6 +19,11 @@ data "azurerm_key_vault_secret" "key_vault_sonar" {
   key_vault_id = data.azurerm_key_vault.key_vault_dev.id
 }
 
+data "azurerm_key_vault_secret" "key_github_path_token" {
+  name         = "github-path-token"
+  key_vault_id = data.azurerm_key_vault.key_vault_dev.id
+}
+
 data "azurerm_user_assigned_identity" "identity_dev_ci" {
   provider = azurerm.dev
 
