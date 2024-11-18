@@ -72,7 +72,6 @@ public class K8sJwtAuthenticationStrategy implements JwtAuthenticationStrategy {
                 null);
         authenticationToken.setDetails(authentication.getDetails());
 
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "authenticate result = {}", authentication);
         log.trace("authenticate end");
         return authenticationToken;
     }

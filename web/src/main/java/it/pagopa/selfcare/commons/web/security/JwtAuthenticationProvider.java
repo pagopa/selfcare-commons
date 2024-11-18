@@ -26,7 +26,6 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         final JwtAuthenticationStrategy jwtAuthenticationStrategy = jwtAuthenticationStrategyFactory.create(requestAuth.getCredentials());
         final JwtAuthenticationToken jwtAuthenticationToken = jwtAuthenticationStrategy.authenticate(requestAuth);
         jwtAuthenticationToken.setDetails(authentication.getDetails());
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "authenticate result = {}", jwtAuthenticationToken);
         log.trace("authenticate end");
         return jwtAuthenticationToken;
     }
