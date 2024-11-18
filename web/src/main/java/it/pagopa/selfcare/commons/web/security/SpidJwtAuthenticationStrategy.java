@@ -47,7 +47,7 @@ public class SpidJwtAuthenticationStrategy implements JwtAuthenticationStrategy 
         SelfCareUser user;
         try {
             Claims claims = jwtService.getClaims(authentication.getCredentials());
-            log.debug(LogUtils.CONFIDENTIAL_MARKER, "authenticate claims = {}", claims);
+            log.debug(LogUtils.CONFIDENTIAL_MARKER, "authenticate user with id = {}", claims.get(CLAIMS_UID, String.class));
             Optional<String> uid = Optional.ofNullable(claims.get(CLAIMS_UID, String.class));
             uid.ifPresentOrElse(value -> MDC.put(MDC_UID, value),
                     () -> log.warn("uid claims is null"));
@@ -74,7 +74,6 @@ public class SpidJwtAuthenticationStrategy implements JwtAuthenticationStrategy 
                 user,
                 authorities);
 
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "authenticate result = {}", authenticationToken);
         log.trace("authenticate end");
         return authenticationToken;
     }

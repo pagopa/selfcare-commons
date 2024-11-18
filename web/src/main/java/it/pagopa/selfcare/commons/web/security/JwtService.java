@@ -2,7 +2,6 @@ package it.pagopa.selfcare.commons.web.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -31,7 +30,6 @@ public class JwtService {
 
     public Claims getClaims(String token) {
         log.trace("getClaims start");
-        log.debug(LogUtils.CONFIDENTIAL_MARKER, "getClaims token = {}" , token);
         return Jwts.parser()
                 .setSigningKey(jwtSigningKey)
                 .parseClaimsJws(token)
