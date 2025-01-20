@@ -16,8 +16,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
-import javax.servlet.ServletException;
-import javax.validation.ValidationException;
+import jakarta.servlet.ServletException;
+import jakarta.validation.ValidationException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

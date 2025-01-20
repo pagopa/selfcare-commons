@@ -10,7 +10,7 @@ import springfox.documentation.spi.schema.ModelPropertyBuilderPlugin;
 import springfox.documentation.spi.schema.contexts.ModelPropertyContext;
 import springfox.documentation.swagger.common.SwaggerPluginSupport;
 
-import javax.validation.constraints.Email;
+import jakarta.validation.constraints.Email;
 import java.util.Optional;
 
 @Order(SwaggerPluginSupport.SWAGGER_PLUGIN_ORDER)

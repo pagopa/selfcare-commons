@@ -17,7 +17,7 @@ import java.util.Optional;
  * Implementation of {@link JwtAuthenticationStrategy} based on Kubernates JWT
  */
 @Slf4j
-@Service
+//@Service
 public class K8sJwtAuthenticationStrategy implements JwtAuthenticationStrategy {
 
     private static final String MDC_UID = "uid";

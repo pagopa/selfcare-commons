@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
-import javax.servlet.ServletException;
-import javax.validation.ValidationException;
+import jakarta.servlet.ServletException;
+import jakarta.validation.ValidationException;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
