@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.context.annotation.RequestScope;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -19,6 +21,7 @@ public class ServerSwaggerConfig {
   private static final Pattern PATTERN = Pattern.compile("^([^:]+:\\/\\/[^(?:\\:|\\/)]+)(?:(?:\\:(\\d+)\\/)|\\/).*$");
 
   @Bean
+  @RequestScope
   public OpenAPI customOpenAPI(HttpServletRequest request) {
     OpenAPI openApi = new OpenAPI();
 

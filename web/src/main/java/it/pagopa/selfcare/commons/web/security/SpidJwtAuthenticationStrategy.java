@@ -17,7 +17,7 @@ import java.util.Optional;
  * Implementation of {@link JwtAuthenticationStrategy} based on SPID JWT
  */
 @Slf4j
-//@Service
+@Service
 public class SpidJwtAuthenticationStrategy implements JwtAuthenticationStrategy {
 
     private static final String MDC_UID = "uid";
