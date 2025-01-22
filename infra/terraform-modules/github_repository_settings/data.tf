@@ -64,3 +64,44 @@ data "azurerm_user_assigned_identity" "identity_prod_cd" {
   name                = format(local.identity_cd_name, local.prod_alias)
   resource_group_name = format(local.identity_resource_group_name, local.prod_alias)
 }
+
+data "azurerm_user_assigned_identity" "identity_dev_fe_ci" {
+  provider = azurerm.dev
+
+  name                = format(local.identity_ci_fe_name, local.dev_alias)
+  resource_group_name = format(local.identity_resource_group_name, local.dev_alias)
+}
+
+data "azurerm_user_assigned_identity" "identity_dev_fe_cd" {
+  provider = azurerm.dev
+
+  name                = format(local.identity_cd_fe_name, local.dev_alias)
+  resource_group_name = format(local.identity_resource_group_name, local.dev_alias)
+}
+
+data "azurerm_user_assigned_identity" "identity_uat_fe_ci" {
+  provider = azurerm.uat
+
+  name                = format(local.identity_ci_fe_name, local.uat_alias)
+  resource_group_name = format(local.identity_resource_group_name, local.uat_alias)
+}
+
+data "azurerm_user_assigned_identity" "identity_uat_fe_cd" {
+  provider            = azurerm.uat
+  name                = format(local.identity_cd_fe_name, local.uat_alias)
+  resource_group_name = format(local.identity_resource_group_name, local.uat_alias)
+}
+
+data "azurerm_user_assigned_identity" "identity_prod_fe_ci" {
+  provider = azurerm.prod
+
+  name                = format(local.identity_ci_fe_name, local.prod_alias)
+  resource_group_name = format(local.identity_resource_group_name, local.prod_alias)
+}
+
+data "azurerm_user_assigned_identity" "identity_prod_fe_cd" {
+  provider = azurerm.prod
+
+  name                = format(local.identity_cd_fe_name, local.prod_alias)
+  resource_group_name = format(local.identity_resource_group_name, local.prod_alias)
+}
