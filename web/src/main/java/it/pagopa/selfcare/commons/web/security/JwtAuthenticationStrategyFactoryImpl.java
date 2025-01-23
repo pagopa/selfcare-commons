@@ -30,9 +30,10 @@ public class JwtAuthenticationStrategyFactoryImpl implements JwtAuthenticationSt
     final JwtAuthenticationStrategy bean;
     final String issuer;
     try {
+
       Claims claims = Jwts.parserBuilder()
         .build()
-        .parseClaimsJwt(Jwts.parser().isSigned(jwt)
+        .parseClaimsJwt(Jwts.parserBuilder().build().isSigned(jwt)
           ? jwt.substring(0, jwt.lastIndexOf('.') + 1)
           : jwt)
         .getBody();
