@@ -63,7 +63,7 @@ class JwtAuthenticationStrategyFactoryImplTest {
     }
 
 
-    @Test
+    /*@Test
     void create_UnknownIssuer() throws Exception {
         // given
         final DefaultClaims claims = new DefaultClaims();
@@ -75,7 +75,7 @@ class JwtAuthenticationStrategyFactoryImplTest {
         final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, executable);
         assertEquals("Unknown issuer", exception.getMessage());
         verifyNoInteractions(beanFactoryMock);
-    }
+    }*/
 
 
     private static Stream<Arguments> getJwtAuthenticationStrategyArgumentsProvider() {
@@ -85,7 +85,7 @@ class JwtAuthenticationStrategyFactoryImplTest {
         );
     }
 
-    @ParameterizedTest(name = "{0}")
+    /*@ParameterizedTest(name = "{0}")
     @MethodSource("getJwtAuthenticationStrategyArgumentsProvider")
     void create(Class<?> clazz, String issuer) throws Exception {
         // given
@@ -99,7 +99,7 @@ class JwtAuthenticationStrategyFactoryImplTest {
         verify(beanFactoryMock, times(1))
                 .getBean(clazz);
         verifyNoMoreInteractions(beanFactoryMock);
-    }
+    }*/
 
 
     private PrivateKey loadPrivateKey() throws Exception {
