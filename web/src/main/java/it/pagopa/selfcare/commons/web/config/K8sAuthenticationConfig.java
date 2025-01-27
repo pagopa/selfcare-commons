@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 
 class K8sAuthenticationConfig {
 
-    //@Bean
+    @Bean
     public AuthenticationV1Api getAuthenticationV1Api() throws IOException {
         final ApiClient client = Config.defaultClient();
         io.kubernetes.client.openapi.Configuration.setDefaultApiClient(client);
