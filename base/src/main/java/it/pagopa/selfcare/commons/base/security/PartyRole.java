@@ -11,7 +11,8 @@ public enum PartyRole {
     DELEGATE(ADMIN),
     SUB_DELEGATE(ADMIN),
     OPERATOR(LIMITED),
-    ADMIN_EA(SelfCareAuthority.ADMIN_EA);
+    ADMIN_EA(SelfCareAuthority.ADMIN_EA),
+    ADMIN_EA_IO(SelfCareAuthority.ADMIN_EA);
 
     private SelfCareAuthority selfCareAuthority;
 
