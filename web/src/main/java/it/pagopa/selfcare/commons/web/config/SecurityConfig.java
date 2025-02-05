@@ -19,7 +19,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -27,7 +26,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @PropertySource("classpath:config/jwt.properties")
-@ComponentScan(basePackages = "it.pagopa.selfcare.commons.web.security")
+@ComponentScan(basePackages = "it.pagopa.selfcare.commons.web")
 @Import({BaseWebConfig.class, K8sAuthenticationConfig.class})
 public class SecurityConfig {
 
@@ -50,7 +49,8 @@ public class SecurityConfig {
     this.objectMapper = objectMapper;
   }
 
-  public AuthenticationManager authenticationManager(UserDetailsService userDetailsService) throws Exception {
+  @Bean
+  public AuthenticationManager authenticationManager() {
     JwtAuthenticationProvider authenticationProvider = new JwtAuthenticationProvider(jwtAuthenticationStrategyFactory);
     return authenticationProvider::authenticate;
   }
@@ -95,13 +95,12 @@ public class SecurityConfig {
       .sessionManagement(
         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
       .formLogin(AbstractHttpConfigurer::disable)
-      .csrf(AbstractHttpConfigurer::disable)
       .logout(AbstractHttpConfigurer::disable)
       .anonymous(AbstractHttpConfigurer::disable)
       .x509(AbstractHttpConfigurer::disable)
       .httpBasic(AbstractHttpConfigurer::disable)
       .rememberMe(AbstractHttpConfigurer::disable)
-      .addFilterBefore(new JwtAuthenticationFilter(authenticationManager(null), objectMapper), UsernamePasswordAuthenticationFilter.class);
+      .addFilterBefore(new JwtAuthenticationFilter(authenticationManager(), objectMapper), UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
 
