@@ -1,87 +1,53 @@
 package it.pagopa.selfcare.commons.web.swagger;
 
-import com.fasterxml.classmate.TypeResolver;
-import it.pagopa.selfcare.commons.web.model.Problem;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+
+import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.responses.ApiResponses;
+import org.springdoc.core.customizers.GlobalOpenApiCustomizer;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import io.swagger.v3.oas.models.media.Content;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
-import springfox.documentation.builders.ResponseBuilder;
-import springfox.documentation.service.Response;
 
-@Configuration
-@Import(BeanValidatorPluginsConfiguration.class)
 @EnableConfigurationProperties(SpringDataWebProperties.class)
+@Configuration
 public class BaseSwaggerConfig {
 
-    public static final Response INTERNAL_SERVER_ERROR_RESPONSE = new ResponseBuilder()
-            .code(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()))
-            .description(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
-            .representation(MediaType.APPLICATION_PROBLEM_JSON).apply(repBuilder ->
-                    repBuilder.model(modelSpecBuilder ->
-                            modelSpecBuilder.referenceModel(refModelSpecBuilder ->
-                                    refModelSpecBuilder.key(modelKeyBuilder ->
-                                            modelKeyBuilder.qualifiedModelName(qualifiedModelNameBuilder ->
-                                                    qualifiedModelNameBuilder.namespace(Problem.class.getPackageName())
-                                                            .name(Problem.class.getSimpleName()))))))
-            .build();
-    public static final Response BAD_REQUEST_RESPONSE = new ResponseBuilder()
-            .code(String.valueOf(HttpStatus.BAD_REQUEST.value()))
-            .description(HttpStatus.BAD_REQUEST.getReasonPhrase())
-            .representation(MediaType.APPLICATION_PROBLEM_JSON).apply(repBuilder ->
-                    repBuilder.model(modelSpecBuilder ->
-                            modelSpecBuilder.referenceModel(refModelSpecBuilder ->
-                                    refModelSpecBuilder.key(modelKeyBuilder ->
-                                            modelKeyBuilder.qualifiedModelName(qualifiedModelNameBuilder ->
-                                                    qualifiedModelNameBuilder.namespace(Problem.class.getPackageName())
-                                                            .name(Problem.class.getSimpleName()))))))
-            .build();
-    public static final Response UNAUTHORIZED_RESPONSE = new ResponseBuilder()
-            .code(String.valueOf(HttpStatus.UNAUTHORIZED.value()))
-            .description(HttpStatus.UNAUTHORIZED.getReasonPhrase())
-            .representation(MediaType.APPLICATION_PROBLEM_JSON).apply(repBuilder ->
-                    repBuilder.model(modelSpecBuilder ->
-                            modelSpecBuilder.referenceModel(refModelSpecBuilder ->
-                                    refModelSpecBuilder.key(modelKeyBuilder ->
-                                            modelKeyBuilder.qualifiedModelName(qualifiedModelNameBuilder ->
-                                                    qualifiedModelNameBuilder.namespace(Problem.class.getPackageName())
-                                                            .name(Problem.class.getSimpleName()))))))
-            .build();
-    public static final Response NOT_FOUND_RESPONSE = new ResponseBuilder()
-            .code(String.valueOf(HttpStatus.NOT_FOUND.value()))
-            .description(HttpStatus.NOT_FOUND.getReasonPhrase())
-            .representation(MediaType.APPLICATION_PROBLEM_JSON).apply(repBuilder ->
-                    repBuilder.model(modelSpecBuilder ->
-                            modelSpecBuilder.referenceModel(refModelSpecBuilder ->
-                                    refModelSpecBuilder.key(modelKeyBuilder ->
-                                            modelKeyBuilder.qualifiedModelName(qualifiedModelNameBuilder ->
-                                                    qualifiedModelNameBuilder.namespace(Problem.class.getPackageName())
-                                                            .name(Problem.class.getSimpleName()))))))
-            .build();
+  @Bean
+  public GlobalOpenApiCustomizer globalApiCustomizer() {
+    return openApi -> {
+      // Definizione del modello "Problem"
+      Schema<?> problemSchema = new Schema<>().type("object").description("Generic problem response");
 
+      // Creazione delle risposte standard
+      ApiResponse badRequest = createApiResponse(HttpStatus.BAD_REQUEST, problemSchema);
+      ApiResponse unauthorized = createApiResponse(HttpStatus.UNAUTHORIZED, problemSchema);
+      ApiResponse notFound = createApiResponse(HttpStatus.NOT_FOUND, problemSchema);
+      ApiResponse internalError = createApiResponse(HttpStatus.INTERNAL_SERVER_ERROR, problemSchema);
 
-    @Bean
-    public EmailAnnotationSwaggerPluginConfig emailAnnotationPlugin() {
-        return new EmailAnnotationSwaggerPluginConfig();
-    }
+      // Aggiunta dello schema "Problem" ai componenti globali di OpenAPI
+      openApi.getComponents().addSchemas("Problem", problemSchema);
 
+      // Aggiunta delle risposte globali a tutte le API
+      openApi.getPaths().values().forEach(pathItem ->
+        pathItem.readOperations().forEach(operation -> {
+          ApiResponses responses = operation.getResponses();
+          responses.addApiResponse("400", badRequest);
+          responses.addApiResponse("401", unauthorized);
+          responses.addApiResponse("404", notFound);
+          responses.addApiResponse("500", internalError);
+        }));
+    };
+  }
 
-    @Bean
-    public ServerSwaggerConfig serverSwaggerConfiguration() {
-        return new ServerSwaggerConfig();
-    }
-
-
-    @Bean
-    @ConditionalOnClass(name = "org.springframework.data.domain.Pageable")
-    public PageableParameterConfig pageableParameterConfig(SpringDataWebProperties springDataWebProperties,
-                                                           TypeResolver resolver) {
-        return new PageableParameterConfig(springDataWebProperties, resolver);
-    }
-
+  private ApiResponse createApiResponse(HttpStatus status, Schema<?> schema) {
+    return new ApiResponse()
+      .description(status.getReasonPhrase())
+      .content(new Content().addMediaType(org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+        new MediaType().schema(schema)));
+  }
 }
