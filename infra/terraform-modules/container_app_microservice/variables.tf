@@ -40,9 +40,9 @@ variable "container_app" {
 
 variable "probes" {
   type = list(object({
-    type             = string
-    timeoutSeconds   = number
-    failureThreshold = number
+    type                = string
+    timeoutSeconds      = number
+    failureThreshold    = number
     initialDelaySeconds = number
     httpGet = object({
       path   = string
@@ -57,9 +57,9 @@ variable "probes" {
         port   = 8080
         scheme = "HTTP"
       }
-      timeoutSeconds   = 30
-      type             = "Liveness"
-      failureThreshold = 3
+      timeoutSeconds      = 30
+      type                = "Liveness"
+      failureThreshold    = 3
       initialDelaySeconds = 1
     },
     {
@@ -68,9 +68,9 @@ variable "probes" {
         port   = 8080
         scheme = "HTTP"
       }
-      timeoutSeconds   = 30
-      type             = "Readiness"
-      failureThreshold = 30
+      timeoutSeconds      = 30
+      type                = "Readiness"
+      failureThreshold    = 30
       initialDelaySeconds = 3
     },
     {
@@ -79,9 +79,9 @@ variable "probes" {
         port   = 8080
         scheme = "HTTP"
       }
-      timeoutSeconds   = 30
-      failureThreshold = 30
-      type             = "Startup"
+      timeoutSeconds      = 30
+      failureThreshold    = 30
+      type                = "Startup"
       initialDelaySeconds = 30
     }
   ]

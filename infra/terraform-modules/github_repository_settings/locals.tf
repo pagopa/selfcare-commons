@@ -17,12 +17,15 @@ locals {
   identity_ci_name             = "${local.project}-ms-github-ci-identity"
   identity_cd_name             = "${local.project}-ms-github-cd-identity"
 
+  identity_ci_fe_name = "${local.project}-fe-github-ci-identity"
+  identity_cd_fe_name = "${local.project}-fe-github-cd-identity"
+
   repo_variables = {
     "ARM_TENANT_ID" = data.azurerm_client_config.current.tenant_id,
   }
 
   repo_secrets = {
-    "SONAR_TOKEN" = data.azurerm_key_vault_secret.key_vault_sonar.value,
+    "SONAR_TOKEN"      = data.azurerm_key_vault_secret.key_vault_sonar.value,
     "GH_PAT_VARIABLES" = data.azurerm_key_vault_secret.key_github_path_token.value,
   }
 
@@ -34,7 +37,7 @@ locals {
         "ARM_SUBSCRIPTION_ID" = local.subscription_id_dev
       }
       secrets = {
-        "ARM_CLIENT_ID" = data.azurerm_user_assigned_identity.identity_dev_ci.client_id
+        "ARM_CLIENT_ID" = var.identity_component == "ms" ? data.azurerm_user_assigned_identity.identity_dev_ci.client_id : data.azurerm_user_assigned_identity.identity_dev_fe_ci.client_id
       }
     }
     cd = {
@@ -44,7 +47,7 @@ locals {
         "ARM_SUBSCRIPTION_ID" = local.subscription_id_dev
       }
       secrets = {
-        "ARM_CLIENT_ID" = data.azurerm_user_assigned_identity.identity_dev_cd.client_id
+        "ARM_CLIENT_ID" = var.identity_component == "ms" ? data.azurerm_user_assigned_identity.identity_dev_cd.client_id : data.azurerm_user_assigned_identity.identity_dev_fe_cd.client_id
       }
     }
   }
@@ -59,7 +62,7 @@ locals {
         "ARM_SUBSCRIPTION_ID" = local.subscription_id_uat
       }
       secrets = {
-        "ARM_CLIENT_ID" = data.azurerm_user_assigned_identity.identity_uat_ci.client_id
+        "ARM_CLIENT_ID" = var.identity_component == "ms" ? data.azurerm_user_assigned_identity.identity_uat_ci.client_id : data.azurerm_user_assigned_identity.identity_uat_fe_ci.client_id
       }
     }
     cd = {
@@ -71,7 +74,7 @@ locals {
         "ARM_SUBSCRIPTION_ID" = local.subscription_id_uat
       }
       secrets = {
-        "ARM_CLIENT_ID" = data.azurerm_user_assigned_identity.identity_uat_cd.client_id
+        "ARM_CLIENT_ID" = var.identity_component == "ms" ? data.azurerm_user_assigned_identity.identity_uat_cd.client_id : data.azurerm_user_assigned_identity.identity_uat_fe_cd.client_id
       }
     }
   }
@@ -86,7 +89,7 @@ locals {
         "ARM_SUBSCRIPTION_ID" = local.subscription_id_prod
       }
       secrets = {
-        "ARM_CLIENT_ID" = data.azurerm_user_assigned_identity.identity_prod_ci.client_id
+        "ARM_CLIENT_ID" = var.identity_component == "ms" ? data.azurerm_user_assigned_identity.identity_prod_ci.client_id : data.azurerm_user_assigned_identity.identity_prod_fe_ci.client_id
       }
     }
     cd = {
@@ -98,7 +101,7 @@ locals {
         "ARM_SUBSCRIPTION_ID" = local.subscription_id_prod
       }
       secrets = {
-        "ARM_CLIENT_ID" = data.azurerm_user_assigned_identity.identity_prod_cd.client_id
+        "ARM_CLIENT_ID" = var.identity_component == "ms" ? data.azurerm_user_assigned_identity.identity_prod_cd.client_id : data.azurerm_user_assigned_identity.identity_prod_fe_cd.client_id
       }
     }
   }

@@ -41,7 +41,7 @@
             </dependency>
             <dependency>
                 <groupId>it.pagopa.selfcare.utils</groupId>
-                <artifactId>selc-commons-crypto</artifactId>
+                <artifactId>selc-commons-crypto</artifactId>1
                 <version>2.6.5</version>
                 <type>test-jar</type>
             </dependency>
