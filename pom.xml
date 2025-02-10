@@ -41,7 +41,7 @@
             </dependency>
             <dependency>
                 <groupId>it.pagopa.selfcare.utils</groupId>
-                <artifactId>selc-commons-crypto</artifactId>1
+                <artifactId>selc-commons-crypto</artifactId>
                 <version>2.6.5</version>
                 <type>test-jar</type>
             </dependency>
@@ -50,7 +50,6 @@
                 <artifactId>selc-commons-connector-soap-utils</artifactId>
                 <version>2.6.5</version>
             </dependency>
-
             <dependency>
                 <groupId>ch.qos.logback.contrib</groupId>
                 <artifactId>logback-json-classic</artifactId>
