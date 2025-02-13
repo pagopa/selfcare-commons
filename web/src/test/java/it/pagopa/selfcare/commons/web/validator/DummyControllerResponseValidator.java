@@ -1,6 +1,6 @@
 package it.pagopa.selfcare.commons.web.validator;
 
-import javax.validation.Validator;
+import jakarta.validation.Validator;
 
 public class DummyControllerResponseValidator extends ControllerResponseValidator {
 

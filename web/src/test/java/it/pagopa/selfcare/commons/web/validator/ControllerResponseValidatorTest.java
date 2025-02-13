@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
-import javax.validation.Validation;
+import jakarta.validation.Validation;
 import java.util.List;
 
 class ControllerResponseValidatorTest {
