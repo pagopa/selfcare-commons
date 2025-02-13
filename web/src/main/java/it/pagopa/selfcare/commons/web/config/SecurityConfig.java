@@ -94,6 +94,7 @@ public class SecurityConfig {
               }))
       .sessionManagement(
         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+      .csrf(AbstractHttpConfigurer::disable)
       .formLogin(AbstractHttpConfigurer::disable)
       .logout(AbstractHttpConfigurer::disable)
       .anonymous(AbstractHttpConfigurer::disable)
