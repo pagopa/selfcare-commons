@@ -4,14 +4,13 @@ import io.kubernetes.client.openapi.apis.AuthenticationV1Api;
 import io.kubernetes.client.openapi.models.*;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.base.security.ServiceAccount;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-
-import java.util.Optional;
 
 /**
  * Implementation of {@link JwtAuthenticationStrategy} based on Kubernates JWT

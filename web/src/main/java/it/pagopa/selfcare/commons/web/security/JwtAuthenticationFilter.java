@@ -9,9 +9,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Objects;
-
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.http.HttpHeaders;
@@ -28,17 +25,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-  private static final String[] AUTH_WHITELIST = {
-    "/swagger-resources/**",
-    "/v3/api-docs",
-    "/v3/api-docs/**",
-    "/swagger-ui.html",
-    "/swagger-ui/**",
-    "/favicon.ico",
-    "/error",
-    "/actuator/**"
-  };
 
     private static final AuthenticationConverter authenticationConverter = request -> {
         String jwt = null;
@@ -67,15 +53,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     final FilterChain filterChain) throws ServletException, IOException {
         log.trace("doFilterInternal start");
         try {
-
-          String requestUri = request.getRequestURI();
-
-            if ( Objects.nonNull(requestUri) && Arrays.stream(AUTH_WHITELIST).anyMatch(path -> requestUri.contains(path))) {
-              log.trace("Skipping filter for Swagger request: " + requestUri);
-              filterChain.doFilter(request, response);
-              return;
-            }
-
             try {
                 final Authentication authentication = authenticationManager.authenticate(authenticationConverter.convert(request));
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
