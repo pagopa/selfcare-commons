@@ -1,15 +1,19 @@
-name: 'Swagger Detect Conflict and Update with Spring'
-description: 'Detects conflicts in the OpenAPI documentation and updates the Spring application'
+name: "Swagger Detect Conflict and Update with Spring"
+description: "Detects conflicts in the OpenAPI documentation and updates the Spring application"
 
 inputs:
   path_openapi_docs:
     type: string
     required: true
-    description: 'Path to the OpenAPI documentation'
+    description: "Path to the OpenAPI documentation"
+  module:
+    type: string
+    required: false
+    description: "Module to build"
   github_token:
     type: string
     required: true
-    description: 'Github token'
+    description: "Github token"
 
 runs:
   using: "composite"
@@ -21,17 +25,22 @@ runs:
     - name: Set up JDK 17
       uses: actions/setup-java@0ab4596768b603586c0de567f2430c30f5b0d2b0 # v3
       with:
-        java-version: '17'
-        distribution: 'temurin'
+        java-version: "17"
+        distribution: "temurin"
         cache: maven
-        
+
     # Selfcare-onboarding
-    - uses: s4u/maven-settings-action@7802f6aec16c9098b4798ad1f1d8ac75198194bd # v3.0.0     
+    - uses: s4u/maven-settings-action@7802f6aec16c9098b4798ad1f1d8ac75198194bd # v3.0.0
       with:
         servers: '[{"id": "selfcare-onboarding", "username": "${{ github.actor }}", "password": "${{ inputs.github_token }}"}]'
 
     - name: Build with Maven
-      run: mvn test -Dtest=SwaggerConfigTest#swaggerSpringPlugin -DfailIfNoTests=false
+      run: |
+        if [ -z "${{ inputs.module }}" ]; then
+          mvn test -Dtest=SwaggerConfigTest#swaggerSpringPlugin -DfailIfNoTests=false
+        else
+          mvn test -Dtest=SwaggerConfigTest#swaggerSpringPlugin -Dsurefire.failIfNoSpecifiedTests=false -pl :${{ inputs.module }}
+        fi
       shell: bash
 
     - name: Install Optic
