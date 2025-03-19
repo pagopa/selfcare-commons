@@ -39,7 +39,7 @@ runs:
         if [ -z "${{ inputs.module }}" ]; then
           mvn test -Dtest=SwaggerConfigTest#swaggerSpringPlugin -DfailIfNoTests=false
         else
-          mvn test -pl :${{ inputs.module }}
+          mvn test -Dtest=SwaggerConfigTest -Dsurefire.failIfNoSpecifiedTests=false
         fi
       shell: bash
 
