@@ -6,10 +6,6 @@ inputs:
     type: string
     required: true
     description: "Path to the OpenAPI documentation"
-  module:
-    type: string
-    required: false
-    description: "Module to build"
   github_token:
     type: string
     required: true
@@ -35,12 +31,7 @@ runs:
         servers: '[{"id": "selfcare-onboarding", "username": "${{ github.actor }}", "password": "${{ inputs.github_token }}"}]'
 
     - name: Build with Maven
-      run: |
-        if [ -z "${{ inputs.module }}" ]; then
-          mvn test -Dtest=SwaggerConfigTest#swaggerSpringPlugin -DfailIfNoTests=false
-        else
-          mvn test -Dtest=SwaggerConfigTest -Dsurefire.failIfNoSpecifiedTests=false
-        fi
+      run:  mvn test -Dtest=SwaggerConfigTest -Dsurefire.failIfNoSpecifiedTests=false
       shell: bash
 
     - name: Install Optic
