@@ -44,7 +44,7 @@ jobs:
 
   build_push_docker:
     name: 'Build and Push Docker'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     environment: ${{ inputs.environment }}-cd
     permissions:
       packages: write
@@ -97,7 +97,7 @@ jobs:
 
   tf_plan:
     name: 'Terraform Plan'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     environment: ${{ inputs.environment }}-ci
     permissions:
       id-token: write
@@ -149,8 +149,8 @@ jobs:
 
   release:
     name: 'Release'
-    runs-on: ubuntu-20.04
-    needs: [build_push_docker, tf_plan]
+    runs-on: ubuntu-24.04
+    needs: [ build_push_docker, tf_plan ]
     environment: ${{ inputs.environment }}-cd
     permissions:
       id-token: write
@@ -207,8 +207,8 @@ jobs:
 
   upload_openapi:
     name: 'Upload OpenAPI'
-    runs-on: ubuntu-20.04
-    needs: [release]
+    runs-on: ubuntu-24.04
+    needs: [ release ]
     if: ${{ inputs.upload_openapi_enabled }}
     environment: ${{ inputs.environment }}-cd
     permissions:
@@ -241,4 +241,4 @@ jobs:
         with:
           inlineScript: |
             az storage blob upload --auth-mode key -f  ${{ inputs.path_openapi_docs }} --account-name selc${{ steps.extract_env_short.outputs.env_short }}checkoutsa  -c selc-openapi -n ${{ inputs.docker_image_name }}/openapi.json --overwrite
-       
+
