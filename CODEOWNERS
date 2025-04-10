@@ -1,4 +1,4 @@
 # see https://help.github.com/en/articles/about-code-owners#example-of-a-codeowners-file
-* @pagopa/selfcare-contributors @pagopa/selfcare-dashboard-external-contributors-be @pagopa/selfcare-onboarding-external-contributors-be
+* @pagopa/selfcare-contributors @GiampieroFerrara @pierpaolodidato89 @giulia-tremolada
 
-/.github/workflows/env @pagopa/selfcare-external-contributors-fe
+/.github/workflows/env @OraldoDoci @GabrieleMaiocchiFilippo
