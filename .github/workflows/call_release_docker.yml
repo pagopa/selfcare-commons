@@ -92,6 +92,7 @@ jobs:
           cache-to: type=gha,mode=min
           build-args: |
             REPO_ONBOARDING=selfcare-onboarding
+            REPO_SELFCARE=selfcare
             REPO_USERNAME=${{ github.actor }}
             REPO_PASSWORD=${{ secrets.GITHUB_TOKEN }}
 
