@@ -11,8 +11,6 @@ locals {
   app_name                                = "${local.container_name}-ca"
   container_app_environment_dns_zone_name = "azurecontainerapps.io"
 
-  identity_group_name                     = "${local.project}-identity-rg"
-
   secrets = [for secret in var.secrets_names :
     {
       identity    = "system"

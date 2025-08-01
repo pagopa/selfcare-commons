@@ -30,9 +30,3 @@ data "azurerm_private_dns_zone" "private_azurecontainerapps_io" {
   name                = local.container_app_environment_dns_zone_name
   resource_group_name = data.azurerm_resource_group.rg_vnet.name
 }
-
-
-data "azurerm_user_assigned_identity" "github_identity" {
-  name                = "${local.project}-ms-github-cd-identity"
-  resource_group_name = local.identity_group_name
-}
