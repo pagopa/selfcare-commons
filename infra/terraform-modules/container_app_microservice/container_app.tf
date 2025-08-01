@@ -8,6 +8,7 @@ resource "azapi_resource" "container_app" {
 
   identity {
     type = "SystemAssigned"
+    identity_ids = [data.azurerm_user_assigned_identity.github_identity.id]
   }
 
   body = {
