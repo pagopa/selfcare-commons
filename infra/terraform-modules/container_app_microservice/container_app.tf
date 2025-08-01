@@ -10,7 +10,7 @@ resource "azapi_resource" "container_app" {
     type = "SystemAssigned"
   }
 
-  body = jsonencode({
+  body = {
     properties = {
       configuration = {
         activeRevisionsMode = "Single"
@@ -50,7 +50,7 @@ resource "azapi_resource" "container_app" {
       }
       workloadProfileName = var.workload_profile_name
     }
-  })
+  }
 }
 
 resource "azurerm_key_vault_access_policy" "keyvault_containerapp_access_policy" {
