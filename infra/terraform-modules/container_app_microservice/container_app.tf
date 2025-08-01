@@ -19,7 +19,7 @@ resource "azurerm_container_app" "container_app" {
     for_each = local.secrets
     content {
       name                = secret.value.name
-      key_vault_secret_id = secret.value.keyVaultId
+      key_vault_secret_id = secret.value.key_vault_secret_name
       identity            = var.user_assigned_identity_id
     }
   }
@@ -56,14 +56,14 @@ resource "azurerm_container_app" "container_app" {
       }
 
       # Environment variables from secrets
-      # dynamic "env" {
-      #   for_each = var.secrets
-      #
-      #   content {
-      #     name        = env.value.name
-      #     secret_name = replace(lower(env.value.name), "_", "-")
-      #   }
-      # }
+      dynamic "env" {
+        for_each = local.secrets_env
+
+        content {
+          name        = env.value.name
+          secret_name = env.value.secretRef
+        }
+      }
 
       # Probes configuration
       dynamic "liveness_probe" {
@@ -165,8 +165,8 @@ resource "azurerm_container_app" "container_app" {
       for_each = [for rule in var.container_app.scale_rules : rule if !contains(["azure-queue", "http"], rule.type)]
       content {
         name             = custom_scale_rule.value.name
-        custom_rule_type = custom_scale_rule.value.custom.type
-        metadata         = custom_scale_rule.value.custom.metadata
+        custom_rule_type = custom_scale_rule.value.type
+        metadata         = custom_scale_rule.value.metadata
 
         dynamic "authentication" {
           for_each = try(custom_scale_rule.value.auth, [])
@@ -184,9 +184,10 @@ resource "azurerm_container_app" "container_app" {
 resource "azurerm_key_vault_access_policy" "keyvault_containerapp_access_policy" {
   key_vault_id = data.azurerm_key_vault.key_vault.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = var.user_assigned_identity_id
+  object_id    = var.user_assigned_identity_principal_id
 
   secret_permissions = [
     "Get",
   ]
 }
+
