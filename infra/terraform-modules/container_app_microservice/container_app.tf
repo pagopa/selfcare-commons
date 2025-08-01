@@ -162,11 +162,11 @@ resource "azurerm_container_app" "container_app" {
     }
 
     dynamic "custom_scale_rule" {
-      for_each = [for rule in var.container_app.scale_rules : rule if !contains(["azure-queue", "http"], rule.type)]
+      for_each = [for rule in var.container_app.scale_rules : rule if !contains(["azure-queue", "http"], rule.custom.type)]
       content {
         name             = custom_scale_rule.value.name
-        custom_rule_type = custom_scale_rule.value.type
-        metadata         = custom_scale_rule.value.metadata
+        custom_rule_type = custom_scale_rule.value.custom.type
+        metadata         = custom_scale_rule.value.custom.metadata
 
         dynamic "authentication" {
           for_each = try(custom_scale_rule.value.auth, [])
@@ -180,7 +180,6 @@ resource "azurerm_container_app" "container_app" {
   }
 }
 
-
 resource "azurerm_key_vault_access_policy" "keyvault_containerapp_access_policy" {
   key_vault_id = data.azurerm_key_vault.key_vault.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
@@ -190,4 +189,3 @@ resource "azurerm_key_vault_access_policy" "keyvault_containerapp_access_policy"
     "Get",
   ]
 }
-

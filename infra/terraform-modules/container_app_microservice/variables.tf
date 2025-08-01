@@ -27,8 +27,11 @@ variable "container_app" {
 
     scale_rules = list(object({
       name = string
-      metadata = map(string)
-      type     = string
+      type = optional(string)
+      custom = object({
+        metadata = map(string)
+        type     = string
+      })
     }))
 
     cpu    = number
@@ -93,8 +96,9 @@ variable "image_tag" {
 
 variable "app_settings" {
   type = list(object({
-    name  = string
-    value = string
+    name                  = string
+    value                 = optional(string, "")
+    key_vault_secret_name = optional(string)
   }))
 }
 
