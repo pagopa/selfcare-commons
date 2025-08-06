@@ -187,5 +187,6 @@ resource "azurerm_key_vault_access_policy" "keyvault_containerapp_access_policy"
 
   secret_permissions = [
     "Get",
+    "List"
   ]
 }
