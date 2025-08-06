@@ -190,3 +190,14 @@ resource "azurerm_key_vault_access_policy" "keyvault_containerapp_access_policy"
     "List"
   ]
 }
+
+resource "azurerm_key_vault_access_policy" "keyvault_containerapp_access_policy" {
+  key_vault_id = data.azurerm_key_vault.key_vault.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = azurerm_container_app.container_app.id
+
+  secret_permissions = [
+    "Get",
+    "List"
+  ]
+}
