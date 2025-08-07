@@ -191,18 +191,41 @@ resource "azurerm_key_vault_access_policy" "keyvault_containerapp_access_policy"
   ]
 }
 
-resource "azurerm_role_definition" "container_apps_action" {
-  name        = "SelfCare ContainerApp action"
-  scope       = azurerm_container_app.container_app.id
-  description = "Custom role used to read container apps jobs execution properties"
+# resource "azurerm_role_definition" "container_apps_action" {
+#   name        = "SelfCare ContainerApp action"
+#   scope       = azurerm_container_app.container_app.id
+#   description = "Can read Container App secrets"
 
-permissions {
-    actions = [
-      "microsoft.app/containerApps/listSecrets/action"
-    ]
-  }
+# permissions {
+#     actions = [
+#       "microsoft.app/containerApps/listSecrets/action",
+#       "Microsoft.App/containerApps/read"
+#     ]
+#   }
 
-  assignable_scopes = [
-    azurerm_container_app.container_app.id
-  ]
-}
+#   assignable_scopes = [
+#     azurerm_container_app.container_app.id
+#   ]
+# }
+
+# data "azurerm_user_assigned_identity" "github_cd" {
+#   name                = "${local.project}-infra-github-cd-identity"
+#   resource_group_name = "${local.project}-identity-rg"
+# }
+
+# data "azurerm_user_assigned_identity" "github_ci" {
+#   name                = "${local.project}-infra-github-ci-identity"
+#   resource_group_name = "${local.project}-identity-rg"
+# }
+
+# resource "azurerm_role_assignment" "github_cd_role_assignment" {
+#   scope              = data.azurerm_resource_group.resource_group_app.id
+#   role_definition_id = azurerm_role_definition.container_apps_action.role_definition_resource_id
+#   principal_id       = data.azurerm_user_assigned_identity.github_cd.principal_id
+# }
+
+# resource "azurerm_role_assignment" "github_ci_role_assignment" {
+#   scope              = data.azurerm_resource_group.resource_group_app.id
+#   role_definition_id = azurerm_role_definition.container_apps_action.role_definition_resource_id
+#   principal_id       = data.azurerm_user_assigned_identity.github_ci.principal_id
+# }
