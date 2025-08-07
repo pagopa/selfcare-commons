@@ -191,13 +191,18 @@ resource "azurerm_key_vault_access_policy" "keyvault_containerapp_access_policy"
   ]
 }
 
-resource "azurerm_key_vault_access_policy" "keyvault_containerapp_access_policy" {
-  key_vault_id = data.azurerm_key_vault.key_vault.id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = azurerm_container_app.container_app.id
+resource "azurerm_role_definition" "container_apps_action" {
+  name        = "SelfCare ContainerApp action"
+  scope       = var.user_assigned_identity_principal_id
+  description = "Custom role used to read container apps jobs execution properties"
 
-  secret_permissions = [
-    "Get",
-    "List"
+permissions {
+    actions = [
+      "microsoft.app/containerApps/listSecrets/action"
+    ]
+  }
+
+  assignable_scopes = [
+    var.user_assigned_identity_principal_id
   ]
 }
