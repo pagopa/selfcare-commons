@@ -193,7 +193,7 @@ resource "azurerm_key_vault_access_policy" "keyvault_containerapp_access_policy"
 
 resource "azurerm_role_definition" "container_apps_action" {
   name        = "SelfCare ContainerApp action"
-  scope       = var.user_assigned_identity_principal_id
+  scope       = azurerm_container_app.container_app.id
   description = "Custom role used to read container apps jobs execution properties"
 
 permissions {
@@ -203,6 +203,6 @@ permissions {
   }
 
   assignable_scopes = [
-    var.user_assigned_identity_principal_id
+    azurerm_container_app.container_app.id
   ]
 }
