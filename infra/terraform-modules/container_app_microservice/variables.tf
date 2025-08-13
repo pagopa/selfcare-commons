@@ -27,6 +27,7 @@ variable "container_app" {
 
     scale_rules = list(object({
       name = string
+      type = optional(string)
       custom = object({
         metadata = map(string)
         type     = string
@@ -95,8 +96,9 @@ variable "image_tag" {
 
 variable "app_settings" {
   type = list(object({
-    name  = string
-    value = string
+    name                  = string
+    value                 = optional(string, "")
+    key_vault_secret_name = optional(string)
   }))
 }
 
@@ -135,4 +137,14 @@ variable "container_app_environment_name" {
 variable "resource_group_name" {
   type        = string
   description = "Container app environment resource group name"
+}
+
+variable "user_assigned_identity_id" {
+  type        = string
+  description = "Id of the user-assigned managed identity created along with the Container App Environment. This is necessary to give identity roles (e.g. KeyVault access) to the Container App."
+}
+
+variable "user_assigned_identity_principal_id" {
+  type        = string
+  description = "Id of the user-assigned managed identity created along with the Container App Environment. This is necessary to give identity roles (e.g. KeyVault access) to the Container App."
 }

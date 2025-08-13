@@ -4,19 +4,18 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "<= 3.91.0"
+      version = "<= 4.27.0"
     }
 
     azapi = {
       source  = "azure/azapi"
-      version = "~> 1.9.0"
+      version = "> 2.0.0"
     }
   }
 }
 
 provider "azurerm" {
   features {}
-  skip_provider_registration = true
 }
 
 data "azurerm_client_config" "current" {}
