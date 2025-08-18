@@ -88,6 +88,14 @@ variable "probes" {
   ]
 }
 
+variable "dapr_settings" {
+  type = list(object({
+    app_id  = string
+    app_port = string
+    app_protocol = string
+  }))
+}
+
 variable "image_tag" {
   type        = string
   default     = "latest"
