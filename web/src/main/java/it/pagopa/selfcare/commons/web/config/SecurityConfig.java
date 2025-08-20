@@ -39,7 +39,8 @@ public class SecurityConfig {
     "/swagger-ui/**",
     "/favicon.ico",
     "/error",
-    "/actuator/**"
+    "/actuator/**",
+    "/dapr/**"
   };
 
   private final JwtAuthenticationStrategyFactory jwtAuthenticationStrategyFactory;

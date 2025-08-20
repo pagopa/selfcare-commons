@@ -24,6 +24,16 @@ resource "azurerm_container_app" "container_app" {
     }
   }
 
+
+  dynamic "dapr" {
+    for_each = var.dapr_settings
+    content {
+      app_id       = dapr.value.app_id
+      app_port     = dapr.value.app_port
+      app_protocol = dapr.app_protocol
+    }
+  }
+  
   # Ingress configuration
   ingress {
     allow_insecure_connections = false
