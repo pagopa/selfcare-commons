@@ -45,6 +45,9 @@ public class JwtAuthenticationStrategyFactoryImpl implements JwtAuthenticationSt
             case "kubernetes/serviceaccount":
                 bean = beanFactory.getBean(K8sJwtAuthenticationStrategy.class);
                 break;
+            case "PAGOPA":
+              bean = beanFactory.getBean(PagopaJwtAuthenticationStrategy.class);
+              break;
             default:
                 throw new IllegalArgumentException("Unknown issuer");
         }

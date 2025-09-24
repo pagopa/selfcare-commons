@@ -42,6 +42,8 @@ class JwtAuthenticationStrategyFactoryImplTest {
                         jwtAuthenticationStrategy = mock(SpidJwtAuthenticationStrategy.class);
                     } else if (K8sJwtAuthenticationStrategy.class.equals(argument)) {
                         jwtAuthenticationStrategy = mock(K8sJwtAuthenticationStrategy.class);
+                    } else if (PagopaJwtAuthenticationStrategy.class.equals(argument)) {
+                      jwtAuthenticationStrategy = mock(PagopaJwtAuthenticationStrategy.class);
                     } else {
                         jwtAuthenticationStrategy = null;
                     }
@@ -81,7 +83,8 @@ class JwtAuthenticationStrategyFactoryImplTest {
     private static Stream<Arguments> getJwtAuthenticationStrategyArgumentsProvider() {
         return Stream.of(
                 Arguments.of(SpidJwtAuthenticationStrategy.class, "SPID"),
-                Arguments.of(K8sJwtAuthenticationStrategy.class, "kubernetes/serviceaccount")
+                Arguments.of(K8sJwtAuthenticationStrategy.class, "kubernetes/serviceaccount"),
+                Arguments.of(PagopaJwtAuthenticationStrategy.class, "PAGOPA")
         );
     }
 
