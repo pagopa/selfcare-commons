@@ -34,9 +34,9 @@ runs:
       with:
         servers: >
           '[
-              {"id": "selfcare-onboarding", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}"},
-              {"id": "selfcare-github", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}"},
-              {"id": "selfcare", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}"}
+              {"id": "selfcare-onboarding", "username": "${{ github.actor }}", "password": "${{ inputs.github_token }}"},
+              {"id": "selfcare-github", "username": "${{ github.actor }}", "password": "${{ inputs.github_token }}"},
+              {"id": "selfcare", "username": "${{ github.actor }}", "password": "${{ inputs.github_token }}"}
           ]'
 
     - name: Build with Maven
