@@ -26,6 +26,7 @@ public class SpidJwtAuthenticationStrategy implements JwtAuthenticationStrategy 
     private static final String CLAIM_NAME = "name";
     private static final String CLAIM_SURNAME = "family_name";
     private static final String CLAIM_FISCAL_CODE = "fiscal_number";
+    private static final String CLAIM_ISSUER = "iss";
 
     private final JwtService jwtService;
     private final AuthoritiesRetriever authoritiesRetriever;
@@ -57,6 +58,7 @@ public class SpidJwtAuthenticationStrategy implements JwtAuthenticationStrategy 
                     .name(claims.get(CLAIM_NAME, String.class))
                     .surname(claims.get(CLAIM_SURNAME, String.class))
                     .fiscalCode(claims.get(CLAIM_FISCAL_CODE, String.class))
+                    .issuer(claims.get(CLAIM_ISSUER, String.class))
                     .build();
 
         } catch (Exception e) {
