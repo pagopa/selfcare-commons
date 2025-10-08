@@ -22,7 +22,7 @@ public class PagopaJwtAuthenticationStrategy implements JwtAuthenticationStrateg
 
     private static final String MDC_UID = "uid";
     private static final String CLAIMS_UID = "uid";
-//    private static final String CLAIM_EMAIL = "email";
+    private static final String CLAIM_ISSUER = "iss";
 
     private final JwtService jwtService;
     private final AuthoritiesRetriever authoritiesRetriever;
@@ -50,7 +50,7 @@ public class PagopaJwtAuthenticationStrategy implements JwtAuthenticationStrateg
                     () -> log.warn("uid claims is null"));
 
             user = SelfCareUser.builder(uid.orElse("uid_not_provided"))
-//                    .email(claims.get(CLAIM_EMAIL, String.class))
+                    .issuer(claims.get(CLAIM_ISSUER, String.class))
                     .build();
 
         } catch (Exception e) {
