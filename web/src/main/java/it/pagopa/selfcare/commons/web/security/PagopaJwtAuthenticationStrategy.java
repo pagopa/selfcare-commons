@@ -3,6 +3,7 @@ package it.pagopa.selfcare.commons.web.security;
 import io.jsonwebtoken.Claims;
 import it.pagopa.selfcare.commons.base.logging.LogUtils;
 import it.pagopa.selfcare.commons.base.security.SelfCareUser;
+import it.pagopa.selfcare.commons.base.security.SelfCareUser.SelfCareUserBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class PagopaJwtAuthenticationStrategy implements JwtAuthenticationStrateg
 
     private static final String MDC_UID = "uid";
     private static final String CLAIMS_UID = "uid";
+    private static final String CLAIM_EMAIL = "email";
+    private static final String CLAIM_NAME = "name";
+    private static final String CLAIM_SURNAME = "family_name";
     private static final String CLAIM_ISSUER = "iss";
 
     private final JwtService jwtService;
@@ -49,10 +53,14 @@ public class PagopaJwtAuthenticationStrategy implements JwtAuthenticationStrateg
             uid.ifPresentOrElse(value -> MDC.put(MDC_UID, value),
                     () -> log.warn("uid claims is null"));
 
-            user = SelfCareUser.builder(uid.orElse("uid_not_provided"))
+            SelfCareUserBuilder userBuilder = SelfCareUser.builder(uid.orElse("uid_not_provided"))
                     .issuer(claims.get(CLAIM_ISSUER, String.class))
-                    .build();
-
+                    .email(claims.get(CLAIM_EMAIL, String.class));
+            
+            Optional.ofNullable(claims.get(CLAIM_NAME, String.class)).ifPresent(userBuilder::name);
+            Optional.ofNullable(claims.get(CLAIM_SURNAME, String.class)).ifPresent(userBuilder::surname);
+            
+            user = userBuilder.build();        
         } catch (Exception e) {
             MDC.remove(MDC_UID);
             throw new JwtAuthenticationException(e.getMessage(), e);
