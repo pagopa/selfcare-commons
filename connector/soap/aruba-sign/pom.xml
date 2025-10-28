@@ -5,7 +5,7 @@
     <parent>
         <artifactId>selc-commons-connector-soap</artifactId>
         <groupId>it.pagopa.selfcare</groupId>
-        <version>2.5.11</version>
+        <version>2.5.12</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
