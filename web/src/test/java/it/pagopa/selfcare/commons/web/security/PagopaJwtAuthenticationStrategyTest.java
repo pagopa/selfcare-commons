@@ -27,7 +27,9 @@ class PagopaJwtAuthenticationStrategyTest {
 
     private static final String MDC_UID = "uid";
     private static final String CLAIM_UID = "uid";
-//    private static final String CLAIM_EMAIL = "email";
+    private static final String CLAIM_EMAIL = "email";
+    private static final String CLAIM_NAME = "name";
+    private static final String CLAIM_SURNAME = "family_name";
 
     @InjectMocks
     private PagopaJwtAuthenticationStrategy pagopaJwtAuthenticationStrategy;
@@ -132,9 +134,10 @@ class PagopaJwtAuthenticationStrategyTest {
         JwtAuthenticationToken authentication = new JwtAuthenticationToken(token);
         String uid = "uid";
         String email = "email@prova.com";
-        String fiscalCode = "fiscalCode";
-        when(jwtServiceMock.getClaims(any()))
-                .thenReturn(new DefaultClaims(Map.of(CLAIM_UID, uid))); //, CLAIM_EMAIL, email
+        String name = "name";
+        when(jwtServiceMock.getClaims(any())).thenReturn(new DefaultClaims(Map.of(CLAIM_UID, uid,
+          CLAIM_EMAIL, email,
+          CLAIM_NAME, name)));
         String role = "role";
         when(authoritiesRetrieverMock.retrieveAuthorities())
                 .thenReturn(List.of(new SimpleGrantedAuthority(role), new SimpleGrantedAuthority(role), new SimpleGrantedAuthority(role)));
@@ -146,7 +149,9 @@ class PagopaJwtAuthenticationStrategyTest {
         assertEquals(token, authenticate.getCredentials());
         assertEquals(SelfCareUser.class, authenticate.getPrincipal().getClass());
         assertEquals(uid, ((SelfCareUser) authenticate.getPrincipal()).getId());
-//        assertEquals(email, ((SelfCareUser) authenticate.getPrincipal()).getEmail());
+        assertEquals(email, ((SelfCareUser) authenticate.getPrincipal()).getEmail());
+        assertEquals(name, ((SelfCareUser) authenticate.getPrincipal()).getUserName());
+        assertNull(((SelfCareUser) authenticate.getPrincipal()).getSurname());
         assertNotNull(authenticate.getAuthorities());
         assertEquals(3, authenticate.getAuthorities().size());
         authenticate.getAuthorities().forEach(grantedAuthority -> assertEquals(role, grantedAuthority.getAuthority()));

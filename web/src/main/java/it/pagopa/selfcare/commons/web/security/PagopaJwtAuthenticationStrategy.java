@@ -23,6 +23,9 @@ public class PagopaJwtAuthenticationStrategy implements JwtAuthenticationStrateg
     private static final String MDC_UID = "uid";
     private static final String CLAIMS_UID = "uid";
     private static final String CLAIM_ISSUER = "iss";
+    private static final String CLAIM_EMAIL = "email";
+    private static final String CLAIM_NAME = "name";
+    private static final String CLAIM_SURNAME = "family_name";
 
     private final JwtService jwtService;
     private final AuthoritiesRetriever authoritiesRetriever;
@@ -49,10 +52,14 @@ public class PagopaJwtAuthenticationStrategy implements JwtAuthenticationStrateg
             uid.ifPresentOrElse(value -> MDC.put(MDC_UID, value),
                     () -> log.warn("uid claims is null"));
 
-            user = SelfCareUser.builder(uid.orElse("uid_not_provided"))
-                    .issuer(claims.get(CLAIM_ISSUER, String.class))
-                    .build();
+            SelfCareUser.SelfCareUserBuilder userBuilder = SelfCareUser.builder(uid.orElse("uid_not_provided"))
+              .issuer(claims.get(CLAIM_ISSUER, String.class))
+              .email(claims.get(CLAIM_EMAIL, String.class));
 
+            Optional.ofNullable(claims.get(CLAIM_NAME, String.class)).ifPresent(userBuilder::name);
+            Optional.ofNullable(claims.get(CLAIM_SURNAME, String.class)).ifPresent(userBuilder::surname);
+
+            user = userBuilder.build();
         } catch (Exception e) {
             MDC.remove(MDC_UID);
             throw new JwtAuthenticationException(e.getMessage(), e);
