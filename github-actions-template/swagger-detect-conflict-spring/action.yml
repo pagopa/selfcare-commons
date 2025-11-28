@@ -61,3 +61,25 @@ runs:
           echo "Swagger documentation is older!!"
           exit 1
         fi
+
+    - name: Commit api-docs
+      shell: bash
+      env:
+        DOCS_PATH: ${{ inputs.path_openapi_docs }}
+      run: |
+        echo "Checking for uncommitted changes under: $DOCS_PATH"
+
+        CHANGES=$(git status --porcelain -- "$DOCS_PATH" || true)
+
+        if [ -n "$CHANGES" ]; then
+          echo "Swagger documentation is older!! (there are uncommitted changes under $DOCS_PATH)"
+          echo
+          echo "Changed files:"
+          echo "$CHANGES"
+          echo
+          echo "Diff:"
+          git diff -- "$DOCS_PATH" || true
+          exit 1
+        else
+          echo "Swagger documentation is up to date."
+        fi
