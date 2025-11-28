@@ -64,9 +64,9 @@ runs:
 
     - name: Commit api-docs
       shell: bash
+      env:
+        DOCS_PATH: ${{ inputs.path_openapi_docs }}
       run: |
-        DOCS_PATH="${{ inputs.path_openapi_docs }}"
-
         echo "Checking for uncommitted changes under: $DOCS_PATH"
 
         CHANGES=$(git status --porcelain -- "$DOCS_PATH" || true)
