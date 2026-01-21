@@ -79,8 +79,9 @@ jobs:
         VITE_OT_TOKEN: "${{ env.VITE_OT_TOKEN }}"
         VITE_OT_TERMS_AND_CONDITION_RESOURCE: "${{ env.VITE_OT_TERMS_CONDITION_RESOURCE }}"
         VITE_OT_TOS_RESOURCE: "${{ env.VITE_OT_TOS_RESOURCE }}"
+        FILE_ENVIRONMENT: "${{ inputs.file_environment }}"
       run: |
-        ENV_ENDPOINT="https://raw.githubusercontent.com/pagopa/selfcare-commons/refs/heads/main/.github/workflows/env/${{ inputs.file_environment }}"
+        ENV_ENDPOINT="https://raw.githubusercontent.com/pagopa/selfcare-commons/refs/heads/main/.github/workflows/env/${FILE_ENVIRONMENT}"
         export $(curl -s "$ENV_ENDPOINT" | xargs)
 
         # Build
@@ -90,7 +91,8 @@ jobs:
     - name: Build info
       env:
         EXECUTION_ID: "${{ github.run_number }} - ${{ github.workflow }}(${{ github.run_id }})"
-      run: printf "$EXECUTION_ID\n$(git name-rev --name-only FETCH_HEAD) $(git rev-parse HEAD)" > ${{ github.workspace }}/dist/build.info
+        WORKSPACE: "${{ github.workspace }}"
+      run: printf "$EXECUTION_ID\n$(git name-rev --name-only FETCH_HEAD) $(git rev-parse HEAD)" > "${WORKSPACE}/dist/build.info"
       shell: bash
 
     - name: Upload Artifact
@@ -141,8 +143,8 @@ jobs:
 
       - name: CDN Code Deploy
         run: |
-          az storage blob sync -c '${{ env.BLOB_CONTAINER_NAME }}' --account-name ${{ env.STORAGE_ACCOUNT_NAME }} -s "./${{ env.BUNDLE_NAME }}" --destination '${{ env.BASE_PATH }}/'
-          az cdn endpoint purge -g ${{ env.RESOURCE_GROUP }} -n ${{ env.ENDPOINT_NAME }} --profile-name ${{ env.CDN_PROFILE }} --content-paths "/${{ env.BASE_PATH }}" "/${{ env.BASE_PATH }}/*" "/"
+          az storage blob sync -c "${BLOB_CONTAINER_NAME}" --account-name "${STORAGE_ACCOUNT_NAME}" -s "./${BUNDLE_NAME}" --destination "${BASE_PATH}/"
+          az cdn endpoint purge -g "${RESOURCE_GROUP}" -n "${ENDPOINT_NAME}" --profile-name "${CDN_PROFILE}" --content-paths "/${BASE_PATH}" "/${BASE_PATH}/*" "/"
         env:
           BLOB_CONTAINER_NAME: ${{ inputs.blob_container_name }}
           STORAGE_ACCOUNT_NAME: "selc${{ env.ENV_SHORT }}${{ inputs.storage_account_name }}"
