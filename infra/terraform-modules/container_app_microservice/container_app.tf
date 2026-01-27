@@ -164,12 +164,13 @@ resource "azurerm_container_app" "container_app" {
     }
 
     dynamic "http_scale_rule" {
-      for_each = [for rule in var.container_app.scale_rules : rule if rule.type == "http"]
+      for_each = [for rule in var.container_app.scale_rules : rule if rule.custom.type == "http"]
       content {
         name                = http_scale_rule.value.name
-        concurrent_requests = http_scale_rule.value.metadata.concurrentRequests
+        concurrent_requests = http_scale_rule.value.custom.metadata.concurrentRequests
       }
     }
+
 
     dynamic "custom_scale_rule" {
       for_each = [for rule in var.container_app.scale_rules : rule if !contains(["azure-queue", "http"], rule.custom.type)]
@@ -189,6 +190,10 @@ resource "azurerm_container_app" "container_app" {
     }
   }
 }
+
+# data "azurerm_key_vault_access_policy" "keyvault_containerapp_access_policy" {
+#   name        = "${local.project}-keyvault-access-policy-containerapp"
+# }
 
 resource "azurerm_key_vault_access_policy" "keyvault_containerapp_access_policy" {
   key_vault_id = data.azurerm_key_vault.key_vault.id
