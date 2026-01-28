@@ -1,7 +1,11 @@
 package it.pagopa.selfcare.commons.web.model;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,37 +14,34 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
-@ApiModel(description = "A \"problem detail\" as a way to carry machine-readable details of errors (https://datatracker.ietf.org/doc/html/rfc7807)")
+@Schema(description = "A \"problem detail\" as a way to carry machine-readable details of errors (https://datatracker.ietf.org/doc/html/rfc7807)")
 public class Problem implements Serializable {
 
-    @ApiModelProperty(value = "A URL to a page with more details regarding the problem.")
+    @Schema(description = "A URL to a page with more details regarding the problem.")
     private String type;
 
-    @ApiModelProperty(value = "Short human-readable summary of the problem.", required = true)
+    @Schema(description = "Short human-readable summary of the problem.")
     @NotBlank
     private String title;
 
-    @ApiModelProperty(value = "The HTTP status code.", required = true, example = "500")
+    @Schema(description = "The HTTP status code.", example = "500")
     @Min(100)
     @Max(599)
+    @NotNull
     private int status;
 
-    @ApiModelProperty(value = "Human-readable description of this specific problem.")
+    @Schema(description = "Human-readable description of this specific problem.")
     private String detail;
 
-    @ApiModelProperty(value = "A URI that describes where the problem occurred.")
+    @Schema(description = "A URI that describes where the problem occurred.")
     private String instance;
 
-    @ApiModelProperty(value = "A list of invalid parameters details.")
+    @Schema(description = "A list of invalid parameters details.")
     @Valid
     private List<InvalidParam> invalidParams;
 
@@ -71,11 +72,11 @@ public class Problem implements Serializable {
     @AllArgsConstructor
     public static class InvalidParam {
 
-        @ApiModelProperty(value = "Invalid parameter name.", required = true)
+        @Schema(description = "Invalid parameter name.")
         @NotBlank
         private String name;
 
-        @ApiModelProperty(value = "Invalid parameter reason.", required = true)
+        @Schema(description = "Invalid parameter reason.")
         @NotBlank
         private String reason;
 
