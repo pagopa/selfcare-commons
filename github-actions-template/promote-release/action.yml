@@ -10,6 +10,10 @@ inputs:
     type: string
     required: true
     description: 'Release version'
+  repository_name:
+    type: string
+    required: true
+    description: 'Repository name'
 
 runs:
   using: "composite" 
@@ -36,6 +40,7 @@ runs:
       shell: bash
       run: |
         gh variable set CURRENT_PROD_VERSION \
-          --body "${{ inputs.release_version }}"
+          --body "${{ inputs.release_version }}" \
+          --repo "${{ inputs.repository_name }}"
       env:
         GH_TOKEN: ${{ inputs.github_path_token }}
