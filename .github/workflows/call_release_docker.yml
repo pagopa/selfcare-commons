@@ -140,25 +140,14 @@ jobs:
           TF_VAR_image_tag: ${{ steps.setsha.outputs.short_sha }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Encrypt Terraform Plan
-        working-directory: ${{ inputs.dir }}
+      - name: Upload Terraform Plan as Artifact
+        uses: pagopa/dx/actions/terraform-plan-upload@main
         env:
-          ENCRYPTION_PASSPHRASE: ${{ secrets.ARTIFACT_ENC_KEY }}
-          TFPLAN_FILE: tfplan-${{ inputs.tf_environment }}-${{ github.sha }}
-        run: |
-          set -euo pipefail
-          openssl enc -aes-256-cbc -salt -pbkdf2 \
-            -in "$TFPLAN_FILE" \
-            -out "${TFPLAN_FILE}.enc" \
-            -pass env:ENCRYPTION_PASSPHRASE
-          rm -f "$TFPLAN_FILE"
-
-      - name: "Upload Terraform Plan as Artifact"
-        uses: actions/upload-artifact@694cdabd8bdb0f10b2cea11669e1bf5453eed0a6 # v4.2.0
+          ARTIFACT_ENC_KEY: ${{ secrets.ARTIFACT_ENC_KEY }}
         with:
-          name: tfplan
-          path: ${{ inputs.dir }}/tfplan-${{ inputs.tf_environment }}-${{ github.sha }}.enc
-          if-no-files-found: error
+          plan-file: tfplan-${{ inputs.tf_environment }}-${{ github.sha }}
+          working-directory: ${{ inputs.dir }}
+          artifact-name: terraform-plan
           retention-days: 1
 
   release:
@@ -186,23 +175,13 @@ jobs:
           subscription-id: ${{ vars.ARM_SUBSCRIPTION_ID }}
 
       - name: Download Terraform Plan as Artifact
-        uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
-        with:
-          name: tfplan
-          path: ${{ inputs.dir }}
-
-      - name: Decrypt Terraform Plan
-        working-directory: ${{ inputs.dir }}
+        uses: pagopa/dx/actions/terraform-plan-download@main
         env:
-          ENCRYPTION_PASSPHRASE: ${{ secrets.ARTIFACT_ENC_KEY }}
-          TFPLAN_FILE: tfplan-${{ inputs.tf_environment }}-${{ github.sha }}
-        run: |
-          set -euo pipefail
-          openssl enc -aes-256-cbc -d -pbkdf2 \
-            -in "${TFPLAN_FILE}.enc" \
-            -out "$TFPLAN_FILE" \
-            -pass env:ENCRYPTION_PASSPHRASE
-          rm -f "${TFPLAN_FILE}.enc"
+          ARTIFACT_ENC_KEY: ${{ secrets.ARTIFACT_ENC_KEY }}
+        with:
+          plan-file: tfplan-${{ inputs.tf_environment }}-${{ github.sha }}
+          working-directory: ${{ inputs.dir }}
+          artifact-name: terraform-plan
 
       - name: Retrieve Terraform Modules from Cache
         id: cache-terraform-modules
