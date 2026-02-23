@@ -144,7 +144,7 @@ jobs:
       - name: CDN Code Deploy
         run: |
           az storage blob sync -c "${BLOB_CONTAINER_NAME}" --account-name "${STORAGE_ACCOUNT_NAME}" -s "./${BUNDLE_NAME}" --destination "${BASE_PATH}/"
-          az afd endpoint purge -g "${RESOURCE_GROUP}" -n "${ENDPOINT_NAME}" --profile-name "${CDN_PROFILE}" --content-paths "/${BASE_PATH}" "/${BASE_PATH}/*" "/"
+          az afd endpoint purge -g "${RESOURCE_GROUP}" --endpoint-name "${ENDPOINT_NAME}" --profile-name "${CDN_PROFILE}" --content-paths "/${BASE_PATH}" "/${BASE_PATH}/*" "/"
         env:
           BLOB_CONTAINER_NAME: ${{ inputs.blob_container_name }}
           STORAGE_ACCOUNT_NAME: "selc${{ env.ENV_SHORT }}${{ inputs.storage_account_name }}"
