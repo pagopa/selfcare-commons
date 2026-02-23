@@ -53,7 +53,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
     - name: Check-out code
@@ -81,7 +81,11 @@ jobs:
         VITE_OT_TOS_RESOURCE: "${{ env.VITE_OT_TOS_RESOURCE }}"
         FILE_ENVIRONMENT: "${{ inputs.file_environment }}"
       run: |
+        : "${FILE_ENVIRONMENT:?FILE_ENVIRONMENT is empty or not set}"
         ENV_ENDPOINT="https://raw.githubusercontent.com/pagopa/selfcare-commons/refs/heads/main/.github/workflows/env/${FILE_ENVIRONMENT}"
+
+        echo "ENV_ENDPOINT = $ENV_ENDPOINT"
+
         export $(curl -s "$ENV_ENDPOINT" | xargs)
 
         # Build
