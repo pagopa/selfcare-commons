@@ -86,7 +86,9 @@ jobs:
 
         echo "ENV_ENDPOINT = $ENV_ENDPOINT"
 
-        export $(curl -s "$ENV_ENDPOINT" | xargs)
+        set -a
+        source <(curl -fsSL "$ENV_ENDPOINT")
+        set +a
 
         # Build
         yarn build
