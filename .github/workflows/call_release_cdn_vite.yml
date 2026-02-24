@@ -147,14 +147,28 @@ jobs:
           tenant-id: ${{ env.ARM_TENANT_ID }}
           subscription-id: ${{ env.ARM_SUBSCRIPTION_ID }}
 
-      - name: CDN Code Deploy
+      - name: Upload bundle to Blob
         run: |
-          az storage blob sync -c "${BLOB_CONTAINER_NAME}" --account-name "${STORAGE_ACCOUNT_NAME}" -s "./${BUNDLE_NAME}" --destination "${BASE_PATH}/"
-          az afd endpoint purge --resource-group "${RESOURCE_GROUP}" --endpoint-name "${ENDPOINT_NAME}" --profile-name "${CDN_PROFILE}" --content-paths "/${BASE_PATH}/*"
+          az storage blob sync \
+            -c "${BLOB_CONTAINER_NAME}" \
+            --account-name "${STORAGE_ACCOUNT_NAME}" \
+            -s "./${BUNDLE_NAME}" \
+            --destination "${BASE_PATH}/"
         env:
           BLOB_CONTAINER_NAME: ${{ inputs.blob_container_name }}
           STORAGE_ACCOUNT_NAME: "selc${{ env.ENV_SHORT }}${{ inputs.storage_account_name }}"
-          CDN_PROFILE: selc-${{ env.ENV_SHORT }}-${{ inputs.profile_name}}
-          ENDPOINT_NAME: selc-${{ env.ENV_SHORT }}-${{ inputs.endpoint_name }}
+          BUNDLE_NAME: ${{ env.BUNDLE_NAME }}
+          BASE_PATH: ${{ inputs.base_path }}
+
+      - name: Purge CDN
+        run: |
+          az afd endpoint purge \
+            --resource-group "${RESOURCE_GROUP}" \
+            --endpoint-name "${ENDPOINT_NAME}" \
+            --profile-name "${CDN_PROFILE}" \
+            --content-paths "/${BASE_PATH}/*"
+        env:
           RESOURCE_GROUP: selc-${{ env.ENV_SHORT }}-${{ inputs.resource_group_name }}
+          CDN_PROFILE: selc-${{ env.ENV_SHORT }}-${{ inputs.profile_name }}
+          ENDPOINT_NAME: selc-${{ env.ENV_SHORT }}-${{ inputs.endpoint_name }}
           BASE_PATH: ${{ inputs.base_path }}
