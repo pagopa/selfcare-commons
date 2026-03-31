@@ -166,7 +166,7 @@ jobs:
             --resource-group "${RESOURCE_GROUP}" \
             --endpoint-name "${ENDPOINT_NAME}" \
             --profile-name "${CDN_PROFILE}" \
-            --content-paths "/${BASE_PATH}/*"
+            --content-paths "/${BASE_PATH}" "/${BASE_PATH}/" "/${BASE_PATH}/*"
         env:
           RESOURCE_GROUP: selc-${{ env.ENV_SHORT }}-${{ inputs.resource_group_name }}
           CDN_PROFILE: selc-${{ env.ENV_SHORT }}-${{ inputs.profile_name }}
